@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;net451;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
 	<Copyright>Copyright (C) Loki Honoo 2020. All rights reserved.</Copyright>
 	<Company>Loki Honoo</Company>
     <Authors>Loki Honoo</Authors>
