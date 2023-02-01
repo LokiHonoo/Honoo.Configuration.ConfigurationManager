@@ -17,6 +17,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="6.9.12" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Middleware\Middleware.csproj" />
   </ItemGroup>
   

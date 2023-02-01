@@ -142,7 +142,10 @@ namespace Honoo.Configuration
                 {
                     XElement content = _contents[name];
                     content.SetAttributeValue("connectionString", connectionString);
-                    content.SetAttributeValue("providerName", providerName);
+                    if (providerName != null)
+                    {
+                        content.SetAttributeValue("providerName", providerName);
+                    }
                     _values[name] = new ConnectionStringsValue(content);
                 }
                 else
@@ -150,7 +153,10 @@ namespace Honoo.Configuration
                     XElement content = new XElement("add");
                     content.SetAttributeValue("name", name);
                     content.SetAttributeValue("connectionString", connectionString);
-                    content.SetAttributeValue("providerName", providerName);
+                    if (providerName != null)
+                    {
+                        content.SetAttributeValue("providerName", providerName);
+                    }
                     ConnectionStringsValue value = new ConnectionStringsValue(content);
                     _values.Add(name, value);
                     _contents.Add(name, content);

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net40;net6.0</TargetFrameworks>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<Copyright>Copyright (C) Loki Honoo 2020. All rights reserved.</Copyright>
+		<Company>Loki Honoo</Company>
+		<Authors>Loki Honoo</Authors>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net40'">
+		<PackageReference Include="MySql.Data" Version="6.9.12" />
+	</ItemGroup>
+
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="MySql.Data" Version="8.0.32" />
+		<PackageReference Include="System.Data.SqlClient">
+		  <Version>4.8.5</Version>
+		</PackageReference>
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Honoo.Configuration.ConfigurationManager\Honoo.Configuration.ConfigurationManager.csproj" />
+	</ItemGroup>
+
+</Project>

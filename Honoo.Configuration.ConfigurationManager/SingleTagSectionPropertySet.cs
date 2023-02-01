@@ -72,7 +72,7 @@ namespace Honoo.Configuration
             }
             if (key.Contains(" "))
             {
-                throw new ArgumentException(ExceptionMessages.InvalidKey.Message + " - " + nameof(key));
+                throw new ArgumentException(Localization.InvalidKey + " - " + nameof(key));
             }
             if (value is null)
             {

@@ -8,18 +8,10 @@ namespace Honoo.Configuration
     {
         internal static object GetDictionarySectionValue(XElement content)
         {
-            string type;
-            if (content.Attribute("type") is null)
+            string type = content.Attribute("type")?.Value;
+            if (string.IsNullOrWhiteSpace(type))
             {
                 type = "System.String";
-            }
-            else
-            {
-                type = content.Attribute("type").Value;
-                if (string.IsNullOrWhiteSpace(type))
-                {
-                    type = "System.String";
-                }
             }
             string value = content.Attribute("value").Value;
             switch (type)

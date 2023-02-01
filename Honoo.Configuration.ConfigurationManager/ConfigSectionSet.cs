@@ -143,7 +143,7 @@ namespace Honoo.Configuration
             }
             if (name.Contains(" "))
             {
-                throw new ArgumentException(ExceptionMessages.InvalidKey.Message + " - " + nameof(name));
+                throw new ArgumentException(Localization.InvalidKey + " - " + nameof(name));
             }
             if (_values.ContainsKey(name))
             {
@@ -177,7 +177,7 @@ namespace Honoo.Configuration
                         value = new SingleTagSection(content, _savable);
                         break;
 
-                    default: throw new ArgumentException(ExceptionMessages.InvalidType.Message + " - " + nameof(type));
+                    default: throw new ArgumentException(Localization.InvalidType + " - " + nameof(type));
                 }
                 _values.Add(name, value);
                 _contents.Add(name, content);

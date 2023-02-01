@@ -117,7 +117,7 @@ namespace Honoo.Configuration
             }
             if (name.Contains(" "))
             {
-                throw new ArgumentException(ExceptionMessages.InvalidKey.Message + " - " + nameof(name));
+                throw new ArgumentException(Localization.InvalidKey + " - " + nameof(name));
             }
             if (_values.ContainsKey(name))
             {
