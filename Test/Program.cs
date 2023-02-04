@@ -7,9 +7,9 @@ namespace Test
     {
         private static void Main()
         {
-            Localization.InvalidKey = "无效的键。";
-            Localization.DuplicateKey = "指定的键已存在。";
-            Localization.InvalidType = "无效的类型。";
+            Localization.EX_0X0001_InvalidKey = "无效的键。";
+            Localization.EX_0X0002_InvalidType = "无效的类型。";
+            Localization.EX_0X0003_DuplicateKey = "指定的键已存在。";
             //
             //
             //

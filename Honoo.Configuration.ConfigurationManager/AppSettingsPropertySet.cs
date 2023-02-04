@@ -38,7 +38,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public string this[string key]
         {
-            get => _values.ContainsKey(key) ? _values[key] : null;
+            get => _values.TryGetValue(key, out string value) ? value : null;
             set { AddOrUpdate(key, value); }
         }
 

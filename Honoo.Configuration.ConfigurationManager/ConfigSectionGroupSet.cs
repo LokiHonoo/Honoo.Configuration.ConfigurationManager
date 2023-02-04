@@ -38,7 +38,7 @@ namespace Honoo.Configuration
         /// <param name="name">配置组的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConfigSectionGroup this[string name] => _values.ContainsKey(name) ? _values[name] : null;
+        public ConfigSectionGroup this[string name] => _values.TryGetValue(name, out ConfigSectionGroup group) ? group : null;
 
         #region Constructor
 
@@ -117,11 +117,11 @@ namespace Honoo.Configuration
             }
             if (name.Contains(" "))
             {
-                throw new ArgumentException(Localization.InvalidKey + " - " + nameof(name));
+                throw new ArgumentException(Localization.EX_0X0001_InvalidKey + " - " + nameof(name));
             }
-            if (_values.ContainsKey(name))
+            if (_values.TryGetValue(name, out ConfigSectionGroup group))
             {
-                return _values[name];
+                return group;
             }
             else
             {

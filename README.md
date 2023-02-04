@@ -127,7 +127,7 @@ public static void Create()
         // 直接赋值等同于 AddOrUpdate 方法。
         //
         manager.ConnectionStrings.Properties.AddOrUpdate("prop1", conn1);
-        manager.ConnectionStrings.Properties["prop2"] = new ConnectionStringsValue(conn1);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop2", conn2.ConnectionString, null);
         manager.ConnectionStrings.Properties.AddOrUpdate("prop3", conn2.ConnectionString, typeof(MySqlConnection).Namespace);
         manager.ConnectionStrings.Properties.AddOrUpdate("prop4", conn2.ConnectionString, typeof(MySqlConnection).AssemblyQualifiedName);
         //

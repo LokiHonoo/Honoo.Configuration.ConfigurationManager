@@ -37,7 +37,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public string this[string key]
         {
-            get => _values.ContainsKey(key) ? _values[key] : null;
+            get => _values.TryGetValue(key, out string value) ? value : null;
             set { AddOrUpdate(key, value); }
         }
 
@@ -72,7 +72,7 @@ namespace Honoo.Configuration
             }
             if (key.Contains(" "))
             {
-                throw new ArgumentException(Localization.InvalidKey + " - " + nameof(key));
+                throw new ArgumentException(Localization.EX_0X0001_InvalidKey + " - " + nameof(key));
             }
             if (value is null)
             {

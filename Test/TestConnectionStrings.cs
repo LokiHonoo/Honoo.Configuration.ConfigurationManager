@@ -25,7 +25,7 @@ namespace Test
                     DataSource = "127.0.0.1",
                     InitialCatalog = "DemoCatalog",
                     UserID = "sa",
-                    Password = Common.Random.Next(1000000, 9999999).ToString()
+                    Password = "12345"
                 };
                 SqlConnection conn1 = new SqlConnection(builder1.ConnectionString);
                 MySqlConnectionStringBuilder builder2 = new MySqlConnectionStringBuilder()
@@ -33,14 +33,14 @@ namespace Test
                     Server = "127.0.0.1",
                     Database = "DemoDB",
                     UserID = "root",
-                    Password = Common.Random.Next(1000000, 9999999).ToString()
+                    Password = "12345"
                 };
                 MySqlConnection conn2 = new MySqlConnection(builder2.ConnectionString);
                 //
                 // 直接赋值等同于 AddOrUpdate 方法。
                 //
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop1", conn1);
-                manager.ConnectionStrings.Properties["prop2"] = new ConnectionStringsValue(conn1);
+                manager.ConnectionStrings.Properties.AddOrUpdate("prop2", conn2.ConnectionString, null);
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop3", conn2.ConnectionString, typeof(MySqlConnection).Namespace);
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop4", conn2.ConnectionString, typeof(MySqlConnection).AssemblyQualifiedName);
                 //

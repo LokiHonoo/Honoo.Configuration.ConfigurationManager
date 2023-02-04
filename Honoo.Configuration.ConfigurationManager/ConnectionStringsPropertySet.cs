@@ -39,7 +39,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringsValue this[string name]
         {
-            get => _values.ContainsKey(name) ? _values[name] : null;
+            get => _values.TryGetValue(name, out ConnectionStringsValue value) ? value : null;
             set { AddOrUpdate(name, value); }
         }
 

@@ -38,7 +38,7 @@ namespace Honoo.Configuration
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public IConfigSection this[string name] => _values.ContainsKey(name) ? _values[name] : null;
+        public IConfigSection this[string name] => _values.TryGetValue(name, out IConfigSection section) ? section : null;
 
         #region Constructor
 
@@ -130,7 +130,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个配置容器并返回值。不能使用此方法获取或添加 CustumSection 类型。
+        /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个配置容器并返回值。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="type">配置容器的类型。</param>
@@ -143,11 +143,11 @@ namespace Honoo.Configuration
             }
             if (name.Contains(" "))
             {
-                throw new ArgumentException(Localization.InvalidKey + " - " + nameof(name));
+                throw new ArgumentException(Localization.EX_0X0001_InvalidKey + " - " + nameof(name));
             }
-            if (_values.ContainsKey(name))
+            if (_values.TryGetValue(name, out IConfigSection section))
             {
-                return _values[name];
+                return section;
             }
             else
             {
@@ -177,7 +177,7 @@ namespace Honoo.Configuration
                         value = new SingleTagSection(content, _savable);
                         break;
 
-                    default: throw new ArgumentException(Localization.InvalidType + " - " + nameof(type));
+                    default: throw new ArgumentException(Localization.EX_0X0002_InvalidType + " - " + nameof(type));
                 }
                 _values.Add(name, value);
                 _contents.Add(name, content);
