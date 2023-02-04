@@ -217,8 +217,8 @@ public static void Create()
         section3.Properties.AddOrUpdate("prop7", uint.MaxValue);
         section3.Properties["prop8"] = long.MaxValue;
         section3.Properties["prop9"] = ulong.MaxValue;
-        section3.Properties["prop10"] = float.MaxValue / 2; // 避免浮点数溢出 Net40
-        section3.Properties["prop11"] = double.MaxValue / 2; // 避免浮点数溢出 Net40
+        section3.Properties["prop10"] = float.MaxValue / 2; // 避免浮点数溢出 Net40 bug
+        section3.Properties["prop11"] = double.MaxValue / 2; // 避免浮点数溢出 Net40 bug
         section3.Properties["prop12"] = decimal.MaxValue;
         section3.Properties["prop13"] = (char)Common.Random.Next(65, 91);
         section3.Properties["prop14"] = new byte[] { 0x01, 0x02, 0x03, 0x0A, 0x0B, 0x0C };
