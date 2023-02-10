@@ -1,5 +1,6 @@
-﻿using Honoo.Configuration;
-using System;
+﻿using System;
+using System.IO;
+using System.Reflection;
 
 namespace Test
 {
@@ -7,18 +8,17 @@ namespace Test
     {
         private static void Main()
         {
-            Localization.EX_0X0001_InvalidKey = "无效的键。";
-            Localization.EX_0X0002_InvalidType = "无效的类型。";
-            Localization.EX_0X0003_DuplicateKey = "指定的键已存在。";
-            //
-            //
-            //
-            TestAppSettings.Create();
-            Console.WriteLine(TestAppSettings.Load());
-            TestConnectionStrings.Create();
-            Console.WriteLine(TestConnectionStrings.Load());
-            TestSection.Create();
-            Console.WriteLine(TestSection.Load());
+            string filePath = Assembly.GetEntryAssembly().Location + ".config";
+            TestAppSettings.Create(filePath);
+            Console.WriteLine(TestAppSettings.Load(filePath));
+            TestConnectionStrings.Create(filePath);
+            Console.WriteLine(TestConnectionStrings.Load(filePath));
+            TestSection.Create(filePath);
+            Console.WriteLine(TestSection.Load(filePath));
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine(File.ReadAllText(filePath));
             Console.ReadKey(true);
         }
     }

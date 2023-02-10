@@ -15,7 +15,7 @@ namespace Honoo.Configuration
         /// </summary>
         public AppSettingsPropertySet Properties => _properties;
 
-        #region Constructor
+        #region Construction
 
         internal AppSettings(XElement root, ISavable savable)
         {
@@ -28,7 +28,7 @@ namespace Honoo.Configuration
             _properties = new AppSettingsPropertySet(_content, savable);
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// 确定指定的对象是否等于当前对象。

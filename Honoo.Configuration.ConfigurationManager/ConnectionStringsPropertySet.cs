@@ -43,7 +43,7 @@ namespace Honoo.Configuration
             set { AddOrUpdate(name, value); }
         }
 
-        #region Constructor
+        #region Construction
 
         internal ConnectionStringsPropertySet(XElement superior, ISavable savable)
         {
@@ -61,7 +61,7 @@ namespace Honoo.Configuration
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// 添加或更新一个连接属性。
@@ -71,9 +71,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string name, ConnectionStringsValue value)
         {
-            if (name is null)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentException($"The invalid name - {nameof(name)}.");
             }
             if (value is null)
             {
@@ -93,9 +93,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string name, DbConnection connection)
         {
-            if (name is null)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentException($"The invalid name - {nameof(name)}.");
             }
             if (connection is null)
             {
@@ -116,9 +116,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string name, string connectionString, string providerName)
         {
-            if (name is null)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentException($"The invalid name - {nameof(name)}.");
             }
             if (connectionString is null && providerName is null)
             {
@@ -132,13 +132,13 @@ namespace Honoo.Configuration
                     }
                 }
             }
-            else if (connectionString is null)
+            else if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new ArgumentNullException(nameof(connectionString));
+                throw new ArgumentException($"The invalid connection string - {nameof(connectionString)}.");
             }
             else
             {
-                if (_values.ContainsKey(name))
+                if (_values.TryGetValue(name, out _))
                 {
                     XElement content = _contents[name];
                     content.SetAttributeValue("connectionString", connectionString);

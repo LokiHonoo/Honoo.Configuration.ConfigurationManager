@@ -15,7 +15,7 @@ namespace Honoo.Configuration
         /// </summary>
         public SingleTagSectionPropertySet Properties => _properties;
 
-        #region Constructor
+        #region Construction
 
         internal SingleTagSection(XElement content, ISavable savable)
         {
@@ -23,7 +23,7 @@ namespace Honoo.Configuration
             _content = content;
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// 确定指定的对象是否等于当前对象。

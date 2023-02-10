@@ -21,7 +21,7 @@ namespace Honoo.Configuration
         /// </summary>
         public ConfigSectionSet Sections => _sections;
 
-        #region Constructor
+        #region Construction
 
         internal ConfigSections(XElement root, ISavable savable)
         {
@@ -35,7 +35,7 @@ namespace Honoo.Configuration
             _sections = new ConfigSectionSet(_content, root, savable);
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// 确定指定的对象是否等于当前对象。

@@ -42,7 +42,7 @@ namespace Honoo.Configuration
             set { AddOrUpdate(key, value); }
         }
 
-        #region Constructor
+        #region Construction
 
         internal NameValueSectionPropertySet(XElement superior, ISavable savable)
         {
@@ -60,7 +60,7 @@ namespace Honoo.Configuration
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// 添加或更新一个配置属性。
@@ -70,9 +70,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, string value)
         {
-            if (key is null)
+            if (string.IsNullOrWhiteSpace(key))
             {
-                throw new ArgumentNullException(nameof(key));
+                throw new ArgumentException($"The invalid key - {nameof(key)}.");
             }
             if (value is null)
             {
@@ -117,9 +117,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, string[] value)
         {
-            if (key is null)
+            if (string.IsNullOrWhiteSpace(key))
             {
-                throw new ArgumentNullException(nameof(key));
+                throw new ArgumentException($"The invalid key - {nameof(key)}.");
             }
             if (value is null)
             {

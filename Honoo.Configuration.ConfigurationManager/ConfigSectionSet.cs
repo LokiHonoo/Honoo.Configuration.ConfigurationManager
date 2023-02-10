@@ -40,7 +40,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public IConfigSection this[string name] => _values.TryGetValue(name, out IConfigSection section) ? section : null;
 
-        #region Constructor
+        #region Construction
 
         internal ConfigSectionSet(XElement declarationSuperior, XElement contentSuperior, ISavable savable)
         {
@@ -86,7 +86,7 @@ namespace Honoo.Configuration
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// 从配置容器集合中移除所有配置容器。
@@ -137,13 +137,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public IConfigSection GetOrAdd(string name, ConfigSectionType type)
         {
-            if (name is null)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException(nameof(name));
-            }
-            if (name.Contains(" "))
-            {
-                throw new ArgumentException(Localization.EX_0X0001_InvalidKey + " - " + nameof(name));
+                throw new ArgumentException($"The invalid name - {nameof(name)}.");
             }
             if (_values.TryGetValue(name, out IConfigSection section))
             {
@@ -177,7 +173,7 @@ namespace Honoo.Configuration
                         value = new SingleTagSection(content, _savable);
                         break;
 
-                    default: throw new ArgumentException(Localization.EX_0X0002_InvalidType + " - " + nameof(type));
+                    default: throw new ArgumentException($"The invalid type - {nameof(type)}.");
                 }
                 _values.Add(name, value);
                 _contents.Add(name, content);

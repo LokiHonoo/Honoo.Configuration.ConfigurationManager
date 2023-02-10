@@ -41,7 +41,7 @@ namespace Honoo.Configuration
         /// </summary>
         public string ProviderName => _providerName;
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// 创建 ConnectionStringsValue 的新实例。
@@ -68,9 +68,9 @@ namespace Honoo.Configuration
         /// <param name="providerName">数据库引擎的文本名称。</param>
         public ConnectionStringsValue(string connectionString, string providerName)
         {
-            if (connectionString is null)
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new ArgumentNullException(nameof(connectionString));
+                throw new ArgumentException($"The invalid connection string - {nameof(connectionString)}.");
             }
             _connectionString = connectionString;
             _providerName = providerName;
@@ -87,7 +87,7 @@ namespace Honoo.Configuration
             _providerName = content.Attribute("providerName")?.Value;
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// 确定指定的对象是否等于当前对象。

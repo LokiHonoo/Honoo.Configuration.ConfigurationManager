@@ -40,7 +40,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigSectionGroup this[string name] => _values.TryGetValue(name, out ConfigSectionGroup group) ? group : null;
 
-        #region Constructor
+        #region Construction
 
         internal ConfigSectionGroupSet(XElement declarationSuperior, XElement contentSuperior, ISavable savable)
         {
@@ -61,7 +61,7 @@ namespace Honoo.Configuration
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// 从配置组集合中移除所有配置组。
@@ -111,13 +111,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigSectionGroup GetOrAdd(string name)
         {
-            if (name is null)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException(nameof(name));
-            }
-            if (name.Contains(" "))
-            {
-                throw new ArgumentException(Localization.EX_0X0001_InvalidKey + " - " + nameof(name));
+                throw new ArgumentException($"The invalid name - {nameof(name)}.");
             }
             if (_values.TryGetValue(name, out ConfigSectionGroup group))
             {

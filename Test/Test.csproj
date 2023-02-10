@@ -10,10 +10,17 @@
 		<Authors>Loki Honoo</Authors>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>..\bin\Debug</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>..\bin\Release</OutputPath>
+	</PropertyGroup>
+	
 	<ItemGroup Condition="'$(TargetFramework)' == 'net40'">
 		<PackageReference Include="MySql.Data" Version="6.9.12" />
 	</ItemGroup>
-
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
 		<PackageReference Include="MySql.Data" Version="8.0.32" />
@@ -21,7 +28,6 @@
 		  <Version>4.8.5</Version>
 		</PackageReference>
 	</ItemGroup>
-
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Honoo.Configuration.ConfigurationManager\Honoo.Configuration.ConfigurationManager.csproj" />

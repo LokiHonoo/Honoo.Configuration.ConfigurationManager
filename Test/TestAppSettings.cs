@@ -1,5 +1,4 @@
 ﻿using Honoo.Configuration;
-using System.Reflection;
 using System.Text;
 
 namespace Test
@@ -9,12 +8,11 @@ namespace Test
     /// </summary>
     internal static class TestAppSettings
     {
-        internal static void Create()
+        internal static void Create(string filePath)
         {
             //
             // 使用 .NET 程序的默认配置文件或自定义配置文件。
             //
-            string filePath = Assembly.GetEntryAssembly().Location + ".config";
             using (ConfigurationManager manager = new ConfigurationManager(filePath))
             {
                 //
@@ -36,13 +34,12 @@ namespace Test
             }
         }
 
-        internal static string Load()
+        internal static string Load(string filePath)
         {
             StringBuilder result = new StringBuilder();
             //
             // 使用 .NET 程序的默认配置文件或自定义配置文件。
             //
-            string filePath = Assembly.GetEntryAssembly().Location + ".config";
             using (ConfigurationManager manager = new ConfigurationManager(filePath))
             {
                 //
@@ -55,6 +52,7 @@ namespace Test
                 value = manager.AppSettings.Properties["prop2"];
                 result.AppendLine(value);
             }
+
             return result.ToString();
         }
     }

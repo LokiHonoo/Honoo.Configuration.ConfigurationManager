@@ -76,7 +76,7 @@ namespace Honoo.Configuration
         /// </summary>
         public string FilePath => _filePath;
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// 创建 ConfigurationManager 的新实例。
@@ -117,7 +117,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                throw new ArgumentNullException(nameof(filePath));
+                throw new ArgumentException($"The invalid file path - {nameof(filePath)}.");
             }
             FileInfo file = new FileInfo(filePath);
             if (file.Exists && file.Length > 0)
@@ -161,7 +161,7 @@ namespace Honoo.Configuration
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// 创建映射到默认配置文件的 <see cref="ConfigurationManager"/> 实例。文件路径形如 Directory\program.exe.config。
@@ -231,7 +231,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                throw new ArgumentNullException(nameof(filePath));
+                throw new ArgumentException($"The invalid file path - {nameof(filePath)}.");
             }
             using (XmlWriter writer = XmlWriter.Create(filePath, _writerSettings))
             {
