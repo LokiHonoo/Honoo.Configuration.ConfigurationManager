@@ -16,7 +16,7 @@ namespace Honoo.Configuration
         private bool _generated;
 
         /// <summary>
-        /// 获取连接实例。如果连接属性中没有数据库引擎参数，将引发异常。
+        /// 获取连接实例。如果连接属性中没有数据库引擎参数，或者工程没有引用相关类库，将引发异常。
         /// </summary>
         public DbConnection Connection
         {
@@ -24,7 +24,7 @@ namespace Honoo.Configuration
             {
                 if (!_generated)
                 {
-                    _connection = GetInstance(_providerName, _connectionString);
+                    _connection = CreateInstance(_providerName, _connectionString);
                     _generated = true;
                 }
                 return _connection;
@@ -122,7 +122,7 @@ namespace Honoo.Configuration
             _content.Remove();
         }
 
-        private static DbConnection GetInstance(string providerName, string connectionString)
+        private static DbConnection CreateInstance(string providerName, string connectionString)
         {
             Type type;
             switch (providerName)

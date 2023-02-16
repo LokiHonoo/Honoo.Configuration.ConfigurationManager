@@ -12,24 +12,24 @@ namespace Honoo.Configuration
     public sealed class ConnectionStringsPropertySet : IEnumerable<KeyValuePair<string, ConnectionStringsValue>>, IEnumerable
     {
         private readonly IDictionary<string, XElement> _contents = new Dictionary<string, XElement>();
+        private readonly IDictionary<string, ConnectionStringsValue> _properties = new Dictionary<string, ConnectionStringsValue>();
         private readonly ISavable _savable;
         private readonly XElement _superior;
-        private readonly IDictionary<string, ConnectionStringsValue> _values = new Dictionary<string, ConnectionStringsValue>();
 
         /// <summary>
         /// 获取连接属性集合中包含的元素数。
         /// </summary>
-        public int Count => _values.Count;
+        public int Count => _properties.Count;
 
         /// <summary>
         /// 获取连接属性集合的名称的集合。
         /// </summary>
-        public ICollection<string> Names => _values.Keys;
+        public ICollection<string> Names => _properties.Keys;
 
         /// <summary>
         /// 获取连接属性集合的值的集合。
         /// </summary>
-        public ICollection<ConnectionStringsValue> Values => _values.Values;
+        public ICollection<ConnectionStringsValue> Values => _properties.Values;
 
         /// <summary>
         /// 获取或设置具有指定名称的连接属性的值。直接赋值等同于 AddOrUpdate 方法。
@@ -39,7 +39,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringsValue this[string name]
         {
-            get => _values.TryGetValue(name, out ConnectionStringsValue value) ? value : null;
+            get => _properties.TryGetValue(name, out ConnectionStringsValue value) ? value : null;
             set { AddOrUpdate(name, value); }
         }
 
@@ -55,7 +55,7 @@ namespace Honoo.Configuration
                 {
                     string name = content.Attribute("name").Value;
                     ConnectionStringsValue value = new ConnectionStringsValue(content);
-                    _values.Add(name, value);
+                    _properties.Add(name, value);
                     _contents.Add(name, content);
                 }
             }
@@ -122,7 +122,7 @@ namespace Honoo.Configuration
             }
             if (connectionString is null && providerName is null)
             {
-                if (_values.Remove(name))
+                if (_properties.Remove(name))
                 {
                     _contents[name].Remove();
                     _contents.Remove(name);
@@ -138,7 +138,7 @@ namespace Honoo.Configuration
             }
             else
             {
-                if (_values.TryGetValue(name, out _))
+                if (_properties.TryGetValue(name, out _))
                 {
                     XElement content = _contents[name];
                     content.SetAttributeValue("connectionString", connectionString);
@@ -146,7 +146,7 @@ namespace Honoo.Configuration
                     {
                         content.SetAttributeValue("providerName", providerName);
                     }
-                    _values[name] = new ConnectionStringsValue(content);
+                    _properties[name] = new ConnectionStringsValue(content);
                 }
                 else
                 {
@@ -158,7 +158,7 @@ namespace Honoo.Configuration
                         content.SetAttributeValue("providerName", providerName);
                     }
                     ConnectionStringsValue value = new ConnectionStringsValue(content);
-                    _values.Add(name, value);
+                    _properties.Add(name, value);
                     _contents.Add(name, content);
                     _superior.Add(content);
                 }
@@ -174,7 +174,7 @@ namespace Honoo.Configuration
         /// </summary>
         public void Clear()
         {
-            _values.Clear();
+            _properties.Clear();
             _contents.Clear();
             _superior.RemoveNodes();
             if (_savable.AutoSave)
@@ -191,7 +191,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool ContainsName(string name)
         {
-            return _values.ContainsKey(name);
+            return _properties.ContainsKey(name);
         }
 
         /// <summary>
@@ -200,12 +200,12 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public IEnumerator<KeyValuePair<string, ConnectionStringsValue>> GetEnumerator()
         {
-            return _values.GetEnumerator();
+            return _properties.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _values.GetEnumerator();
+            return _properties.GetEnumerator();
         }
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(string name)
         {
-            if (_values.Remove(name))
+            if (_properties.Remove(name))
             {
                 _contents[name].Remove();
                 _contents.Remove(name);
@@ -241,7 +241,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out ConnectionStringsValue value)
         {
-            return _values.TryGetValue(name, out value);
+            return _properties.TryGetValue(name, out value);
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out DbConnection connection)
         {
-            if (_values.TryGetValue(name, out ConnectionStringsValue value))
+            if (_properties.TryGetValue(name, out ConnectionStringsValue value))
             {
                 connection = value.Connection;
                 return true;
@@ -275,7 +275,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out string connectionString, out string providerName)
         {
-            if (_values.TryGetValue(name, out ConnectionStringsValue value))
+            if (_properties.TryGetValue(name, out ConnectionStringsValue value))
             {
                 connectionString = value.ConnectionString;
                 providerName = value.ProviderName;

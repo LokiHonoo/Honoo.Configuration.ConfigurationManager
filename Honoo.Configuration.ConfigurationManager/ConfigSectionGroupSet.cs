@@ -14,23 +14,23 @@ namespace Honoo.Configuration
         private readonly XElement _contentSuperior;
         private readonly IDictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
+        private readonly IDictionary<string, ConfigSectionGroup> _groups = new Dictionary<string, ConfigSectionGroup>();
         private readonly ISavable _savable;
-        private readonly IDictionary<string, ConfigSectionGroup> _values = new Dictionary<string, ConfigSectionGroup>();
 
         /// <summary>
         /// 获取配置组集合中包含的元素数。
         /// </summary>
-        public int Count => _values.Count;
+        public int Count => _groups.Count;
 
         /// <summary>
         /// 获取配置组集合的名称的集合。
         /// </summary>
-        public ICollection<string> Names => _values.Keys;
+        public ICollection<string> Names => _groups.Keys;
 
         /// <summary>
         /// 获取配置组集合。
         /// </summary>
-        public ICollection<ConfigSectionGroup> Values => _values.Values;
+        public ICollection<ConfigSectionGroup> Values => _groups.Values;
 
         /// <summary>
         /// 获取具有指定名称的配置组的值。
@@ -38,7 +38,7 @@ namespace Honoo.Configuration
         /// <param name="name">配置组的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConfigSectionGroup this[string name] => _values.TryGetValue(name, out ConfigSectionGroup group) ? group : null;
+        public ConfigSectionGroup this[string name] => _groups.TryGetValue(name, out ConfigSectionGroup group) ? group : null;
 
         #region Construction
 
@@ -54,7 +54,7 @@ namespace Honoo.Configuration
                     string name = declaration.Attribute("name").Value;
                     XElement content = contentSuperior.Element(name);
                     ConfigSectionGroup value = new ConfigSectionGroup(declaration, content, savable);
-                    _values.Add(name, value);
+                    _groups.Add(name, value);
                     _contents.Add(name, content);
                     _declarations.Add(name, declaration);
                 }
@@ -68,7 +68,7 @@ namespace Honoo.Configuration
         /// </summary>
         public void Clear()
         {
-            _values.Clear();
+            _groups.Clear();
             _contents.Clear();
             _contentSuperior.RemoveNodes();
             _declarations.Clear();
@@ -87,7 +87,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool ContainsName(string name)
         {
-            return _values.ContainsKey(name);
+            return _groups.ContainsKey(name);
         }
 
         /// <summary>
@@ -96,12 +96,12 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public IEnumerator<KeyValuePair<string, ConfigSectionGroup>> GetEnumerator()
         {
-            return _values.GetEnumerator();
+            return _groups.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _values.GetEnumerator();
+            return _groups.GetEnumerator();
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException($"The invalid name - {nameof(name)}.");
             }
-            if (_values.TryGetValue(name, out ConfigSectionGroup group))
+            if (_groups.TryGetValue(name, out ConfigSectionGroup group))
             {
                 return group;
             }
@@ -125,7 +125,7 @@ namespace Honoo.Configuration
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
                 ConfigSectionGroup value = new ConfigSectionGroup(declaration, content, _savable);
-                _values.Add(name, value);
+                _groups.Add(name, value);
                 _contents.Add(name, content);
                 _contentSuperior.Add(content);
                 _declarations.Add(name, declaration);
@@ -146,7 +146,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(string name)
         {
-            if (_values.Remove(name))
+            if (_groups.Remove(name))
             {
                 _contents[name].Remove();
                 _contents.Remove(name);
@@ -173,7 +173,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out ConfigSectionGroup value)
         {
-            return _values.TryGetValue(name, out value);
+            return _groups.TryGetValue(name, out value);
         }
     }
 }

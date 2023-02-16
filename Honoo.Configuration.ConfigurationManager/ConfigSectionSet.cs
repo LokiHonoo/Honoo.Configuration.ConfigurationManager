@@ -15,22 +15,22 @@ namespace Honoo.Configuration
         private readonly IDictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
         private readonly ISavable _savable;
-        private readonly IDictionary<string, IConfigSection> _values = new Dictionary<string, IConfigSection>();
+        private readonly IDictionary<string, IConfigSection> _sections = new Dictionary<string, IConfigSection>();
 
         /// <summary>
         /// 获取配置容器集合中包含的元素数。
         /// </summary>
-        public int Count => _values.Count;
+        public int Count => _sections.Count;
 
         /// <summary>
         /// 获取配置容器集合的名称的集合。
         /// </summary>
-        public ICollection<string> Names => _values.Keys;
+        public ICollection<string> Names => _sections.Keys;
 
         /// <summary>
         /// 获取配置容器集合。
         /// </summary>
-        public ICollection<IConfigSection> Values => _values.Values;
+        public ICollection<IConfigSection> Values => _sections.Values;
 
         /// <summary>
         /// 获取具有指定名称的配置容器的值。
@@ -38,7 +38,7 @@ namespace Honoo.Configuration
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public IConfigSection this[string name] => _values.TryGetValue(name, out IConfigSection section) ? section : null;
+        public IConfigSection this[string name] => _sections.TryGetValue(name, out IConfigSection section) ? section : null;
 
         #region Construction
 
@@ -79,7 +79,7 @@ namespace Honoo.Configuration
                         case "CustumSectionHandler":
                         default: value = new CustumSection(content, savable); break;
                     }
-                    _values.Add(name, value);
+                    _sections.Add(name, value);
                     _contents.Add(name, content);
                     _declarations.Add(name, declaration);
                 }
@@ -93,7 +93,7 @@ namespace Honoo.Configuration
         /// </summary>
         public void Clear()
         {
-            _values.Clear();
+            _sections.Clear();
             _contents.Clear();
             _contentSuperior.RemoveNodes();
             _declarations.Clear();
@@ -112,7 +112,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool ContainsName(string name)
         {
-            return _values.ContainsKey(name);
+            return _sections.ContainsKey(name);
         }
 
         /// <summary>
@@ -121,12 +121,12 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public IEnumerator<KeyValuePair<string, IConfigSection>> GetEnumerator()
         {
-            return _values.GetEnumerator();
+            return _sections.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _values.GetEnumerator();
+            return _sections.GetEnumerator();
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException($"The invalid name - {nameof(name)}.");
             }
-            if (_values.TryGetValue(name, out IConfigSection section))
+            if (_sections.TryGetValue(name, out IConfigSection section))
             {
                 return section;
             }
@@ -175,7 +175,7 @@ namespace Honoo.Configuration
 
                     default: throw new ArgumentException($"The invalid type - {nameof(type)}.");
                 }
-                _values.Add(name, value);
+                _sections.Add(name, value);
                 _contents.Add(name, content);
                 _contentSuperior.Add(content);
                 _declarations.Add(name, declaration);
@@ -196,7 +196,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(string name)
         {
-            if (_values.Remove(name))
+            if (_sections.Remove(name))
             {
                 _contents[name].Remove();
                 _contents.Remove(name);
@@ -223,7 +223,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out CustumSection value)
         {
-            if (_values.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out IConfigSection val))
             {
                 value = (CustumSection)val;
                 return true;
@@ -244,7 +244,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out DictionarySection value)
         {
-            if (_values.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out IConfigSection val))
             {
                 value = (DictionarySection)val;
                 return true;
@@ -265,7 +265,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out NameValueSection value)
         {
-            if (_values.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out IConfigSection val))
             {
                 value = (NameValueSection)val;
                 return true;
@@ -286,7 +286,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out SingleTagSection value)
         {
-            if (_values.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out IConfigSection val))
             {
                 value = (SingleTagSection)val;
                 return true;
@@ -307,7 +307,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out IConfigSection value)
         {
-            return _values.TryGetValue(name, out value);
+            return _sections.TryGetValue(name, out value);
         }
     }
 }
