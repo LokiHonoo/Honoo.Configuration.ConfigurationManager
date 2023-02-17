@@ -55,27 +55,27 @@ namespace Honoo.Configuration
                     IConfigSection value;
                     switch (typeName)
                     {
-                        case "System.Configuration.DictionarySectionHandler, System":
-                        case "System.Configuration.DictionarySectionHandler":
                         case "DictionarySectionHandler":
+                        case "System.Configuration.DictionarySectionHandler":
+                        case "System.Configuration.DictionarySectionHandler, System.Configuration":
                             value = new DictionarySection(content);
                             break;
 
-                        case "System.Configuration.NameValueSectionHandler, System":
-                        case "System.Configuration.NameValueSectionHandler":
                         case "NameValueSectionHandler":
+                        case "System.Configuration.NameValueSectionHandler":
+                        case "System.Configuration.NameValueSectionHandler, System.Configuration":
                             value = new NameValueSection(content);
                             break;
 
-                        case "System.Configuration.SingleTagSectionHandler, System":
-                        case "System.Configuration.SingleTagSectionHandler":
                         case "SingleTagSectionHandler":
+                        case "System.Configuration.SingleTagSectionHandler":
+                        case "System.Configuration.SingleTagSectionHandler, System.Configuration":
                             value = new SingleTagSection(content);
                             break;
 
-                        case "Honoo.Configuration.CustumSectionHandler, Honoo":
-                        case "Honoo.Configuration.CustumSectionHandler":
                         case "CustumSectionHandler":
+                        case "Honoo.Configuration.CustumSectionHandler":
+                        case "Honoo.Configuration.CustumSectionHandler, Honoo.Configuration":
                         default: value = new CustumSection(content); break;
                     }
                     _sections.Add(name, value);
