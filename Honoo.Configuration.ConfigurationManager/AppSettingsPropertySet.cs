@@ -12,7 +12,6 @@ namespace Honoo.Configuration
     {
         private readonly IDictionary<string, XElement> _contents = new Dictionary<string, XElement>();
         private readonly IDictionary<string, string> _properties = new Dictionary<string, string>();
-        private readonly ISavable _savable;
         private readonly XElement _superior;
 
         /// <summary>
@@ -44,10 +43,9 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal AppSettingsPropertySet(XElement superior, ISavable savable)
+        internal AppSettingsPropertySet(XElement superior)
         {
             _superior = superior;
-            _savable = savable;
             if (superior.HasElements)
             {
                 foreach (XElement content in superior.Elements("add"))
@@ -80,10 +78,6 @@ namespace Honoo.Configuration
                 {
                     _contents[key].Remove();
                     _contents.Remove(key);
-                    if (_savable.AutoSave)
-                    {
-                        _savable.Save();
-                    }
                 }
             }
             else
@@ -102,10 +96,6 @@ namespace Honoo.Configuration
                     _contents.Add(key, content);
                     _superior.Add(content);
                 }
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
             }
         }
 
@@ -117,10 +107,6 @@ namespace Honoo.Configuration
             _properties.Clear();
             _contents.Clear();
             _superior.RemoveNodes();
-            if (_savable.AutoSave)
-            {
-                _savable.Save();
-            }
         }
 
         /// <summary>
@@ -160,10 +146,6 @@ namespace Honoo.Configuration
             {
                 _contents[key].Remove();
                 _contents.Remove(key);
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
                 return true;
             }
             else

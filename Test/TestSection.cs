@@ -54,9 +54,9 @@ namespace Test
                 CustumSection section4 = (CustumSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionType.CustumSection);
                 section4.SetValue("<arbitrarily>任意文本内容或 XML 内容</arbitrarily><arbitrarily>任意文本内容或 XML 内容</arbitrarily>");
                 //
-                // 保存到创建实例时指定的文件。
+                // 保存到指定的文件。
                 //
-                manager.Save();
+                manager.Save(filePath);
             }
         }
 

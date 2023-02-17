@@ -17,9 +17,9 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal NameValueSection(XElement content, ISavable savable)
+        internal NameValueSection(XElement content)
         {
-            _properties = new NameValueSectionPropertySet(content, savable);
+            _properties = new NameValueSectionPropertySet(content);
             _content = content;
         }
 

@@ -17,9 +17,9 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal SingleTagSection(XElement content, ISavable savable)
+        internal SingleTagSection(XElement content)
         {
-            _properties = new SingleTagSectionPropertySet(content, savable);
+            _properties = new SingleTagSectionPropertySet(content);
             _content = content;
         }
 

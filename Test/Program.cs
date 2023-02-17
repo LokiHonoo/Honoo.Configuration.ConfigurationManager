@@ -15,6 +15,8 @@ namespace Test
             Console.WriteLine(TestConnectionStrings.Load(filePath));
             TestSection.Create(filePath);
             Console.WriteLine(TestSection.Load(filePath));
+            TestStream.Create(filePath);
+            Console.WriteLine(TestStream.Load(filePath));
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();

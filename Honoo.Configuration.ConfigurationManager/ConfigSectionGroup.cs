@@ -23,11 +23,11 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal ConfigSectionGroup(XElement declaration, XElement content, ISavable savable)
+        internal ConfigSectionGroup(XElement declaration, XElement content)
         {
             _content = content;
-            _groups = new ConfigSectionGroupSet(declaration, content, savable);
-            _sections = new ConfigSectionSet(declaration, content, savable);
+            _groups = new ConfigSectionGroupSet(declaration, content);
+            _sections = new ConfigSectionSet(declaration, content);
         }
 
         #endregion Construction

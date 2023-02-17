@@ -14,7 +14,6 @@ namespace Honoo.Configuration
         private readonly XElement _contentSuperior;
         private readonly IDictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
-        private readonly ISavable _savable;
         private readonly IDictionary<string, IConfigSection> _sections = new Dictionary<string, IConfigSection>();
 
         /// <summary>
@@ -42,11 +41,10 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal ConfigSectionSet(XElement declarationSuperior, XElement contentSuperior, ISavable savable)
+        internal ConfigSectionSet(XElement declarationSuperior, XElement contentSuperior)
         {
             _declarationSuperior = declarationSuperior;
             _contentSuperior = contentSuperior;
-            _savable = savable;
             if (declarationSuperior.HasElements)
             {
                 foreach (XElement declaration in declarationSuperior.Elements("section"))
@@ -60,24 +58,25 @@ namespace Honoo.Configuration
                         case "System.Configuration.DictionarySectionHandler, System":
                         case "System.Configuration.DictionarySectionHandler":
                         case "DictionarySectionHandler":
-                            value = new DictionarySection(content, savable);
+                            value = new DictionarySection(content);
                             break;
 
                         case "System.Configuration.NameValueSectionHandler, System":
                         case "System.Configuration.NameValueSectionHandler":
                         case "NameValueSectionHandler":
-                            value = new NameValueSection(content, savable);
+                            value = new NameValueSection(content);
                             break;
 
                         case "System.Configuration.SingleTagSectionHandler, System":
                         case "System.Configuration.SingleTagSectionHandler":
                         case "SingleTagSectionHandler":
-                            value = new SingleTagSection(content, savable);
+                            value = new SingleTagSection(content);
                             break;
 
+                        case "Honoo.Configuration.CustumSectionHandler, Honoo":
                         case "Honoo.Configuration.CustumSectionHandler":
                         case "CustumSectionHandler":
-                        default: value = new CustumSection(content, savable); break;
+                        default: value = new CustumSection(content); break;
                     }
                     _sections.Add(name, value);
                     _contents.Add(name, content);
@@ -98,10 +97,6 @@ namespace Honoo.Configuration
             _contentSuperior.RemoveNodes();
             _declarations.Clear();
             _declarationSuperior.RemoveNodes();
-            if (_savable.AutoSave)
-            {
-                _savable.Save();
-            }
         }
 
         /// <summary>
@@ -155,22 +150,22 @@ namespace Honoo.Configuration
                 {
                     case ConfigSectionType.CustumSection:
                         declaration.SetAttributeValue("type", "Honoo.Configuration.CustumSectionHandler");
-                        value = new CustumSection(content, _savable);
+                        value = new CustumSection(content);
                         break;
 
                     case ConfigSectionType.DictionarySection:
                         declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
-                        value = new DictionarySection(content, _savable);
+                        value = new DictionarySection(content);
                         break;
 
                     case ConfigSectionType.NameValueSection:
                         declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
-                        value = new NameValueSection(content, _savable);
+                        value = new NameValueSection(content);
                         break;
 
                     case ConfigSectionType.SingleTagSection:
                         declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
-                        value = new SingleTagSection(content, _savable);
+                        value = new SingleTagSection(content);
                         break;
 
                     default: throw new ArgumentException($"The invalid type - {nameof(type)}.");
@@ -180,10 +175,6 @@ namespace Honoo.Configuration
                 _contentSuperior.Add(content);
                 _declarations.Add(name, declaration);
                 _declarationSuperior.Add(declaration);
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
                 return value;
             }
         }
@@ -202,10 +193,6 @@ namespace Honoo.Configuration
                 _contents.Remove(name);
                 _declarations[name].Remove();
                 _declarations.Remove(name);
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
                 return true;
             }
             else

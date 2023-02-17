@@ -17,7 +17,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal ConnectionStrings(XElement root, ISavable savable)
+        internal ConnectionStrings(XElement root)
         {
             _content = root.Element("connectionStrings");
             if (_content is null)
@@ -25,7 +25,7 @@ namespace Honoo.Configuration
                 _content = new XElement("connectionStrings");
                 root.Add(_content);
             }
-            _properties = new ConnectionStringsPropertySet(_content, savable);
+            _properties = new ConnectionStringsPropertySet(_content);
         }
 
         #endregion Construction

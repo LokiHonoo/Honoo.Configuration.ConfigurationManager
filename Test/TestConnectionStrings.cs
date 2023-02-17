@@ -2,7 +2,6 @@
 using MySql.Data.MySqlClient;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Reflection;
 using System.Text;
 
 namespace Test
@@ -45,7 +44,7 @@ namespace Test
                 //
                 // 不设置引擎参数，读取时不能直接创建连接实例。
                 //
-                manager.ConnectionStrings.Properties["prop5"] = new ConnectionStringsValue(conn2.ConnectionString, string.Empty);
+                manager.ConnectionStrings.Properties["prop5"] = new ConnectionStringsProperty(conn2.ConnectionString, string.Empty);
                 //
                 // 移除属性的方法。选择其一。
                 //
@@ -53,9 +52,9 @@ namespace Test
                 manager.ConnectionStrings.Properties["prop5"] = null;
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop5", (DbConnection)null);
                 //
-                // 保存到创建实例时指定的文件。
+                // 保存到指定的文件。
                 //
-                manager.Save();
+                manager.Save(filePath);
             }
         }
 
@@ -70,7 +69,7 @@ namespace Test
                 //
                 // 取出属性。
                 //
-                if (manager.ConnectionStrings.Properties.TryGetValue("prop1", out ConnectionStringsValue value))
+                if (manager.ConnectionStrings.Properties.TryGetValue("prop1", out ConnectionStringsProperty value))
                 {
                     result.AppendLine(value.Connection.ConnectionString);
                 }

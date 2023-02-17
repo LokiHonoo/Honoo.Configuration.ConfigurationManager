@@ -12,7 +12,6 @@ namespace Honoo.Configuration
     {
         private readonly IDictionary<string, XElement> _contents = new Dictionary<string, XElement>();
         private readonly IDictionary<string, string> _properties = new Dictionary<string, string>();
-        private readonly ISavable _savable;
         private readonly XElement _superior;
 
         /// <summary>
@@ -44,10 +43,9 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal NameValueSectionPropertySet(XElement superior, ISavable savable)
+        internal NameValueSectionPropertySet(XElement superior)
         {
             _superior = superior;
-            _savable = savable;
             if (superior.HasElements)
             {
                 foreach (XElement content in superior.Elements("add"))
@@ -80,15 +78,11 @@ namespace Honoo.Configuration
                 {
                     _contents[key].Remove();
                     _contents.Remove(key);
-                    if (_savable.AutoSave)
-                    {
-                        _savable.Save();
-                    }
                 }
             }
             else
             {
-                if (_properties.ContainsKey(key))
+                if (_properties.TryGetValue(key, out _))
                 {
                     _contents[key].SetAttributeValue("value", value);
                     _properties[key] = value;
@@ -102,10 +96,6 @@ namespace Honoo.Configuration
                     _contents.Add(key, content);
                     _superior.Add(content);
                 }
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
             }
         }
 
@@ -113,7 +103,7 @@ namespace Honoo.Configuration
         /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。以逗号 "," 连接为一个字符串。</param>
+        /// <param name="value">配置属性的值。以逗号 "," 连接为一个字符串。不推荐使用字符串数组类型。</param>
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, string[] value)
         {
@@ -127,15 +117,11 @@ namespace Honoo.Configuration
                 {
                     _contents[key].Remove();
                     _contents.Remove(key);
-                    if (_savable.AutoSave)
-                    {
-                        _savable.Save();
-                    }
                 }
             }
             else
             {
-                if (_properties.ContainsKey(key))
+                if (_properties.TryGetValue(key, out _))
                 {
                     string merge = string.Join(",", value);
                     _contents[key].SetAttributeValue("value", merge);
@@ -151,10 +137,6 @@ namespace Honoo.Configuration
                     _contents.Add(key, content);
                     _superior.Add(content);
                 }
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
             }
         }
 
@@ -166,10 +148,6 @@ namespace Honoo.Configuration
             _properties.Clear();
             _contents.Clear();
             _superior.RemoveNodes();
-            if (_savable.AutoSave)
-            {
-                _savable.Save();
-            }
         }
 
         /// <summary>
@@ -209,10 +187,6 @@ namespace Honoo.Configuration
             {
                 _contents[key].Remove();
                 _contents.Remove(key);
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
                 return true;
             }
             else

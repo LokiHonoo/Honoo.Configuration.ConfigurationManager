@@ -12,7 +12,6 @@ namespace Honoo.Configuration
     {
         private readonly XElement _content;
         private readonly IDictionary<string, string> _properties = new Dictionary<string, string>();
-        private readonly ISavable _savable;
 
         /// <summary>
         /// 获取配置属性集合中包含的元素数。
@@ -43,10 +42,9 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal SingleTagSectionPropertySet(XElement content, ISavable savable)
+        internal SingleTagSectionPropertySet(XElement content)
         {
             _content = content;
-            _savable = savable;
             if (content.HasAttributes)
             {
                 foreach (XAttribute attribute in content.Attributes())
@@ -75,10 +73,6 @@ namespace Honoo.Configuration
                 if (_properties.Remove(key))
                 {
                     _content.Attribute(key).Remove();
-                    if (_savable.AutoSave)
-                    {
-                        _savable.Save();
-                    }
                 }
             }
             else
@@ -93,10 +87,6 @@ namespace Honoo.Configuration
                     _content.SetAttributeValue(key, value);
                     _properties.Add(key, value);
                 }
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
             }
         }
 
@@ -107,10 +97,6 @@ namespace Honoo.Configuration
         {
             _properties.Clear();
             _content.RemoveAttributes();
-            if (_savable.AutoSave)
-            {
-                _savable.Save();
-            }
         }
 
         /// <summary>
@@ -149,10 +135,6 @@ namespace Honoo.Configuration
             if (_properties.Remove(key))
             {
                 _content.Attribute(key).Remove();
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
                 return true;
             }
             else

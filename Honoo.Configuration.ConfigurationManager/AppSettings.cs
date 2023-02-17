@@ -1,7 +1,9 @@
-﻿using System.Xml.Linq;
+﻿using System.Configuration;
+using System.Xml.Linq;
 
 namespace Honoo.Configuration
 {
+
     /// <summary>
     /// 映射到标准格式的 "appSettings" 节点。
     /// </summary>
@@ -17,7 +19,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal AppSettings(XElement root, ISavable savable)
+        internal AppSettings(XElement root)
         {
             _content = root.Element("appSettings");
             if (_content is null)
@@ -25,7 +27,7 @@ namespace Honoo.Configuration
                 _content = new XElement("appSettings");
                 root.Add(_content);
             }
-            _properties = new AppSettingsPropertySet(_content, savable);
+            _properties = new AppSettingsPropertySet(_content);
         }
 
         #endregion Construction

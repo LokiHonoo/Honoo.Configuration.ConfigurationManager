@@ -7,7 +7,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 连接属性。
     /// </summary>
-    public sealed class ConnectionStringsValue
+    public sealed class ConnectionStringsProperty
     {
         private readonly string _connectionString;
         private readonly XElement _content;
@@ -47,7 +47,7 @@ namespace Honoo.Configuration
         /// 创建 ConnectionStringsValue 的新实例。
         /// </summary>
         /// <param name="connection">数据库连接实例。</param>
-        public ConnectionStringsValue(DbConnection connection)
+        public ConnectionStringsProperty(DbConnection connection)
         {
             if (connection is null)
             {
@@ -66,7 +66,7 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="connectionString">连接字符串。</param>
         /// <param name="providerName">数据库引擎的文本名称。</param>
-        public ConnectionStringsValue(string connectionString, string providerName)
+        public ConnectionStringsProperty(string connectionString, string providerName)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -80,7 +80,7 @@ namespace Honoo.Configuration
             _content.SetAttributeValue("providerName", providerName);
         }
 
-        internal ConnectionStringsValue(XElement content)
+        internal ConnectionStringsProperty(XElement content)
         {
             _content = content;
             _connectionString = content.Attribute("connectionString").Value;
@@ -96,7 +96,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is ConnectionStringsValue other && _content.Equals(other._content);
+            return obj is ConnectionStringsProperty other && _content.Equals(other._content);
         }
 
         /// <summary>

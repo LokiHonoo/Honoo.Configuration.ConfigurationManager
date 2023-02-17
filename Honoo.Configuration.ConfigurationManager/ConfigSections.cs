@@ -23,7 +23,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal ConfigSections(XElement root, ISavable savable)
+        internal ConfigSections(XElement root)
         {
             _content = root.Element("configSections");
             if (_content is null)
@@ -31,8 +31,8 @@ namespace Honoo.Configuration
                 _content = new XElement("configSections");
                 root.AddFirst(_content);
             }
-            _groups = new ConfigSectionGroupSet(_content, root, savable);
-            _sections = new ConfigSectionSet(_content, root, savable);
+            _groups = new ConfigSectionGroupSet(_content, root);
+            _sections = new ConfigSectionSet(_content, root);
         }
 
         #endregion Construction

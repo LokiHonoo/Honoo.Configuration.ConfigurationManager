@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -10,12 +9,10 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置管理器。
     /// </summary>
-    public sealed class ConfigurationManager : IDisposable, ISavable
+    public sealed class ConfigurationManager : IDisposable
     {
-        private readonly string _filePath;
         private readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
         private AppSettings _appSettings;
-        private bool _autoSave;
         private ConfigSections _configSections;
         private ConnectionStrings _connectionStrings;
         private bool _disposed;
@@ -30,16 +27,11 @@ namespace Honoo.Configuration
             {
                 if (_appSettings is null)
                 {
-                    _appSettings = new AppSettings(_root, this);
+                    _appSettings = new AppSettings(_root);
                 }
                 return _appSettings;
             }
         }
-
-        /// <summary>
-        /// 获取或设置自动保存选项。如果在创建 <see cref="ConfigurationManager"/> 实例时没有指定文件路径，此选项无效。默认值是 false。
-        /// </summary>
-        public bool AutoSave { get => _autoSave; set => _autoSave = value; }
 
         /// <summary>
         /// 映射到标准格式的 "configSections" 节点。
@@ -50,7 +42,7 @@ namespace Honoo.Configuration
             {
                 if (_configSections is null)
                 {
-                    _configSections = new ConfigSections(_root, this);
+                    _configSections = new ConfigSections(_root);
                 }
                 return _configSections;
             }
@@ -65,16 +57,11 @@ namespace Honoo.Configuration
             {
                 if (_connectionStrings is null)
                 {
-                    _connectionStrings = new ConnectionStrings(_root, this);
+                    _connectionStrings = new ConnectionStrings(_root);
                 }
                 return _connectionStrings;
             }
         }
-
-        /// <summary>
-        /// 获取映射的配置文件的路径。
-        /// </summary>
-        public string FilePath => _filePath;
 
         #region Construction
 
@@ -84,51 +71,39 @@ namespace Honoo.Configuration
         public ConfigurationManager()
         {
             _root = new XElement("configuration");
-            _filePath = string.Empty;
-        }
-
-        /// <summary>
-        /// 创建 ConfigurationManager 的新实例。
-        /// </summary>
-        /// <param name="stream">指定配置文件的流。</param>
-        public ConfigurationManager(Stream stream)
-        {
-            if (stream is null)
-            {
-                throw new ArgumentNullException(nameof(stream));
-            }
-            if (stream.Length > 0)
-            {
-                stream.Seek(0, SeekOrigin.Begin);
-                _root = XElement.Load(stream);
-            }
-            else
-            {
-                _root = new XElement("configuration");
-            }
-            _filePath = string.Empty;
         }
 
         /// <summary>
         /// 创建 ConfigurationManager 的新实例。
         /// </summary>
         /// <param name="filePath">指定配置文件的路径。</param>
+        /// <exception cref="Exception"/>
         public ConfigurationManager(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 throw new ArgumentException($"The invalid file path - {nameof(filePath)}.");
             }
-            FileInfo file = new FileInfo(filePath);
-            if (file.Exists && file.Length > 0)
+            _root = XElement.Load(filePath);
+        }
+
+        /// <summary>
+        /// 创建 ConfigurationManager 的新实例。
+        /// </summary>
+        /// <param name="stream">指定配置文件的流。</param>
+        /// <param name="closeStream">读取完成后关闭流。</param>
+        /// <exception cref="Exception"/>
+        public ConfigurationManager(Stream stream, bool closeStream = true)
+        {
+            if (stream is null)
             {
-                _root = XElement.Load(filePath);
+                throw new ArgumentNullException(nameof(stream));
             }
-            else
+            _root = XElement.Load(stream);
+            if (closeStream)
             {
-                _root = new XElement("configuration");
+                stream.Close();
             }
-            _filePath = filePath.Trim();
         }
 
         /// <summary>
@@ -156,20 +131,11 @@ namespace Honoo.Configuration
                 {
                     _root = null;
                 }
-
                 _disposed = true;
             }
         }
 
         #endregion Construction
-
-        /// <summary>
-        /// 创建映射到默认配置文件的 <see cref="ConfigurationManager"/> 实例。文件路径形如 Directory\program.exe.config。
-        /// </summary>
-        public static ConfigurationManager CreateAppConfigManager()
-        {
-            return new ConfigurationManager(Assembly.GetEntryAssembly().Location + ".config");
-        }
 
         /// <summary>
         /// 确定指定的对象是否等于当前对象。
@@ -191,34 +157,16 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 保存到创建 <see cref="ConfigurationManager"/> 实例时指定的文件。
+        /// 保存到指定的字符串。
         /// </summary>
-        public void Save()
+        /// <param name="xmlString">指定保存的配置文件内容的字符串。</param>
+        public void Save(out string xmlString)
         {
-            if (!string.IsNullOrWhiteSpace(_filePath))
-            {
-                using (XmlWriter writer = XmlWriter.Create(_filePath, _writerSettings))
-                {
-                    _root.Save(writer);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 保存到指定的流。
-        /// </summary>
-        /// <param name="stream">指定配置文件的流。</param>
-        /// <exception cref="Exception"/>
-        public void Save(Stream stream)
-        {
-            if (stream is null)
-            {
-                throw new ArgumentNullException(nameof(stream));
-            }
-            stream.SetLength(0);
-            using (XmlWriter writer = XmlWriter.Create(stream, _writerSettings))
+            StringBuilder builder = new StringBuilder();
+            using (XmlWriter writer = XmlWriter.Create(builder, _writerSettings))
             {
                 _root.Save(writer);
+                xmlString = builder.ToString();
             }
         }
 
@@ -234,6 +182,23 @@ namespace Honoo.Configuration
                 throw new ArgumentException($"The invalid file path - {nameof(filePath)}.");
             }
             using (XmlWriter writer = XmlWriter.Create(filePath, _writerSettings))
+            {
+                _root.Save(writer);
+            }
+        }
+
+        /// <summary>
+        /// 保存到指定的流。
+        /// </summary>
+        /// <param name="stream">指定配置文件的流。</param>
+        /// <exception cref="Exception"/>
+        public void Save(Stream stream)
+        {
+            if (stream is null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+            using (XmlWriter writer = XmlWriter.Create(stream, _writerSettings))
             {
                 _root.Save(writer);
             }

@@ -1,4 +1,5 @@
 ﻿using Honoo.Configuration;
+using System.IO;
 using System.Text;
 
 namespace Test
@@ -13,7 +14,8 @@ namespace Test
             //
             // 使用 .NET 程序的默认配置文件或自定义配置文件。
             //
-            using (ConfigurationManager manager = new ConfigurationManager(filePath))
+            bool exists = File.Exists(filePath);
+            using (ConfigurationManager manager = exists ? new ConfigurationManager(filePath) : new ConfigurationManager())
             {
                 //
                 // 直接赋值等同于 AddOrUpdate 方法。
@@ -28,9 +30,9 @@ namespace Test
                 manager.AppSettings.Properties["prop3"] = null;
                 manager.AppSettings.Properties.AddOrUpdate("prop3", null);
                 //
-                // 保存到创建实例时指定的文件。
+                // 保存到指定的文件。
                 //
-                manager.Save();
+                manager.Save(filePath);
             }
         }
 

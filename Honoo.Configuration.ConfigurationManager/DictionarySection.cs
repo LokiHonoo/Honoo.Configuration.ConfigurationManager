@@ -17,9 +17,9 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal DictionarySection(XElement content, ISavable savable)
+        internal DictionarySection(XElement content)
         {
-            _properties = new DictionarySectionPropertySet(content, savable);
+            _properties = new DictionarySectionPropertySet(content);
             _content = content;
         }
 

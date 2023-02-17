@@ -12,7 +12,6 @@ namespace Honoo.Configuration
     {
         private readonly IDictionary<string, XElement> _contents = new Dictionary<string, XElement>();
         private readonly IDictionary<string, object> _properties = new Dictionary<string, object>();
-        private readonly ISavable _savable;
         private readonly XElement _superior;
 
         /// <summary>
@@ -44,10 +43,9 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal DictionarySectionPropertySet(XElement superior, ISavable savable)
+        internal DictionarySectionPropertySet(XElement superior)
         {
             _superior = superior;
-            _savable = savable;
             if (superior.HasElements)
             {
                 foreach (XElement content in superior.Elements("add"))
@@ -80,15 +78,11 @@ namespace Honoo.Configuration
                 {
                     _contents[key].Remove();
                     _contents.Remove(key);
-                    if (_savable.AutoSave)
-                    {
-                        _savable.Save();
-                    }
                 }
             }
             else
             {
-                if (_properties.ContainsKey(key))
+                if (_properties.TryGetValue(key, out _))
                 {
                     XValueHelper.SetDictionarySectionValue(value, _contents[key]);
                     _properties[key] = value;
@@ -102,10 +96,6 @@ namespace Honoo.Configuration
                     _contents.Add(key, content);
                     _superior.Add(content);
                 }
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
             }
         }
 
@@ -117,10 +107,6 @@ namespace Honoo.Configuration
             _properties.Clear();
             _contents.Clear();
             _superior.RemoveNodes();
-            if (_savable.AutoSave)
-            {
-                _savable.Save();
-            }
         }
 
         /// <summary>
@@ -160,10 +146,6 @@ namespace Honoo.Configuration
             {
                 _contents[key].Remove();
                 _contents.Remove(key);
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
                 return true;
             }
             else

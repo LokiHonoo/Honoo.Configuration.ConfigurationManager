@@ -15,7 +15,6 @@ namespace Honoo.Configuration
         private readonly IDictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
         private readonly IDictionary<string, ConfigSectionGroup> _groups = new Dictionary<string, ConfigSectionGroup>();
-        private readonly ISavable _savable;
 
         /// <summary>
         /// 获取配置组集合中包含的元素数。
@@ -42,18 +41,17 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal ConfigSectionGroupSet(XElement declarationSuperior, XElement contentSuperior, ISavable savable)
+        internal ConfigSectionGroupSet(XElement declarationSuperior, XElement contentSuperior)
         {
             _declarationSuperior = declarationSuperior;
             _contentSuperior = contentSuperior;
-            _savable = savable;
             if (declarationSuperior.HasElements)
             {
                 foreach (XElement declaration in declarationSuperior.Elements("sectionGroup"))
                 {
                     string name = declaration.Attribute("name").Value;
                     XElement content = contentSuperior.Element(name);
-                    ConfigSectionGroup value = new ConfigSectionGroup(declaration, content, savable);
+                    ConfigSectionGroup value = new ConfigSectionGroup(declaration, content);
                     _groups.Add(name, value);
                     _contents.Add(name, content);
                     _declarations.Add(name, declaration);
@@ -73,10 +71,6 @@ namespace Honoo.Configuration
             _contentSuperior.RemoveNodes();
             _declarations.Clear();
             _declarationSuperior.RemoveNodes();
-            if (_savable.AutoSave)
-            {
-                _savable.Save();
-            }
         }
 
         /// <summary>
@@ -124,16 +118,12 @@ namespace Honoo.Configuration
                 XElement declaration = new XElement("sectionGroup");
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
-                ConfigSectionGroup value = new ConfigSectionGroup(declaration, content, _savable);
+                ConfigSectionGroup value = new ConfigSectionGroup(declaration, content);
                 _groups.Add(name, value);
                 _contents.Add(name, content);
                 _contentSuperior.Add(content);
                 _declarations.Add(name, declaration);
                 _declarationSuperior.Add(declaration);
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
                 return value;
             }
         }
@@ -152,10 +142,6 @@ namespace Honoo.Configuration
                 _contents.Remove(name);
                 _declarations[name].Remove();
                 _declarations.Remove(name);
-                if (_savable.AutoSave)
-                {
-                    _savable.Save();
-                }
                 return true;
             }
             else

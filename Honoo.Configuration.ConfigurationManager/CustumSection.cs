@@ -8,7 +8,6 @@ namespace Honoo.Configuration
     public sealed class CustumSection : IConfigSection
     {
         private readonly XElement _content;
-        private readonly ISavable _savable;
 
         /// <summary>
         /// 获取或设置配置容器的串联内容。
@@ -27,10 +26,9 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal CustumSection(XElement content, ISavable savable)
+        internal CustumSection(XElement content)
         {
             _content = content;
-            _savable = savable;
         }
 
         #endregion Construction
@@ -76,10 +74,6 @@ namespace Honoo.Configuration
                 if (_content.Value.Length != 0)
                 {
                     _content.SetValue(string.Empty);
-                    if (_savable.AutoSave)
-                    {
-                        _savable.Save();
-                    }
                 }
             }
             else
@@ -87,10 +81,6 @@ namespace Honoo.Configuration
                 if (!_content.Value.Equals(value))
                 {
                     _content.SetValue(value);
-                    if (_savable.AutoSave)
-                    {
-                        _savable.Save();
-                    }
                 }
             }
         }
