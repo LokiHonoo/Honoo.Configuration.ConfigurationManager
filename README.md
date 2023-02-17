@@ -6,7 +6,9 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [简介](#简介)
-  - [快速上手](#快速上手)
+  - [Changelog](#changelog)
+    - [1.2.0](#120)
+  - [使用说明](#使用说明)
     - [NuGet](#nuget)
     - [引用命名空间](#引用命名空间)
     - [appSettings](#appsettings)
@@ -22,11 +24,19 @@
 
 此项目是 System.Configuration.ConfigurationManager 的简单替代。
 
-用于 .NET Framework 4.0+/.NET Standard 2.0+/UWP 中读写默认配置文件或自定义配置文件。
+用于 .NET Framework 4.0+/.NET Standard 2.0+ 中读写默认配置文件或自定义配置文件。
 
 提供对 appSettings、connectionStrings、configSections 节点的有限读写支持。
 
-## 快速上手
+## Changelog
+
+### 1.2.0
+
+**Feature* 移除了原有的自动保存的代码，现在在事件中实现自动保存。
+
+**Feature* 现在支持读写注释（comment）节点。
+
+## 使用说明
 
 ### NuGet
 
@@ -44,53 +54,63 @@ using Honoo.Configuration;
 
 ```c#
 
-public static void Create()
+internal static void Create(string filePath)
 {
     //
     // 使用 .NET 程序的默认配置文件或自定义配置文件。
     //
-    string filePath = Assembly.GetEntryAssembly().Location + ".config";
-    using (ConfigurationManager manager = new ConfigurationManager(filePath))
+    bool exists = File.Exists(filePath);
+    using (ConfigurationManager manager = exists ? new ConfigurationManager(filePath) : new ConfigurationManager())
     {
         //
         // 直接赋值等同于 AddOrUpdate 方法。
         //
-        manager.AppSettings.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
-        manager.AppSettings.Properties["prop2"] = Common.Random.NextDouble().ToString();
-        manager.AppSettings.Properties["prop3"] = "等待移除";
+        manager.AppSettings.Properties["prop1"] = Common.Random.NextDouble().ToString();
+        manager.AppSettings.Properties.AddOrUpdate("prop2", Common.Random.NextDouble().ToString());
+        manager.AppSettings.Properties.AddOrUpdate("prop3", Common.Random.NextDouble().ToString());
         //
-        // 移除属性的方法。选择其一。
+        // 设置注释。
         //
-        manager.AppSettings.Properties.Remove("prop3");
-        manager.AppSettings.Properties["prop3"] = null;
-        manager.AppSettings.Properties.AddOrUpdate("prop3", null);
+        manager.AppSettings.Properties.TrySetComment("prop1", string.Empty);
+        manager.AppSettings.Properties.TrySetComment("prop2", "This is \"appSettings\" prop2 comment");
+        manager.AppSettings.Properties.TrySetComment("prop3", null);
         //
-        // 保存到创建实例时指定的文件。
+        // 移除属性的方法。选择其一。移除属性时相关注释一并移除。
         //
-        manager.Save();
+        manager.AppSettings.Properties.Remove("prop1");
+        manager.AppSettings.Properties["prop1"] = null;
+        manager.AppSettings.Properties.AddOrUpdate("prop1", null);
+        //
+        // 保存到指定的文件。
+        //
+        manager.Save(filePath);
     }
 }
 
-public static string Load()
+internal static void Load(string filePath)
 {
-    StringBuilder result = new StringBuilder();
     //
     // 使用 .NET 程序的默认配置文件或自定义配置文件。
     //
-    string filePath = Assembly.GetEntryAssembly().Location + ".config";
     using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
         //
         // 取出属性。
         //
-        if (manager.AppSettings.Properties.TryGetValue("prop1", out string value))
+        if (manager.AppSettings.Properties.TryGetValue("prop2", out string value))
         {
-            result.AppendLine(value);
+            Console.WriteLine(value);
         }
-        value = manager.AppSettings.Properties["prop2"];
-        result.AppendLine(value);
+        value = manager.AppSettings.Properties["prop3"];
+        Console.WriteLine(value);
+        //
+        // 取出注释。
+        //
+        if (manager.AppSettings.Properties.TryGetComment("prop2", out string comment))
+        {
+            Console.WriteLine(comment);
+        }
     }
-    return result.ToString();
 }
 
 ```
@@ -99,12 +119,11 @@ public static string Load()
 
 ```c#
 
-public static void Create()
+internal static void Create(string filePath)
 {
     //
     // 使用 .NET 程序的默认配置文件或自定义配置文件。
     //
-    string filePath = Assembly.GetEntryAssembly().Location + ".config";
     using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
         SqlConnectionStringBuilder builder1 = new SqlConnectionStringBuilder()
@@ -112,7 +131,7 @@ public static void Create()
             DataSource = "127.0.0.1",
             InitialCatalog = "DemoCatalog",
             UserID = "sa",
-            Password = Common.Random.Next(1000000, 9999999).ToString()
+            Password = "12345"
         };
         SqlConnection conn1 = new SqlConnection(builder1.ConnectionString);
         MySqlConnectionStringBuilder builder2 = new MySqlConnectionStringBuilder()
@@ -120,61 +139,66 @@ public static void Create()
             Server = "127.0.0.1",
             Database = "DemoDB",
             UserID = "root",
-            Password = Common.Random.Next(1000000, 9999999).ToString()
+            Password = "12345"
         };
         MySqlConnection conn2 = new MySqlConnection(builder2.ConnectionString);
         //
-        // 直接赋值等同于 AddOrUpdate 方法。
+        // 直接赋值等同于 AddOrUpdate 方法。不设置引擎参数，读取时不能访问连接实例。
         //
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop1", conn1);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop2", conn2.ConnectionString, null);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop3", conn2.ConnectionString, typeof(MySqlConnection).Namespace);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop4", conn2.ConnectionString, typeof(MySqlConnection).AssemblyQualifiedName);
+        manager.ConnectionStrings.Properties["prop1"] = new ConnectionStringsValue(conn1.ConnectionString, null);
+        manager.ConnectionStrings.Properties["prop2"] = new ConnectionStringsValue(conn1);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop3", conn1);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop4", conn2.ConnectionString, conn2.GetType().Namespace);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop5", conn2.ConnectionString, typeof(MySqlConnection).AssemblyQualifiedName);
         //
-        // 不设置引擎参数，读取时不能直接创建连接实例。
+        // 设置注释。
         //
-        manager.ConnectionStrings.Properties["prop5"] = new ConnectionStringsValue(conn2.ConnectionString, string.Empty);
+        manager.ConnectionStrings.Properties.TrySetComment("prop1", string.Empty);
+        manager.ConnectionStrings.Properties.TrySetComment("prop2", "This is \"sql server connection\" comment");
+        manager.ConnectionStrings.Properties.TrySetComment("prop3", null);
+        manager.ConnectionStrings.Properties.TrySetComment("prop4", "This is \"mysql connection\" comment ");
+        manager.ConnectionStrings.Properties.TrySetComment("prop5", "This is \"mysql connection\" comment used assembly qualified name");
         //
-        // 移除属性的方法。选择其一。
+        // 移除属性的方法。选择其一。移除属性时相关注释一并移除。
         //
-        manager.ConnectionStrings.Properties.Remove("prop5");
-        manager.ConnectionStrings.Properties["prop5"] = null;
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop5", (DbConnection)null);
+        manager.ConnectionStrings.Properties.Remove("prop1");
+        manager.ConnectionStrings.Properties["prop1"] = null;
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop1", (DbConnection)null);
         //
-        // 保存到创建实例时指定的文件。
+        // 保存到指定的文件。
         //
-        manager.Save();
+        manager.Save(filePath);
     }
 }
 
-public static string Load()
+internal static void Load(string filePath)
 {
-    StringBuilder result = new StringBuilder();
     //
     // 使用 .NET 程序的默认配置文件或自定义配置文件。
     //
-    string filePath = Assembly.GetEntryAssembly().Location + ".config";
     using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
         //
         // 取出属性。
         //
-        if (manager.ConnectionStrings.Properties.TryGetValue("prop1", out ConnectionStringsValue value))
+        if (manager.ConnectionStrings.Properties.TryGetValue("prop2", out ConnectionStringsValue value))
         {
-            result.AppendLine(value.Connection.ConnectionString);
+            Console.WriteLine(value.ConnectionString);
         }
+        //
+        // 访问实例。
+        //
+        DbConnection connection = manager.ConnectionStrings.Properties["prop3"].Connection;
+        Console.WriteLine(connection.ConnectionString);
+
+        MySqlConnection mysql = (MySqlConnection)manager.ConnectionStrings.Properties["prop4"].Connection;
+        Console.WriteLine(mysql.ConnectionString);
         //
         // 不访问 Connection，属性内部没有实例化 Connection。项目没有引用相关数据库引擎时使用。
         //
-        string connectionString = manager.ConnectionStrings.Properties["prop2"].ConnectionString;
-        result.AppendLine(connectionString);
-        DbConnection connection = manager.ConnectionStrings.Properties["prop3"].Connection;
-        result.AppendLine(connection.ConnectionString);
-
-        MySqlConnection mysql = (MySqlConnection)manager.ConnectionStrings.Properties["prop4"].Connection;
-        result.AppendLine(mysql.ConnectionString);
+        string connectionString = manager.ConnectionStrings.Properties["prop5"].ConnectionString;
+        Console.WriteLine(connectionString);
     }
-    return result.ToString();
 }
 
 ```
@@ -183,12 +207,11 @@ public static string Load()
 
 ```c#
 
-public static void Create()
+internal static void Create(string filePath)
 {
     //
     // 使用 .NET 程序的默认配置文件或自定义配置文件。
     //
-    string filePath = Assembly.GetEntryAssembly().Location + ".config";
     using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
         //
@@ -199,15 +222,25 @@ public static void Create()
         //
         // 直接赋值等同于 AddOrUpdate 方法。
         //
-        SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionType.SingleTagSection);
+        SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", SectionType.SingleTagSection);
         section1.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
         section1.Properties["prop2"] = Common.Random.NextDouble().ToString();
-        NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionType.NameValueSection);
+        NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", SectionType.NameValueSection);
         section2.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
         section2.Properties["prop2"] = Common.Random.NextDouble().ToString();
+        section2.Properties.TrySetComment("prop1", "This is a name value section children");
+        section2.Properties.TrySetComment("prop2", "This is a name value section children");
         //
-        ConfigSectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
-        DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionType.DictionarySection);
+        // 配置组和注释。
+        //
+        SectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
+        manager.ConfigSections.Groups.TrySetComment("sectionGroup1", "This is a section group");
+        //
+        // 配置容器和注释。
+        //
+        DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", SectionType.DictionarySection);
+        group.Sections.TrySetComment("section3", "This is a dictionary section");
+        //
         section3.Properties.AddOrUpdate("prop1", true);
         section3.Properties.AddOrUpdate("prop2", sbyte.MaxValue);
         section3.Properties.AddOrUpdate("prop3", byte.MaxValue);
@@ -217,31 +250,32 @@ public static void Create()
         section3.Properties.AddOrUpdate("prop7", uint.MaxValue);
         section3.Properties["prop8"] = long.MaxValue;
         section3.Properties["prop9"] = ulong.MaxValue;
-        section3.Properties["prop10"] = float.MaxValue / 2; // 避免浮点数溢出 Net40 bug
-        section3.Properties["prop11"] = double.MaxValue / 2; // 避免浮点数溢出 Net40 bug
+        section3.Properties["prop10"] = float.MaxValue / 2;
+        section3.Properties["prop11"] = double.MaxValue / 2;
         section3.Properties["prop12"] = decimal.MaxValue;
         section3.Properties["prop13"] = (char)Common.Random.Next(65, 91);
         section3.Properties["prop14"] = new byte[] { 0x01, 0x02, 0x03, 0x0A, 0x0B, 0x0C };
-        section3.Properties["prop15"] = "支持 15 种单值类型";
+        section3.Properties["prop15"] = "支持 15 种可序列化类型";
+        section3.Properties.TrySetComment("prop15", "This is a dictionary section children");
         //
-        // 支持自定义类型的创建。
+        // 以文本方式创建。
         //
-        CustumSection section4 = (CustumSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionType.CustumSection);
-        section4.SetValue("<arbitrarily>任意文本内容或 XML 内容</arbitrarily><arbitrarily>任意文本内容或 XML 内容</arbitrarily>");
+        TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", SectionType.TextSection);
+        section4.SetAttribute("attr1", "属性值");
+        section4.SetValue("<arbitrarily>任意内容</arbitrarily>");
+        manager.ConfigSections.Sections.TrySetComment("section4", "This is a text section");
         //
-        // 保存到创建实例时指定的文件。
+        // 保存到指定的文件。
         //
-        manager.Save();
+        manager.Save(filePath);
     }
 }
 
-public static string Load()
+internal static void Load(string filePath)
 {
-    StringBuilder result = new StringBuilder();
     //
     // 使用 .NET 程序的默认配置文件或自定义配置文件。
     //
-    string filePath = Assembly.GetEntryAssembly().Location + ".config";
     using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
         //
@@ -251,46 +285,68 @@ public static string Load()
         {
             foreach (KeyValuePair<string, string> prop in section1.Properties)
             {
-                result.AppendLine(prop.Value);
+                Console.WriteLine(prop.Value);
             }
         }
         if (manager.ConfigSections.Sections.TryGetValue("section2", out NameValueSection section2))
         {
             foreach (KeyValuePair<string, string> prop in section2.Properties)
             {
-                result.AppendLine(prop.Value);
+                Console.WriteLine(prop.Value);
             }
         }
-        if (manager.ConfigSections.Groups.TryGetValue("sectionGroup1", out ConfigSectionGroup group))
+        if (manager.ConfigSections.Groups.TryGetValue("sectionGroup1", out SectionGroup group))
         {
             if (group.Sections.TryGetValue("section3", out DictionarySection section3))
             {
                 // 根据 type 参数返回强类型值。如果没有 type 参数，以 string 类型处理。
                 foreach (KeyValuePair<string, object> prop in section3.Properties)
                 {
-                    result.AppendLine($"{prop.Value.GetType().Name,-10}{prop.Value}");
+                    Console.WriteLine($"{prop.Value.GetType().Name,-10}{prop.Value}");
                 }
             }
         }
-        //
-        // 如果是自定义格式，可取出文本处理。
-        //
-        if (manager.ConfigSections.Sections.TryGetValue("section4", out CustumSection section4))
+        if (manager.ConfigSections.Sections.TryGetValue("section4", out TextSection section4))
         {
-            result.AppendLine(section4.Value);
+            Console.WriteLine(section4.GetXmlString());
+        }
+        //
+        // 任何类型都可以转换为基类以文本方式取出处理。
+        //
+        if (manager.ConfigSections.Sections.TryGetValue("section1", out ConfigurationSection section))
+        {
+            Console.WriteLine(section.GetXmlString());
         }
     }
-    return result.ToString();
 }
 
 ```
 
 ### 自动保存
 
-如果在创建 Honoo.Configuration.ConfigurationManager 实例时没有指定文件路径，此选项无效。默认值是 false。
+在事件中实现自动保存。
 
 ```c#
-manager.AutoSave = true;
+
+internal static void AutoSaveDemo()
+{
+    using (ConfigurationManager manager = new ConfigurationManager())
+    {
+        manager.OnChanged += Manager_OnChanged;
+        manager.OnDisposing += Manager_OnDisposing;
+    }
+}
+
+private static void Manager_OnChanged(ConfigurationManager manager)
+{
+    manager.Save(filePath);
+}
+
+private static void Manager_OnDisposing(ConfigurationManager manager)
+{
+    manager.Save(filePath);
+}
+
 ```
 
 ### 在 UWP 项目中使用

@@ -5,11 +5,6 @@ VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Honoo.Configuration.ConfigurationManager", "Honoo.Configuration.ConfigurationManager\Honoo.Configuration.ConfigurationManager.csproj", "{EDF43B24-6B59-4169-AB22-C798DC73AD4D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD16B11D-85E4-4498-9CEC-BD8D9CD9ADB4}"
-	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{F6365969-48A9-4AC1-9AD7-9A80C7EA586F}"
 EndProject
 Global

@@ -1,9 +1,7 @@
-﻿using System.Configuration;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace Honoo.Configuration
 {
-
     /// <summary>
     /// 映射到标准格式的 "appSettings" 节点。
     /// </summary>
@@ -22,7 +20,7 @@ namespace Honoo.Configuration
         internal AppSettings(XElement root)
         {
             _content = root.Element("appSettings");
-            if (_content is null)
+            if (_content == null)
             {
                 _content = new XElement("appSettings");
                 root.Add(_content);
@@ -31,25 +29,6 @@ namespace Honoo.Configuration
         }
 
         #endregion Construction
-
-        /// <summary>
-        /// 确定指定的对象是否等于当前对象。
-        /// </summary>
-        /// <param name="obj">要与当前对象进行比较的对象。</param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            return obj is AppSettings other && _content.Equals(other._content);
-        }
-
-        /// <summary>
-        /// 作为默认哈希函数。
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return _content.GetHashCode();
-        }
 
         /// <summary>
         /// 方法已重写。返回节点的缩进 XML 文本。

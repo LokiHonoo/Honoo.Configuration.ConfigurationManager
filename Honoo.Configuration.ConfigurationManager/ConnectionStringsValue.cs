@@ -7,10 +7,9 @@ namespace Honoo.Configuration
     /// <summary>
     /// 连接属性。
     /// </summary>
-    public sealed class ConnectionStringsProperty
+    public sealed class ConnectionStringsValue
     {
         private readonly string _connectionString;
-        private readonly XElement _content;
         private readonly string _providerName;
         private DbConnection _connection;
         private bool _generated;
@@ -44,83 +43,41 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 创建 ConnectionStringsProperty 的新实例。
+        /// 创建 ConnectionStringsValue 的新实例。
         /// </summary>
         /// <param name="connection">数据库连接实例。</param>
-        public ConnectionStringsProperty(DbConnection connection)
+        public ConnectionStringsValue(DbConnection connection)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
             _connectionString = connection.ConnectionString;
             _providerName = connection.GetType().Namespace;
-            _content = new XElement("add");
-            _content.SetAttributeValue("name", "newProperty");
-            _content.SetAttributeValue("connectionString", _connectionString);
-            _content.SetAttributeValue("providerName", _providerName);
         }
 
         /// <summary>
-        /// 创建 ConnectionStringsProperty 的新实例。
+        /// 创建 ConnectionStringsValue 的新实例。
         /// </summary>
         /// <param name="connectionString">连接字符串。</param>
         /// <param name="providerName">数据库引擎的文本名称。</param>
-        public ConnectionStringsProperty(string connectionString, string providerName)
+        public ConnectionStringsValue(string connectionString, string providerName)
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
+            if (connectionString == null)
             {
-                throw new ArgumentException($"The invalid connection string - {nameof(connectionString)}.");
+                throw new ArgumentNullException(nameof(connectionString));
             }
             _connectionString = connectionString;
             _providerName = providerName;
-            _content = new XElement("add");
-            _content.SetAttributeValue("name", "newProperty");
-            _content.SetAttributeValue("connectionString", connectionString);
-            _content.SetAttributeValue("providerName", providerName);
         }
 
-        internal ConnectionStringsProperty(XElement content)
+        internal ConnectionStringsValue(XElement content)
         {
-            _content = content;
             _connectionString = content.Attribute("connectionString").Value;
             _providerName = content.Attribute("providerName")?.Value;
         }
 
         #endregion Construction
-
-        /// <summary>
-        /// 确定指定的对象是否等于当前对象。
-        /// </summary>
-        /// <param name="obj">要与当前对象进行比较的对象。</param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            return obj is ConnectionStringsProperty other && _content.Equals(other._content);
-        }
-
-        /// <summary>
-        /// 作为默认哈希函数。
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return _content.GetHashCode();
-        }
-
-        /// <summary>
-        /// 方法已重写。返回节点的缩进 XML 文本。
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return _content.ToString();
-        }
-
-        internal void Remove()
-        {
-            _content.Remove();
-        }
 
         private static DbConnection CreateInstance(string providerName, string connectionString)
         {
@@ -131,7 +88,7 @@ namespace Honoo.Configuration
                 case "System.Data.Odbc.OdbcConnection":
                 case "System.Data.Odbc.OdbcConnection, System.Data.Odbc":
                     type = Type.GetType("System.Data.Odbc.OdbcConnection, System.Data.Odbc");
-                    if (type is null)
+                    if (type == null)
                     {
                         type = Type.GetType("System.Data.Odbc.OdbcConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
                     }
@@ -141,7 +98,7 @@ namespace Honoo.Configuration
                 case "System.Data.OleDb.OleDbConnection":
                 case "System.Data.OleDb.OleDbConnection, System.Data.OleDb":
                     type = Type.GetType("System.Data.OleDb.OleDbConnection, System.Data.OleDb");
-                    if (type is null)
+                    if (type == null)
                     {
                         type = Type.GetType("System.Data.OleDb.OleDbConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
                     }
@@ -151,7 +108,7 @@ namespace Honoo.Configuration
                 case "System.Data.SqlClient.SqlConnection":
                 case "System.Data.SqlClient.SqlConnection, System.Data.SqlClient":
                     type = Type.GetType("System.Data.SqlClient.SqlConnection, System.Data.SqlClient");
-                    if (type is null)
+                    if (type == null)
                     {
                         type = Type.GetType("System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
                     }

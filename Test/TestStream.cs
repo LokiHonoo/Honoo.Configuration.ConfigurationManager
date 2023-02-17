@@ -1,6 +1,6 @@
 ﻿using Honoo.Configuration;
+using System;
 using System.IO;
-using System.Text;
 
 namespace Test
 {
@@ -18,13 +18,12 @@ namespace Test
             {
                 using (ConfigurationManager manager = new ConfigurationManager(input, true))
                 {
-                  
                     manager.AppSettings.Properties.AddOrUpdate("prop4", Common.Random.NextDouble().ToString());
                     manager.AppSettings.Properties["prop5"] = Common.Random.NextDouble().ToString();
                     //
                     // 保存到指定的流。
                     //
-                    using (FileStream output = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+                    using (FileStream output = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read))
                     {
                         manager.Save(output);
                     }
@@ -32,9 +31,8 @@ namespace Test
             }
         }
 
-        internal static string Load(string filePath)
+        internal static void Load(string filePath)
         {
-            StringBuilder result = new StringBuilder();
             //
             // 使用配置文件流。
             //
@@ -47,14 +45,12 @@ namespace Test
                     //
                     if (manager.AppSettings.Properties.TryGetValue("prop4", out string value))
                     {
-                        result.AppendLine(value);
+                        Console.WriteLine(value);
                     }
                     value = manager.AppSettings.Properties["prop5"];
-                    result.AppendLine(value);
+                    Console.WriteLine(value);
                 }
             }
-
-            return result.ToString();
         }
     }
 }

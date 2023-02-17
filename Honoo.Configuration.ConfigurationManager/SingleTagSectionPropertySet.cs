@@ -68,7 +68,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException($"The invalid key - {nameof(key)}.");
             }
-            if (value is null)
+            if (value == null)
             {
                 if (_properties.Remove(key))
                 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Honoo.Configuration
@@ -8,13 +9,14 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器集合。
     /// </summary>
-    public sealed class ConfigSectionSet : IEnumerable<KeyValuePair<string, IConfigSection>>, IEnumerable
+    public sealed class SectionSet : IEnumerable<KeyValuePair<string, ConfigurationSection>>, IEnumerable
     {
+        private readonly IDictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly IDictionary<string, XElement> _contents = new Dictionary<string, XElement>();
         private readonly XElement _contentSuperior;
         private readonly IDictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
-        private readonly IDictionary<string, IConfigSection> _sections = new Dictionary<string, IConfigSection>();
+        private readonly IDictionary<string, ConfigurationSection> _sections = new Dictionary<string, ConfigurationSection>();
 
         /// <summary>
         /// 获取配置容器集合中包含的元素数。
@@ -29,7 +31,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置容器集合。
         /// </summary>
-        public ICollection<IConfigSection> Values => _sections.Values;
+        public ICollection<ConfigurationSection> Values => _sections.Values;
 
         /// <summary>
         /// 获取具有指定名称的配置容器的值。
@@ -37,11 +39,11 @@ namespace Honoo.Configuration
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public IConfigSection this[string name] => _sections.TryGetValue(name, out IConfigSection section) ? section : null;
+        public ConfigurationSection this[string name] => _sections.TryGetValue(name, out ConfigurationSection section) ? section : null;
 
         #region Construction
 
-        internal ConfigSectionSet(XElement declarationSuperior, XElement contentSuperior)
+        internal SectionSet(XElement declarationSuperior, XElement contentSuperior)
         {
             _declarationSuperior = declarationSuperior;
             _contentSuperior = contentSuperior;
@@ -50,10 +52,10 @@ namespace Honoo.Configuration
                 foreach (XElement declaration in declarationSuperior.Elements("section"))
                 {
                     string name = declaration.Attribute("name").Value;
-                    string typeName = declaration.Attribute("type").Value;
+                    string type = declaration.Attribute("type").Value;
                     XElement content = contentSuperior.Element(name);
-                    IConfigSection value;
-                    switch (typeName)
+                    ConfigurationSection value;
+                    switch (type)
                     {
                         case "DictionarySectionHandler":
                         case "System.Configuration.DictionarySectionHandler":
@@ -73,14 +75,20 @@ namespace Honoo.Configuration
                             value = new SingleTagSection(content);
                             break;
 
-                        case "CustumSectionHandler":
-                        case "Honoo.Configuration.CustumSectionHandler":
-                        case "Honoo.Configuration.CustumSectionHandler, Honoo.Configuration":
-                        default: value = new CustumSection(content); break;
+                        default: value = new TextSection(content); break;
                     }
                     _sections.Add(name, value);
-                    _contents.Add(name, content);
                     _declarations.Add(name, declaration);
+                    _contents.Add(name, content);
+                    XNode pre = content.PreviousNode;
+                    if (pre != null && pre.NodeType == XmlNodeType.Comment)
+                    {
+                        _comments.Add(name, (XComment)pre);
+                    }
+                    else
+                    {
+                        _comments.Add(name, null);
+                    }
                 }
             }
         }
@@ -93,10 +101,10 @@ namespace Honoo.Configuration
         public void Clear()
         {
             _sections.Clear();
-            _contents.Clear();
-            _contentSuperior.RemoveNodes();
             _declarations.Clear();
             _declarationSuperior.RemoveNodes();
+            _contents.Clear();
+            _contentSuperior.RemoveNodes();
         }
 
         /// <summary>
@@ -114,7 +122,7 @@ namespace Honoo.Configuration
         /// 支持在泛型集合上进行简单迭代。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, IConfigSection>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, ConfigurationSection>> GetEnumerator()
         {
             return _sections.GetEnumerator();
         }
@@ -130,13 +138,13 @@ namespace Honoo.Configuration
         /// <param name="name">配置容器的名称。</param>
         /// <param name="type">配置容器的类型。</param>
         /// <exception cref="Exception"/>
-        public IConfigSection GetOrAdd(string name, ConfigSectionType type)
+        public ConfigurationSection GetOrAdd(string name, SectionType type)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException($"The invalid name - {nameof(name)}.");
             }
-            if (_sections.TryGetValue(name, out IConfigSection section))
+            if (_sections.TryGetValue(name, out ConfigurationSection section))
             {
                 return section;
             }
@@ -145,25 +153,25 @@ namespace Honoo.Configuration
                 XElement declaration = new XElement("section");
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
-                IConfigSection value;
+                ConfigurationSection value;
                 switch (type)
                 {
-                    case ConfigSectionType.CustumSection:
-                        declaration.SetAttributeValue("type", "Honoo.Configuration.CustumSectionHandler");
-                        value = new CustumSection(content);
+                    case SectionType.TextSection:
+                        declaration.SetAttributeValue("type", string.Empty);
+                        value = new TextSection(content);
                         break;
 
-                    case ConfigSectionType.DictionarySection:
+                    case SectionType.DictionarySection:
                         declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
                         value = new DictionarySection(content);
                         break;
 
-                    case ConfigSectionType.NameValueSection:
+                    case SectionType.NameValueSection:
                         declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
                         value = new NameValueSection(content);
                         break;
 
-                    case ConfigSectionType.SingleTagSection:
+                    case SectionType.SingleTagSection:
                         declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
                         value = new SingleTagSection(content);
                         break;
@@ -171,16 +179,17 @@ namespace Honoo.Configuration
                     default: throw new ArgumentException($"The invalid type - {nameof(type)}.");
                 }
                 _sections.Add(name, value);
-                _contents.Add(name, content);
-                _contentSuperior.Add(content);
                 _declarations.Add(name, declaration);
+                _contents.Add(name, content);
+                _comments.Add(name, null);
+                _contentSuperior.Add(content);
                 _declarationSuperior.Add(declaration);
                 return value;
             }
         }
 
         /// <summary>
-        /// 从配置容器集合中移除带有指定名称的配置容器。
+        /// 从配置容器集合中移除带有指定名称的配置容器。和指定名称关联的配置容器的注释一并移除。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
@@ -189,15 +198,40 @@ namespace Honoo.Configuration
         {
             if (_sections.Remove(name))
             {
-                _contents[name].Remove();
-                _contents.Remove(name);
                 _declarations[name].Remove();
                 _declarations.Remove(name);
+                _contents[name].Remove();
+                _contents.Remove(name);
+                _comments[name]?.Remove();
+                _comments.Remove(name);
                 return true;
             }
             else
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// 获取与指定名称关联的配置容器的注释。
+        /// <para/>如果没有找到指定名称，返回 false。如果找到了指定名称但没有注释节点，则仍返回 false。
+        /// </summary>
+        /// <param name="name">配置容器的名称。</param>
+        /// <param name="comment">配置容器的注释。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetComment(string name, out string comment)
+        {
+            _comments.TryGetValue(name, out XComment comment_);
+            if (comment_ == null)
+            {
+                comment = null;
+                return false;
+            }
+            else
+            {
+                comment = comment_.Value;
+                return true;
             }
         }
 
@@ -208,11 +242,11 @@ namespace Honoo.Configuration
         /// <param name="value">配置容器的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out CustumSection value)
+        public bool TryGetValue(string name, out TextSection value)
         {
-            if (_sections.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out ConfigurationSection val))
             {
-                value = (CustumSection)val;
+                value = (TextSection)val;
                 return true;
             }
             else
@@ -231,7 +265,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out DictionarySection value)
         {
-            if (_sections.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out ConfigurationSection val))
             {
                 value = (DictionarySection)val;
                 return true;
@@ -252,7 +286,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out NameValueSection value)
         {
-            if (_sections.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out ConfigurationSection val))
             {
                 value = (NameValueSection)val;
                 return true;
@@ -273,7 +307,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out SingleTagSection value)
         {
-            if (_sections.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out ConfigurationSection val))
             {
                 value = (SingleTagSection)val;
                 return true;
@@ -292,9 +326,53 @@ namespace Honoo.Configuration
         /// <param name="value">配置容器的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out IConfigSection value)
+        public bool TryGetValue(string name, out ConfigurationSection value)
         {
             return _sections.TryGetValue(name, out value);
+        }
+
+        /// <summary>
+        /// 添加或更新或删除一个与指定名称关联的配置容器的注释。
+        /// </summary>
+        /// <param name="name">配置容器的名称。</param>
+        /// <param name="comment">配置容器的注释。</param>
+        /// <exception cref="Exception"/>
+        public bool TrySetComment(string name, string comment)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+            if (comment == null)
+            {
+                if (_comments.TryGetValue(name, out XComment comment_))
+                {
+                    if (comment_ != null)
+                    {
+                        comment_.Remove();
+                        _comments[name] = null;
+                    }
+                    return true;
+                }
+            }
+            else
+            {
+                if (_comments.TryGetValue(name, out XComment comment_))
+                {
+                    if (comment_ == null)
+                    {
+                        comment_ = new XComment(comment);
+                        _contents[name].AddBeforeSelf(comment_);
+                        _comments[name] = comment_;
+                    }
+                    else
+                    {
+                        comment_.Value = comment;
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

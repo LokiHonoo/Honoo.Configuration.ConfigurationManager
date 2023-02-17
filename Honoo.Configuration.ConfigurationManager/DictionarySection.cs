@@ -5,9 +5,8 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器。
     /// </summary>
-    public sealed class DictionarySection : IConfigSection
+    public sealed class DictionarySection : ConfigurationSection
     {
-        private readonly XElement _content;
         private readonly DictionarySectionPropertySet _properties;
 
         /// <summary>
@@ -17,40 +16,11 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal DictionarySection(XElement content)
+        internal DictionarySection(XElement content) : base(content)
         {
             _properties = new DictionarySectionPropertySet(content);
-            _content = content;
         }
 
         #endregion Construction
-
-        /// <summary>
-        /// 确定指定的对象是否等于当前对象。
-        /// </summary>
-        /// <param name="obj">要与当前对象进行比较的对象。</param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            return obj is DictionarySection other && _content.Equals(other._content);
-        }
-
-        /// <summary>
-        /// 作为默认哈希函数。
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return _content.GetHashCode();
-        }
-
-        /// <summary>
-        /// 方法已重写。返回节点的缩进 XML 文本。
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return _content.ToString();
-        }
     }
 }

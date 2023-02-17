@@ -10,13 +10,13 @@ namespace Test
         {
             string filePath = Assembly.GetEntryAssembly().Location + ".config";
             TestAppSettings.Create(filePath);
-            Console.WriteLine(TestAppSettings.Load(filePath));
+            TestAppSettings.Load(filePath);
             TestConnectionStrings.Create(filePath);
-            Console.WriteLine(TestConnectionStrings.Load(filePath));
+            TestConnectionStrings.Load(filePath);
             TestSection.Create(filePath);
-            Console.WriteLine(TestSection.Load(filePath));
+            TestSection.Load(filePath);
             TestStream.Create(filePath);
-            Console.WriteLine(TestStream.Load(filePath));
+            TestStream.Load(filePath);
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();

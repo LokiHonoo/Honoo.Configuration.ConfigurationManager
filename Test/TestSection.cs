@@ -1,6 +1,6 @@
 ﻿using Honoo.Configuration;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Test
 {
@@ -24,15 +24,25 @@ namespace Test
                 //
                 // 直接赋值等同于 AddOrUpdate 方法。
                 //
-                SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionType.SingleTagSection);
+                SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", SectionType.SingleTagSection);
                 section1.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
                 section1.Properties["prop2"] = Common.Random.NextDouble().ToString();
-                NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionType.NameValueSection);
+                NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", SectionType.NameValueSection);
                 section2.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
                 section2.Properties["prop2"] = Common.Random.NextDouble().ToString();
+                section2.Properties.TrySetComment("prop1", "This is a name value section children");
+                section2.Properties.TrySetComment("prop2", "This is a name value section children");
                 //
-                ConfigSectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
-                DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionType.DictionarySection);
+                // 配置组和注释。
+                //
+                SectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
+                manager.ConfigSections.Groups.TrySetComment("sectionGroup1", "This is a section group");
+                //
+                // 配置容器和注释。
+                //
+                DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", SectionType.DictionarySection);
+                group.Sections.TrySetComment("section3", "This is a dictionary section");
+                //
                 section3.Properties.AddOrUpdate("prop1", true);
                 section3.Properties.AddOrUpdate("prop2", sbyte.MaxValue);
                 section3.Properties.AddOrUpdate("prop3", byte.MaxValue);
@@ -42,17 +52,20 @@ namespace Test
                 section3.Properties.AddOrUpdate("prop7", uint.MaxValue);
                 section3.Properties["prop8"] = long.MaxValue;
                 section3.Properties["prop9"] = ulong.MaxValue;
-                section3.Properties["prop10"] = float.MaxValue / 2; // 避免浮点数溢出 Net40
-                section3.Properties["prop11"] = double.MaxValue / 2; // 避免浮点数溢出 Net40
+                section3.Properties["prop10"] = float.MaxValue / 2;
+                section3.Properties["prop11"] = double.MaxValue / 2;
                 section3.Properties["prop12"] = decimal.MaxValue;
                 section3.Properties["prop13"] = (char)Common.Random.Next(65, 91);
                 section3.Properties["prop14"] = new byte[] { 0x01, 0x02, 0x03, 0x0A, 0x0B, 0x0C };
-                section3.Properties["prop15"] = "支持 15 种单值类型";
+                section3.Properties["prop15"] = "支持 15 种可序列化类型";
+                section3.Properties.TrySetComment("prop15", "This is a dictionary section children");
                 //
-                // 支持自定义类型的创建。
+                // 以文本方式创建。
                 //
-                CustumSection section4 = (CustumSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionType.CustumSection);
-                section4.SetValue("<arbitrarily>任意文本内容或 XML 内容</arbitrarily><arbitrarily>任意文本内容或 XML 内容</arbitrarily>");
+                TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", SectionType.TextSection);
+                section4.SetAttribute("attr1", "属性值");
+                section4.SetValue("<arbitrarily>任意内容</arbitrarily>");
+                manager.ConfigSections.Sections.TrySetComment("section4", "This is a text section");
                 //
                 // 保存到指定的文件。
                 //
@@ -60,9 +73,8 @@ namespace Test
             }
         }
 
-        internal static string Load(string filePath)
+        internal static void Load(string filePath)
         {
-            StringBuilder result = new StringBuilder();
             //
             // 使用 .NET 程序的默认配置文件或自定义配置文件。
             //
@@ -75,36 +87,39 @@ namespace Test
                 {
                     foreach (KeyValuePair<string, string> prop in section1.Properties)
                     {
-                        result.AppendLine(prop.Value);
+                        Console.WriteLine(prop.Value);
                     }
                 }
                 if (manager.ConfigSections.Sections.TryGetValue("section2", out NameValueSection section2))
                 {
                     foreach (KeyValuePair<string, string> prop in section2.Properties)
                     {
-                        result.AppendLine(prop.Value);
+                        Console.WriteLine(prop.Value);
                     }
                 }
-                if (manager.ConfigSections.Groups.TryGetValue("sectionGroup1", out ConfigSectionGroup group))
+                if (manager.ConfigSections.Groups.TryGetValue("sectionGroup1", out SectionGroup group))
                 {
                     if (group.Sections.TryGetValue("section3", out DictionarySection section3))
                     {
                         // 根据 type 参数返回强类型值。如果没有 type 参数，以 string 类型处理。
                         foreach (KeyValuePair<string, object> prop in section3.Properties)
                         {
-                            result.AppendLine($"{prop.Value.GetType().Name,-10}{prop.Value}");
+                            Console.WriteLine($"{prop.Value.GetType().Name,-10}{prop.Value}");
                         }
                     }
                 }
-                //
-                // 如果是自定义格式，可取出文本处理。
-                //
-                if (manager.ConfigSections.Sections.TryGetValue("section4", out CustumSection section4))
+                if (manager.ConfigSections.Sections.TryGetValue("section4", out TextSection section4))
                 {
-                    result.AppendLine(section4.Value);
+                    Console.WriteLine(section4.GetXmlString());
+                }
+                //
+                // 任何类型都可以转换为基类以文本方式取出处理。
+                //
+                if (manager.ConfigSections.Sections.TryGetValue("section1", out ConfigurationSection section))
+                {
+                    Console.WriteLine(section.GetXmlString());
                 }
             }
-            return result.ToString();
         }
     }
 }

@@ -11,26 +11,26 @@ namespace Honoo.Configuration
             string type = content.Attribute("type")?.Value;
             if (string.IsNullOrWhiteSpace(type))
             {
-                type = "System.String";
+                type = "String";
             }
             string value = content.Attribute("value").Value;
             switch (type)
             {
-                case "System.Boolean": return bool.Parse(value);
-                case "System.Char": return char.Parse(value);
-                case "System.SByte": return sbyte.Parse(value, CultureInfo.InvariantCulture);
-                case "System.Byte": return byte.Parse(value, CultureInfo.InvariantCulture);
-                case "System.Int16": return short.Parse(value, CultureInfo.InvariantCulture);
-                case "System.UInt16": return ushort.Parse(value, CultureInfo.InvariantCulture);
-                case "System.Int32": return int.Parse(value, CultureInfo.InvariantCulture);
-                case "System.UInt32": return uint.Parse(value, CultureInfo.InvariantCulture);
-                case "System.Int64": return long.Parse(value, CultureInfo.InvariantCulture);
-                case "System.UInt64": return ulong.Parse(value, CultureInfo.InvariantCulture);
-                case "System.Single": return float.Parse(value, CultureInfo.InvariantCulture);
-                case "System.Double": return double.Parse(value, CultureInfo.InvariantCulture);
-                case "System.Decimal": return decimal.Parse(value, CultureInfo.InvariantCulture);
-                case "System.String": return value;
-                case "System.Byte[]": return GetHexBytes(value);
+                case "bool": case "Boolean": case "System.Boolean": return bool.Parse(value);
+                case "sbyte": case "SByte": case "System.SByte": return sbyte.Parse(value, CultureInfo.InvariantCulture);
+                case "byte": case "Byte": case "System.Byte": return byte.Parse(value, CultureInfo.InvariantCulture);
+                case "short": case "Int16": case "System.Int16": return short.Parse(value, CultureInfo.InvariantCulture);
+                case "ushort": case "UInt16": case "System.UInt16": return ushort.Parse(value, CultureInfo.InvariantCulture);
+                case "int": case "Int32": case "System.Int32": return int.Parse(value, CultureInfo.InvariantCulture);
+                case "uint": case "UInt32": case "System.UInt32": return uint.Parse(value, CultureInfo.InvariantCulture);
+                case "long": case "Int64": case "System.Int64": return long.Parse(value, CultureInfo.InvariantCulture);
+                case "ulong": case "UInt64": case "System.UInt64": return ulong.Parse(value, CultureInfo.InvariantCulture);
+                case "float": case "Single": case "System.Single": return float.Parse(value, CultureInfo.InvariantCulture);
+                case "double": case "Double": case "System.Double": return double.Parse(value, CultureInfo.InvariantCulture);
+                case "decimal": case "Decimal": case "System.Decimal": return decimal.Parse(value, CultureInfo.InvariantCulture);
+                case "char": case "Char": case "System.Char": return char.Parse(value);
+                case "string": case "String": case "System.String": return value;
+                case "byte[]": case "Byte[]": case "System.Byte[]": return GetHexBytes(value);
                 default: throw new InvalidCastException();
             }
         }
@@ -52,8 +52,11 @@ namespace Honoo.Configuration
                 case double _:
                 case decimal _:
                 case char _:
-                case string _:
                     content.SetAttributeValue("value", value.ToString());
+                    break;
+
+                case string val:
+                    content.SetAttributeValue("value", val);
                     break;
 
                 case byte[] val:
@@ -62,7 +65,7 @@ namespace Honoo.Configuration
 
                 default: throw new NotSupportedException();
             }
-            content.SetAttributeValue("type", value.GetType().FullName);
+            content.SetAttributeValue("type", value.GetType().Name);
         }
 
         private static byte[] GetHexBytes(string hex)

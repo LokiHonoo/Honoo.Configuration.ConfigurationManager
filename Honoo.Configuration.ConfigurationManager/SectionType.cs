@@ -5,13 +5,13 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器的类型。
     /// </summary>
-    public enum ConfigSectionType
+    public enum SectionType
     {
         /// <summary>
-        /// Honoo.Configuration.CustumSectionHandler 类型。
+        /// Honoo.Configuration.TextSectionHandler 类型。
         /// </summary>
-        [Description("Honoo.Configuration.CustumSectionHandler")]
-        CustumSection = 0,
+        [Description("Honoo.Configuration.ConfigurationSectionHandler")]
+        TextSection = 0,
 
         /// <summary>
         /// System.Configuration.DictionarySectionHandler 类型。

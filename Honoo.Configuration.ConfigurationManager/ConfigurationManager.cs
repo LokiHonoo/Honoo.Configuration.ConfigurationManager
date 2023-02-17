@@ -11,6 +11,8 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConfigurationManager : IDisposable
     {
+        #region Properties
+
         private readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
         private AppSettings _appSettings;
         private ConfigSections _configSections;
@@ -25,7 +27,7 @@ namespace Honoo.Configuration
         {
             get
             {
-                if (_appSettings is null)
+                if (_appSettings == null)
                 {
                     _appSettings = new AppSettings(_root);
                 }
@@ -40,7 +42,7 @@ namespace Honoo.Configuration
         {
             get
             {
-                if (_configSections is null)
+                if (_configSections == null)
                 {
                     _configSections = new ConfigSections(_root);
                 }
@@ -55,13 +57,29 @@ namespace Honoo.Configuration
         {
             get
             {
-                if (_connectionStrings is null)
+                if (_connectionStrings == null)
                 {
                     _connectionStrings = new ConnectionStrings(_root);
                 }
                 return _connectionStrings;
             }
         }
+
+        #endregion Properties
+
+        #region Event
+
+        /// <summary>
+        /// 在内容改变时执行。
+        /// </summary>
+        public event OnChangedEventHandler OnChanged;
+
+        /// <summary>
+        /// 在 ConfigurationManager 实例正在释放时执行。
+        /// </summary>
+        public event OnDisposingEventHandler OnDisposing;
+
+        #endregion Event
 
         #region Construction
 
@@ -71,6 +89,7 @@ namespace Honoo.Configuration
         public ConfigurationManager()
         {
             _root = new XElement("configuration");
+            _root.Changed += OnContentChanged;
         }
 
         /// <summary>
@@ -85,6 +104,7 @@ namespace Honoo.Configuration
                 throw new ArgumentException($"The invalid file path - {nameof(filePath)}.");
             }
             _root = XElement.Load(filePath);
+            _root.Changed += OnContentChanged;
         }
 
         /// <summary>
@@ -95,11 +115,12 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigurationManager(Stream stream, bool closeStream = true)
         {
-            if (stream is null)
+            if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
             _root = XElement.Load(stream);
+            _root.Changed += OnContentChanged;
             if (closeStream)
             {
                 stream.Close();
@@ -127,6 +148,7 @@ namespace Honoo.Configuration
         {
             if (!_disposed)
             {
+                OnDisposing?.Invoke(this);
                 if (disposing)
                 {
                     _root = null;
@@ -138,35 +160,15 @@ namespace Honoo.Configuration
         #endregion Construction
 
         /// <summary>
-        /// 确定指定的对象是否等于当前对象。
+        /// 返回配置文件的缩进 XML 文本。
         /// </summary>
-        /// <param name="obj">要与当前对象进行比较的对象。</param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            return obj is ConfigurationManager other && _root.Equals(other._root);
-        }
-
-        /// <summary>
-        /// 作为默认哈希函数。
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return _root.GetHashCode();
-        }
-
-        /// <summary>
-        /// 保存到指定的字符串。
-        /// </summary>
-        /// <param name="xmlString">指定保存的配置文件内容的字符串。</param>
-        public void Save(out string xmlString)
+        public string GetXmlString()
         {
             StringBuilder builder = new StringBuilder();
             using (XmlWriter writer = XmlWriter.Create(builder, _writerSettings))
             {
                 _root.Save(writer);
-                xmlString = builder.ToString();
+                return builder.ToString();
             }
         }
 
@@ -194,7 +196,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void Save(Stream stream)
         {
-            if (stream is null)
+            if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
@@ -211,6 +213,11 @@ namespace Honoo.Configuration
         public override string ToString()
         {
             return _root.ToString();
+        }
+
+        private void OnContentChanged(object sender, XObjectChangeEventArgs e)
+        {
+            OnChanged?.Invoke(this);
         }
     }
 }
