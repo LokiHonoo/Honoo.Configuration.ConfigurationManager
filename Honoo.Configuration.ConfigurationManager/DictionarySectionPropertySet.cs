@@ -64,7 +64,7 @@ namespace Honoo.Configuration
                         if (content.Name == "add")
                         {
                             string key = content.Attribute("key").Value;
-                            string value = content.Attribute("value").Value;
+                            object value = XValueHelper.GetDictionarySectionValue(content);
                             _properties.Add(key, value);
                             _contents.Add(key, content);
                             _comments.Add(key, comment);

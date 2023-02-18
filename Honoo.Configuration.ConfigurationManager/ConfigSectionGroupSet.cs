@@ -9,14 +9,14 @@ namespace Honoo.Configuration
     /// <summary>
     ///  配置组集合。
     /// </summary>
-    public sealed class SectionGroupSet : IEnumerable<KeyValuePair<string, SectionGroup>>, IEnumerable
+    public sealed class ConfigSectionGroupSet : IEnumerable<KeyValuePair<string, ConfigSectionGroup>>, IEnumerable
     {
         private readonly IDictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly IDictionary<string, XElement> _contents = new Dictionary<string, XElement>();
         private readonly XElement _contentSuperior;
         private readonly IDictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
-        private readonly IDictionary<string, SectionGroup> _groups = new Dictionary<string, SectionGroup>();
+        private readonly IDictionary<string, ConfigSectionGroup> _groups = new Dictionary<string, ConfigSectionGroup>();
 
         /// <summary>
         /// 获取配置组集合中包含的元素数。
@@ -31,7 +31,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置组集合。
         /// </summary>
-        public ICollection<SectionGroup> Values => _groups.Values;
+        public ICollection<ConfigSectionGroup> Values => _groups.Values;
 
         /// <summary>
         /// 获取具有指定名称的配置组的值。
@@ -39,11 +39,11 @@ namespace Honoo.Configuration
         /// <param name="name">配置组的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public SectionGroup this[string name] => _groups.TryGetValue(name, out SectionGroup group) ? group : null;
+        public ConfigSectionGroup this[string name] => _groups.TryGetValue(name, out ConfigSectionGroup group) ? group : null;
 
         #region Construction
 
-        internal SectionGroupSet(XElement declarationSuperior, XElement contentSuperior)
+        internal ConfigSectionGroupSet(XElement declarationSuperior, XElement contentSuperior)
         {
             _declarationSuperior = declarationSuperior;
             _contentSuperior = contentSuperior;
@@ -53,7 +53,7 @@ namespace Honoo.Configuration
                 {
                     string name = declaration.Attribute("name").Value;
                     XElement content = contentSuperior.Element(name);
-                    SectionGroup value = new SectionGroup(declaration, content);
+                    ConfigSectionGroup value = new ConfigSectionGroup(declaration, content);
                     _groups.Add(name, value);
                     _declarations.Add(name, declaration);
                     _contents.Add(name, content);
@@ -99,7 +99,7 @@ namespace Honoo.Configuration
         /// 支持在泛型集合上进行简单迭代。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, SectionGroup>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, ConfigSectionGroup>> GetEnumerator()
         {
             return _groups.GetEnumerator();
         }
@@ -114,13 +114,13 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="name">配置组的名称。</param>
         /// <exception cref="Exception"/>
-        public SectionGroup GetOrAdd(string name)
+        public ConfigSectionGroup GetOrAdd(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException($"The invalid name - {nameof(name)}.");
             }
-            if (_groups.TryGetValue(name, out SectionGroup group))
+            if (_groups.TryGetValue(name, out ConfigSectionGroup group))
             {
                 return group;
             }
@@ -129,7 +129,7 @@ namespace Honoo.Configuration
                 XElement declaration = new XElement("sectionGroup");
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
-                SectionGroup value = new SectionGroup(declaration, content);
+                ConfigSectionGroup value = new ConfigSectionGroup(declaration, content);
                 _groups.Add(name, value);
                 _declarations.Add(name, declaration);
                 _contents.Add(name, content);
@@ -194,7 +194,7 @@ namespace Honoo.Configuration
         /// <param name="value">配置组的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out SectionGroup value)
+        public bool TryGetValue(string name, out ConfigSectionGroup value)
         {
             return _groups.TryGetValue(name, out value);
         }

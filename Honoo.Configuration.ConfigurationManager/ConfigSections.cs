@@ -8,18 +8,18 @@ namespace Honoo.Configuration
     public sealed class ConfigSections
     {
         private readonly XElement _content;
-        private readonly SectionGroupSet _groups;
-        private readonly SectionSet _sections;
+        private readonly ConfigSectionGroupSet _groups;
+        private readonly ConfigSectionSet _sections;
 
         /// <summary>
         /// 包含的配置组集合。
         /// </summary>
-        public SectionGroupSet Groups => _groups;
+        public ConfigSectionGroupSet Groups => _groups;
 
         /// <summary>
         /// 包含的配置容器集合。
         /// </summary>
-        public SectionSet Sections => _sections;
+        public ConfigSectionSet Sections => _sections;
 
         #region Construction
 
@@ -31,8 +31,8 @@ namespace Honoo.Configuration
                 _content = new XElement("configSections");
                 root.AddFirst(_content);
             }
-            _groups = new SectionGroupSet(_content, root);
-            _sections = new SectionSet(_content, root);
+            _groups = new ConfigSectionGroupSet(_content, root);
+            _sections = new ConfigSectionSet(_content, root);
         }
 
         #endregion Construction

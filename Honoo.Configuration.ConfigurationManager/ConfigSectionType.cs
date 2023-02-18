@@ -5,7 +5,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器的类型。
     /// </summary>
-    public enum SectionType
+    public enum ConfigSectionType
     {
         /// <summary>
         /// Honoo.Configuration.TextSectionHandler 类型。
@@ -14,10 +14,10 @@ namespace Honoo.Configuration
         TextSection = 0,
 
         /// <summary>
-        /// System.Configuration.DictionarySectionHandler 类型。
+        /// System.Configuration.SingleTagSectionHandler 类型。
         /// </summary>
-        [Description("System.Configuration.DictionarySectionHandler")]
-        DictionarySection = 1,
+        [Description("System.Configuration.SingleTagSectionHandler")]
+        SingleTagSection = 1,
 
         /// <summary>
         /// System.Configuration.NameValueSectionHandler 类型。
@@ -26,9 +26,9 @@ namespace Honoo.Configuration
         NameValueSection = 2,
 
         /// <summary>
-        /// System.Configuration.SingleTagSectionHandler 类型。
+        /// System.Configuration.DictionarySectionHandler 类型。
         /// </summary>
-        [Description("System.Configuration.SingleTagSectionHandler")]
-        SingleTagSection = 3,
+        [Description("System.Configuration.DictionarySectionHandler")]
+        DictionarySection = 3,
     }
 }

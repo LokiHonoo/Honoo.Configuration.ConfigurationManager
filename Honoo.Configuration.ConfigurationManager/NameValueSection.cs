@@ -5,7 +5,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器。
     /// </summary>
-    public sealed class NameValueSection : ConfigurationSection
+    public sealed class NameValueSection : ConfigSection
     {
         private readonly NameValueSectionPropertySet _properties;
 

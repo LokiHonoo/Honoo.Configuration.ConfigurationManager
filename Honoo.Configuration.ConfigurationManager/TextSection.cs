@@ -6,7 +6,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器。
     /// </summary>
-    public sealed class TextSection : ConfigurationSection
+    public sealed class TextSection : ConfigSection
     {
         #region Construction
 

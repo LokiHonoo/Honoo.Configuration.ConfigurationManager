@@ -5,7 +5,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器。
     /// </summary>
-    public sealed class DictionarySection : ConfigurationSection
+    public sealed class DictionarySection : ConfigSection
     {
         private readonly DictionarySectionPropertySet _properties;
 

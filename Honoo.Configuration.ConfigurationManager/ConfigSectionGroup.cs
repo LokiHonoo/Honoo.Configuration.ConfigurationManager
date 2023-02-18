@@ -5,29 +5,29 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置组。
     /// </summary>
-    public sealed class SectionGroup
+    public sealed class ConfigSectionGroup
     {
         private readonly XElement _content;
-        private readonly SectionGroupSet _groups;
-        private readonly SectionSet _sections;
+        private readonly ConfigSectionGroupSet _groups;
+        private readonly ConfigSectionSet _sections;
 
         /// <summary>
         /// 获取配置组集合。
         /// </summary>
-        public SectionGroupSet Groups => _groups;
+        public ConfigSectionGroupSet Groups => _groups;
 
         /// <summary>
         /// 获取配置容器集合。
         /// </summary>
-        public SectionSet Sections => _sections;
+        public ConfigSectionSet Sections => _sections;
 
         #region Construction
 
-        internal SectionGroup(XElement declaration, XElement content)
+        internal ConfigSectionGroup(XElement declaration, XElement content)
         {
             _content = content;
-            _groups = new SectionGroupSet(declaration, content);
-            _sections = new SectionSet(declaration, content);
+            _groups = new ConfigSectionGroupSet(declaration, content);
+            _sections = new ConfigSectionSet(declaration, content);
         }
 
         #endregion Construction

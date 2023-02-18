@@ -5,7 +5,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器。
     /// </summary>
-    public sealed class SingleTagSection : ConfigurationSection
+    public sealed class SingleTagSection : ConfigSection
     {
         private readonly SingleTagSectionPropertySet _properties;
 
