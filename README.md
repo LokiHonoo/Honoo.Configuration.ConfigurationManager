@@ -7,6 +7,7 @@
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [简介](#简介)
   - [Changelog](#changelog)
+    - [1.2.1](#121)
     - [1.2.0](#120)
   - [使用说明](#使用说明)
     - [NuGet](#nuget)
