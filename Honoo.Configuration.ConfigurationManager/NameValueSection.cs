@@ -16,7 +16,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal NameValueSection(XElement content) : base(content)
+        internal NameValueSection(XElement content) : base(content, ConfigSectionType.NameValueSection)
         {
             _properties = new NameValueSectionPropertySet(content);
         }

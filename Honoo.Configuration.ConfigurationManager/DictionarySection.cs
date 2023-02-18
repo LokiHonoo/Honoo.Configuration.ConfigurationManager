@@ -16,7 +16,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal DictionarySection(XElement content) : base(content)
+        internal DictionarySection(XElement content) : base(content, ConfigSectionType.DictionarySection)
         {
             _properties = new DictionarySectionPropertySet(content);
         }

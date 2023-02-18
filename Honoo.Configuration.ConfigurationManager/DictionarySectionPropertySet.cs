@@ -58,21 +58,20 @@ namespace Honoo.Configuration
                     {
                         comment = (XComment)enumerator.Current;
                     }
-                    else if (enumerator.Current.NodeType == XmlNodeType.Element)
-                    {
-                        XElement content = ((XElement)enumerator.Current);
-                        if (content.Name == "add")
-                        {
-                            string key = content.Attribute("key").Value;
-                            object value = XValueHelper.GetDictionarySectionValue(content);
-                            _properties.Add(key, value);
-                            _contents.Add(key, content);
-                            _comments.Add(key, comment);
-                        }
-                        comment = null;
-                    }
                     else
                     {
+                        if (enumerator.Current.NodeType == XmlNodeType.Element)
+                        {
+                            XElement content = ((XElement)enumerator.Current);
+                            if (content.Name == "add")
+                            {
+                                string key = content.Attribute("key").Value;
+                                object value = XValueHelper.GetDictionarySectionValue(content);
+                                _properties.Add(key, value);
+                                _contents.Add(key, content);
+                                _comments.Add(key, comment);
+                            }
+                        }
                         comment = null;
                     }
                 }

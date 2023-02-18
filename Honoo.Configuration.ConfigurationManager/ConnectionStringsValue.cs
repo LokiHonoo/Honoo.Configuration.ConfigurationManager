@@ -63,11 +63,7 @@ namespace Honoo.Configuration
         /// <param name="providerName">数据库引擎的文本名称。</param>
         public ConnectionStringsValue(string connectionString, string providerName)
         {
-            if (connectionString == null)
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-            _connectionString = connectionString;
+            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             _providerName = providerName;
         }
 

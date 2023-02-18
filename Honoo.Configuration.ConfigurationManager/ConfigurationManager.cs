@@ -151,6 +151,9 @@ namespace Honoo.Configuration
                 OnDisposing?.Invoke(this);
                 if (disposing)
                 {
+                    _appSettings = null;
+                    _configSections = null;
+                    _connectionStrings = null;
                     _root = null;
                 }
                 _disposed = true;

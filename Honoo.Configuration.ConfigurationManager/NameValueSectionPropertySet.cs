@@ -58,31 +58,23 @@ namespace Honoo.Configuration
                     {
                         comment = (XComment)enumerator.Current;
                     }
-                    else if (enumerator.Current.NodeType == XmlNodeType.Element)
+                    else
                     {
-                        XElement content = ((XElement)enumerator.Current);
-                        if (content.Name == "add")
+                        if (enumerator.Current.NodeType == XmlNodeType.Element)
                         {
-                            string key = content.Attribute("key").Value;
-                            string value = content.Attribute("value").Value;
-                            _properties.Add(key, value);
-                            _contents.Add(key, content);
-                            _comments.Add(key, comment);
+                            XElement content = (XElement)enumerator.Current;
+                            if (content.Name == "add")
+                            {
+                                string key = content.Attribute("key").Value;
+                                string value = content.Attribute("value").Value;
+                                _properties.Add(key, value);
+                                _contents.Add(key, content);
+                                _comments.Add(key, comment);
+                            }
                         }
                         comment = null;
                     }
-                    else
-                    {
-                        comment = null;
-                    }
                 }
-                //foreach (XElement content in superior.Elements("add"))
-                //{
-                //    string key = content.Attribute("key").Value;
-                //    string value = content.Attribute("value").Value;
-                //    _properties.Add(key, value);
-                //    _contents.Add(key, content);
-                //}
             }
         }
 

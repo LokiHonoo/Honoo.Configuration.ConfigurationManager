@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Security.Cryptography;
+using System.Xml.Linq;
 
 namespace Honoo.Configuration
 {
@@ -24,6 +25,10 @@ namespace Honoo.Configuration
             {
                 _content = new XElement("connectionStrings");
                 root.Add(_content);
+            }
+            else if (_content.Attribute("configProtectionProvider") != null)
+            {
+                throw new CryptographicException("Encryped configuration sections are not supported.");
             }
             _properties = new ConnectionStringsPropertySet(_content);
         }
