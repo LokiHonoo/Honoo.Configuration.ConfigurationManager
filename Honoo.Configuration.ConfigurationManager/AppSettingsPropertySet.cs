@@ -9,7 +9,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性集合。
     /// </summary>
-    public sealed class AppSettingsPropertySet : IEnumerable<KeyValuePair<string, string>>, IEnumerable
+    public sealed class AppSettingsPropertySet : IEnumerable<KeyValuePair<string, string>>
     {
         private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
@@ -75,13 +75,6 @@ namespace Honoo.Configuration
                         comment = null;
                     }
                 }
-                //foreach (XElement content in superior.Elements("add"))
-                //{
-                //    string key = content.Attribute("key").Value;
-                //    string value = content.Attribute("value").Value;
-                //    _properties.Add(key, value);
-                //    _contents.Add(key, content);
-                //}
             }
         }
 

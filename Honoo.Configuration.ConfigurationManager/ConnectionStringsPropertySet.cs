@@ -10,7 +10,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 连接属性集合。
     /// </summary>
-    public sealed class ConnectionStringsPropertySet : IEnumerable<KeyValuePair<string, ConnectionStringsValue>>, IEnumerable
+    public sealed class ConnectionStringsPropertySet : IEnumerable<KeyValuePair<string, ConnectionStringsValue>>
     {
         private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();

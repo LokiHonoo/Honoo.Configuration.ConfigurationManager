@@ -9,7 +9,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性集合。
     /// </summary>
-    public sealed class DictionarySectionPropertySet : IEnumerable<KeyValuePair<string, object>>, IEnumerable
+    public sealed class DictionarySectionPropertySet : IEnumerable<KeyValuePair<string, object>>
     {
         private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();

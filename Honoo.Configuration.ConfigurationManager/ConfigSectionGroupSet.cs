@@ -9,7 +9,7 @@ namespace Honoo.Configuration
     /// <summary>
     ///  配置组集合。
     /// </summary>
-    public sealed class ConfigSectionGroupSet : IEnumerable<KeyValuePair<string, ConfigSectionGroup>>, IEnumerable
+    public sealed class ConfigSectionGroupSet : IEnumerable<KeyValuePair<string, ConfigSectionGroup>>
     {
         private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();

@@ -29,6 +29,8 @@ namespace Test
                 section1.Properties["prop2"] = Common.Random.NextDouble().ToString();
                 NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionType.NameValueSection);
                 section2.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
+
+                section2.Properties.AddOrUpdate (filePath, new string[3] );
                 section2.Properties["prop2"] = Common.Random.NextDouble().ToString();
                 section2.Properties.TrySetComment("prop1", "This is a name value section child");
                 section2.Properties.TrySetComment("prop2", "This is a name value section child");

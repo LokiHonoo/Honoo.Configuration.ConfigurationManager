@@ -8,7 +8,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性集合。
     /// </summary>
-    public sealed class SingleTagSectionPropertySet : IEnumerable<KeyValuePair<string, string>>, IEnumerable
+    public sealed class SingleTagSectionPropertySet : IEnumerable<KeyValuePair<string, string>>
     {
         private readonly XElement _content;
         private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();

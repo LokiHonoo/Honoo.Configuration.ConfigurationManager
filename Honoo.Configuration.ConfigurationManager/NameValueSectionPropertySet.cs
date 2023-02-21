@@ -9,7 +9,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性集合。
     /// </summary>
-    public sealed class NameValueSectionPropertySet : IEnumerable<KeyValuePair<string, string>>, IEnumerable
+    public sealed class NameValueSectionPropertySet : IEnumerable<KeyValuePair<string, string>>
     {
         private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
@@ -111,10 +111,10 @@ namespace Honoo.Configuration
                 }
                 else
                 {
+                    _properties.Add(key, value);
                     XElement content = new XElement("add");
                     content.SetAttributeValue("key", key);
                     content.SetAttributeValue("value", value);
-                    _properties.Add(key, value);
                     _contents.Add(key, content);
                     _comments.Add(key, null);
                     _superior.Add(content);
@@ -123,11 +123,12 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。配置属性的值以分隔符 "," 连接为一个字符串。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。以逗号 "," 连接为一个字符串。不推荐使用字符串数组类型。</param>
+        /// <param name="value">配置属性的值。以分隔符 "," 连接为一个字符串。</param>
         /// <exception cref="Exception"/>
+        [Obsolete(".NET 原设计支持数组值，分隔符 \",\" 可能和预期值冲突，因此不推荐这种方式。", false)]
         public void AddOrUpdate(string key, string[] value)
         {
             if (key == null)
