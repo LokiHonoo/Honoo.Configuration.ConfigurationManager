@@ -12,9 +12,9 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConnectionStringsPropertySet : IEnumerable<KeyValuePair<string, ConnectionStringsValue>>, IEnumerable
     {
-        private readonly IDictionary<string, XComment> _comments = new Dictionary<string, XComment>();
-        private readonly IDictionary<string, XElement> _contents = new Dictionary<string, XElement>();
-        private readonly IDictionary<string, ConnectionStringsValue> _properties = new Dictionary<string, ConnectionStringsValue>();
+        private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
+        private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
+        private readonly Dictionary<string, ConnectionStringsValue> _properties = new Dictionary<string, ConnectionStringsValue>();
         private readonly XElement _superior;
 
         /// <summary>

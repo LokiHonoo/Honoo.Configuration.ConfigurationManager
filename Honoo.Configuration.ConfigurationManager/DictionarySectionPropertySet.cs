@@ -11,9 +11,9 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class DictionarySectionPropertySet : IEnumerable<KeyValuePair<string, object>>, IEnumerable
     {
-        private readonly IDictionary<string, XComment> _comments = new Dictionary<string, XComment>();
-        private readonly IDictionary<string, XElement> _contents = new Dictionary<string, XElement>();
-        private readonly IDictionary<string, object> _properties = new Dictionary<string, object>();
+        private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
+        private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
+        private readonly Dictionary<string, object> _properties = new Dictionary<string, object>();
         private readonly XElement _superior;
 
         /// <summary>

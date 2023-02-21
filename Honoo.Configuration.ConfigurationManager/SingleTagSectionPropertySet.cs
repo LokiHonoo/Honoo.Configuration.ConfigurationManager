@@ -11,7 +11,7 @@ namespace Honoo.Configuration
     public sealed class SingleTagSectionPropertySet : IEnumerable<KeyValuePair<string, string>>, IEnumerable
     {
         private readonly XElement _content;
-        private readonly IDictionary<string, string> _properties = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
 
         /// <summary>
         /// 获取配置属性集合中包含的元素数。

@@ -11,12 +11,12 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConfigSectionSet : IEnumerable<KeyValuePair<string, ConfigSection>>, IEnumerable
     {
-        private readonly IDictionary<string, XComment> _comments = new Dictionary<string, XComment>();
-        private readonly IDictionary<string, XElement> _contents = new Dictionary<string, XElement>();
+        private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
+        private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
         private readonly XElement _contentSuperior;
-        private readonly IDictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
+        private readonly Dictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
-        private readonly IDictionary<string, ConfigSection> _sections = new Dictionary<string, ConfigSection>();
+        private readonly Dictionary<string, ConfigSection> _sections = new Dictionary<string, ConfigSection>();
 
         /// <summary>
         /// 获取配置容器集合中包含的元素数。

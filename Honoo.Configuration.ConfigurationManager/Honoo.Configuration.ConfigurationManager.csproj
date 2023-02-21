@@ -20,7 +20,7 @@ Limited read/write support for appSettings, connectionStrings, configSections no
     <PackageTags>Honoo Configuration ConfigurationManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-    <Version>1.2.1</Version>
+    <Version>1.2.2</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
