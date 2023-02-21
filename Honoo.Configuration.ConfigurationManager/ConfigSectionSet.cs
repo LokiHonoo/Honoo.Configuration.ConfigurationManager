@@ -139,9 +139,9 @@ namespace Honoo.Configuration
         /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个配置容器并返回值。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
-        /// <param name="type">配置容器的类型。</param>
+        /// <param name="kind">配置容器的类型。</param>
         /// <exception cref="Exception"/>
-        public ConfigSection GetOrAdd(string name, ConfigSectionType type)
+        public ConfigSection GetOrAdd(string name, ConfigSectionKind kind)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -157,29 +157,29 @@ namespace Honoo.Configuration
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
                 ConfigSection value;
-                switch (type)
+                switch (kind)
                 {
-                    case ConfigSectionType.TextSection:
+                    case ConfigSectionKind.TextSection:
                         declaration.SetAttributeValue("type", "Honoo.Configuration.TextSectionHandler");
                         value = new TextSection(content);
                         break;
 
-                    case ConfigSectionType.SingleTagSection:
+                    case ConfigSectionKind.SingleTagSection:
                         declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
                         value = new SingleTagSection(content);
                         break;
 
-                    case ConfigSectionType.NameValueSection:
+                    case ConfigSectionKind.NameValueSection:
                         declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
                         value = new NameValueSection(content);
                         break;
 
-                    case ConfigSectionType.DictionarySection:
+                    case ConfigSectionKind.DictionarySection:
                         declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
                         value = new DictionarySection(content);
                         break;
 
-                    default: throw new ArgumentException($"The invalid type - {nameof(type)}.");
+                    default: throw new ArgumentException($"The invalid type - {nameof(kind)}.");
                 }
                 _sections.Add(name, value);
                 _declarations.Add(name, declaration);

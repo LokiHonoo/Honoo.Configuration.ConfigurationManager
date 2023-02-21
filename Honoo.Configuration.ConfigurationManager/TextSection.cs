@@ -10,7 +10,7 @@ namespace Honoo.Configuration
     {
         #region Construction
 
-        internal TextSection(XElement content) : base(content, ConfigSectionType.TextSection)
+        internal TextSection(XElement content) : base(content, ConfigSectionKind.TextSection)
         {
         }
 

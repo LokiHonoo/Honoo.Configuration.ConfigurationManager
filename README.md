@@ -5,23 +5,24 @@
 <!-- code_chunk_output -->
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
-  - [简介](#简介)
-  - [Changelog](#changelog)
+  - [INTRODUCTION](#introduction)
+  - [CHANGELOG](#changelog)
+    - [1.2.2](#122)
     - [1.2.1](#121)
     - [1.2.0](#120)
-  - [使用说明](#使用说明)
+  - [USAGE](#usage)
     - [NuGet](#nuget)
-    - [引用命名空间](#引用命名空间)
+    - [Namespace](#namespace)
     - [appSettings](#appsettings)
     - [connectionStrings](#connectionstrings)
     - [sectionGroup/section](#sectiongroupsection)
-    - [自动保存](#自动保存)
-    - [在 UWP 项目中使用](#在-uwp-项目中使用)
-  - [版权](#版权)
+    - [Auto save](#auto-save)
+    - [UWP](#uwp)
+  - [LICENSE](#license)
 
 <!-- /code_chunk_output -->
 
-## 简介
+## INTRODUCTION
 
 此项目是 System.Configuration.ConfigurationManager 的简单替代。
 
@@ -29,7 +30,13 @@
 
 提供对 appSettings、connectionStrings、configSections 节点的有限读写支持。
 
-## Changelog
+## CHANGELOG
+
+### 1.2.2
+
+**Fix* 实例释放后仍可访问缓存后的节点的问题。
+
+**Feature* ConfigSectionType 更名 ConfigSectionKind。
 
 ### 1.2.1
 
@@ -43,13 +50,13 @@
 
 **Feature* 现在支持读写注释（comment）节点。
 
-## 使用说明
+## USAGE
 
 ### NuGet
 
 <https://www.nuget.org/packages/Honoo.Configuration.ConfigurationManager/>
 
-### 引用命名空间
+### Namespace
 
 ```c#
 
@@ -229,10 +236,10 @@ internal static void Create(string filePath)
         //
         // 直接赋值等同于 AddOrUpdate 方法。
         //
-        SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionType.SingleTagSection);
+        SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionKind.SingleTagSection);
         section1.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
         section1.Properties["prop2"] = Common.Random.NextDouble().ToString();
-        NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionType.NameValueSection);
+        NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
         section2.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
         section2.Properties["prop2"] = Common.Random.NextDouble().ToString();
         section2.Properties.TrySetComment("prop1", "This is a name value section child");
@@ -245,7 +252,7 @@ internal static void Create(string filePath)
         //
         // 配置容器和注释。
         //
-        DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionType.DictionarySection);
+        DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
         group.Sections.TrySetComment("section3", "This is a dictionary section");
         //
         section3.Properties.AddOrUpdate("prop1", true);
@@ -267,7 +274,7 @@ internal static void Create(string filePath)
         //
         // 以文本方式创建。
         //
-        TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionType.TextSection);
+        TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
         section4.SetAttribute("attr1", "属性值");
         section4.SetValue("<arbitrarily>任意内容</arbitrarily>");
         manager.ConfigSections.Sections.TrySetComment("section4", "This is a text section");
@@ -322,7 +329,7 @@ internal static void Load(string filePath)
 
 ```
 
-### 自动保存
+### Auto save
 
 在事件中实现自动保存。
 
@@ -349,7 +356,7 @@ private static void Manager_OnDisposing(ConfigurationManager manager)
 
 ```
 
-### 在 UWP 项目中使用
+### UWP
 
 必须使用流方式。
 
@@ -371,6 +378,6 @@ public static async void Test()
 
 ```
 
-## 版权
+## LICENSE
 
 MIT 协议。

@@ -5,7 +5,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器的类型。
     /// </summary>
-    public enum ConfigSectionType
+    public enum ConfigSectionKind
     {
         /// <summary>
         /// Honoo.Configuration.TextSectionHandler 类型。

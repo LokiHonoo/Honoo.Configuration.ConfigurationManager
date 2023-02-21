@@ -24,13 +24,11 @@ namespace Test
                 //
                 // 直接赋值等同于 AddOrUpdate 方法。
                 //
-                SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionType.SingleTagSection);
+                SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionKind.SingleTagSection);
                 section1.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
                 section1.Properties["prop2"] = Common.Random.NextDouble().ToString();
-                NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionType.NameValueSection);
+                NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
                 section2.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
-
-                section2.Properties.AddOrUpdate (filePath, new string[3] );
                 section2.Properties["prop2"] = Common.Random.NextDouble().ToString();
                 section2.Properties.TrySetComment("prop1", "This is a name value section child");
                 section2.Properties.TrySetComment("prop2", "This is a name value section child");
@@ -42,7 +40,7 @@ namespace Test
                 //
                 // 配置容器和注释。
                 //
-                DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionType.DictionarySection);
+                DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
                 group.Sections.TrySetComment("section3", "This is a dictionary section");
                 //
                 section3.Properties.AddOrUpdate("prop1", true);
@@ -64,7 +62,7 @@ namespace Test
                 //
                 // 以文本方式创建。
                 //
-                TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionType.TextSection);
+                TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
                 section4.SetAttribute("attr1", "属性值");
                 section4.SetValue("<arbitrarily>任意内容</arbitrarily>");
                 manager.ConfigSections.Sections.TrySetComment("section4", "This is a text section");

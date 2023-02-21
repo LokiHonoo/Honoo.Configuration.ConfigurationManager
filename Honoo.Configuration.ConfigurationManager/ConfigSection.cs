@@ -12,12 +12,12 @@ namespace Honoo.Configuration
         /// </summary>
         protected readonly XElement _content;
 
-        private readonly ConfigSectionType _configSectionType;
+        private readonly ConfigSectionKind _kind;
 
         /// <summary>
         /// 获取此配置容器的类型。
         /// </summary>
-        public ConfigSectionType ConfigSectionType => _configSectionType;
+        public ConfigSectionKind Kind => _kind;
 
         #region Construction
 
@@ -25,10 +25,11 @@ namespace Honoo.Configuration
         /// 创建 ConfigurationSection 的新实例。
         /// </summary>
         /// <param name="content"></param>
-        protected ConfigSection(XElement content, ConfigSectionType configSectionType)
+        /// <param name="kind"></param>
+        protected ConfigSection(XElement content, ConfigSectionKind kind)
         {
             _content = content;
-            _configSectionType = configSectionType;
+            _kind = kind;
         }
 
         #endregion Construction
