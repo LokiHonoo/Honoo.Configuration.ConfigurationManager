@@ -11,24 +11,6 @@ namespace Honoo.Configuration
     {
         private readonly string _connectionString;
         private readonly string _providerName;
-        private DbConnection _connection;
-        private bool _generated;
-
-        /// <summary>
-        /// 获取连接实例。如果连接属性中没有数据库引擎参数，或者工程没有引用相关类库，将引发异常。
-        /// </summary>
-        public DbConnection Connection
-        {
-            get
-            {
-                if (!_generated)
-                {
-                    _connection = CreateInstance(_providerName, _connectionString);
-                    _generated = true;
-                }
-                return _connection;
-            }
-        }
 
         /// <summary>
         /// 获取连接字符串。
@@ -75,10 +57,14 @@ namespace Honoo.Configuration
 
         #endregion Construction
 
-        private static DbConnection CreateInstance(string providerName, string connectionString)
+        /// <summary>
+        /// 创建连接实例。如果连接属性中没有数据库引擎参数，或者工程没有引用相关类库，将引发异常。
+        /// </summary>
+        /// <returns></returns>
+        public DbConnection CreateInstance()
         {
             Type type;
-            switch (providerName)
+            switch (_providerName)
             {
                 case "System.Data.Odbc":
                 case "System.Data.Odbc.OdbcConnection":
@@ -170,9 +156,9 @@ namespace Honoo.Configuration
                     type = Type.GetType("MySqlConnector.MySqlConnection, MySqlConnector");
                     break;
 
-                default: type = Type.GetType(providerName); break;
+                default: type = Type.GetType(_providerName); break;
             }
-            return (DbConnection)Activator.CreateInstance(type, connectionString);
+            return (DbConnection)Activator.CreateInstance(type, _connectionString);
         }
     }
 }

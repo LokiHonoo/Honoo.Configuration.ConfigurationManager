@@ -77,19 +77,16 @@ namespace Test
                 {
                     Console.WriteLine(value.ConnectionString);
                 }
+                string connectionString = manager.ConnectionStrings.Properties["prop3"].ConnectionString;
+                Console.WriteLine(connectionString);
                 //
                 // 访问实例。
                 //
-                DbConnection connection = manager.ConnectionStrings.Properties["prop3"].Connection;
+                DbConnection connection = manager.ConnectionStrings.Properties["prop4"].CreateInstance();
                 Console.WriteLine(connection.ConnectionString);
 
-                MySqlConnection mysql = (MySqlConnection)manager.ConnectionStrings.Properties["prop4"].Connection;
+                MySqlConnection mysql = (MySqlConnection)manager.ConnectionStrings.Properties["prop5"].CreateInstance();
                 Console.WriteLine(mysql.ConnectionString);
-                //
-                // 不访问 Connection，属性内部没有实例化 Connection。项目没有引用相关数据库引擎时使用。
-                //
-                string connectionString = manager.ConnectionStrings.Properties["prop5"].ConnectionString;
-                Console.WriteLine(connectionString);
             }
         }
     }

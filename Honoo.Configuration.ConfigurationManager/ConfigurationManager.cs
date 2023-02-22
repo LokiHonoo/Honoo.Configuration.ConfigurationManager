@@ -113,7 +113,7 @@ namespace Honoo.Configuration
         /// <param name="stream">指定配置文件的流。</param>
         /// <param name="closeStream">读取完成后关闭流。</param>
         /// <exception cref="Exception"/>
-        public ConfigurationManager(Stream stream, bool closeStream = true)
+        public ConfigurationManager(Stream stream, bool closeStream = false)
         {
             if (stream == null)
             {

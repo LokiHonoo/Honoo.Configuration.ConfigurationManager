@@ -32,6 +32,10 @@
 
 ## CHANGELOG
 
+### 1.2.3
+
+**Feature* 移除了访问 ConnectionStrings 直接创建和访问实例的代码。提供 CreateInstance() 方法由用户主动调用。
+
 ### 1.2.2
 
 **Fix* 实例释放后仍可访问缓存后的节点的问题。
@@ -199,19 +203,16 @@ internal static void Load(string filePath)
         {
             Console.WriteLine(value.ConnectionString);
         }
+        string connectionString = manager.ConnectionStrings.Properties["prop3"].ConnectionString;
+        Console.WriteLine(connectionString);
         //
         // 访问实例。
         //
-        DbConnection connection = manager.ConnectionStrings.Properties["prop3"].Connection;
+        DbConnection connection = manager.ConnectionStrings.Properties["prop4"].CreateInstance();
         Console.WriteLine(connection.ConnectionString);
 
-        MySqlConnection mysql = (MySqlConnection)manager.ConnectionStrings.Properties["prop4"].Connection;
+        MySqlConnection mysql = (MySqlConnection)manager.ConnectionStrings.Properties["prop5"].CreateInstance();
         Console.WriteLine(mysql.ConnectionString);
-        //
-        // 不访问 Connection，属性内部没有实例化 Connection。项目没有引用相关数据库引擎时使用。
-        //
-        string connectionString = manager.ConnectionStrings.Properties["prop5"].ConnectionString;
-        Console.WriteLine(connectionString);
     }
 }
 

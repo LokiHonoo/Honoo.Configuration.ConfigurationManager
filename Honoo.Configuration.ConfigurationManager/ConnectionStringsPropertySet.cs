@@ -284,27 +284,6 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定名称关联的连接属性的值。如果连接属性中没有数据库引擎参数，将引发异常。
-        /// </summary>
-        /// <param name="name">连接属性的名称。</param>
-        /// <param name="connection">连接属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out DbConnection connection)
-        {
-            if (_properties.TryGetValue(name, out ConnectionStringsValue value))
-            {
-                connection = value.Connection;
-                return true;
-            }
-            else
-            {
-                connection = null;
-                return false;
-            }
-        }
-
-        /// <summary>
         /// 获取与指定名称关联的连接属性的值。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
