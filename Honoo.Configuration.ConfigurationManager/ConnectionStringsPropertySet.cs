@@ -25,12 +25,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取连接属性集合的名称的集合。
         /// </summary>
-        public ICollection<string> Names => _properties.Keys;
+        public Dictionary<string, ConnectionStringsValue>.KeyCollection Names => _properties.Keys;
 
         /// <summary>
         /// 获取连接属性集合的值的集合。
         /// </summary>
-        public ICollection<ConnectionStringsValue> Values => _properties.Values;
+        public Dictionary<string, ConnectionStringsValue>.ValueCollection Values => _properties.Values;
 
         /// <summary>
         /// 获取或设置具有指定名称的连接属性的值。直接赋值等同于 AddOrUpdate 方法。

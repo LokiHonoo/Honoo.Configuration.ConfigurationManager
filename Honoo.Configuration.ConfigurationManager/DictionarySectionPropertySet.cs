@@ -24,12 +24,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置属性集合的键的集合。
         /// </summary>
-        public ICollection<string> Keys => _properties.Keys;
+        public Dictionary<string, object>.KeyCollection Keys => _properties.Keys;
 
         /// <summary>
         /// 获取配置属性集合的值的集合。
         /// </summary>
-        public ICollection<object> Values => _properties.Values;
+        public Dictionary<string, object>.ValueCollection Values => _properties.Values;
 
         /// <summary>
         /// 获取或设置具有指定键的配置属性的值。直接赋值等同于 AddOrUpdate 方法。

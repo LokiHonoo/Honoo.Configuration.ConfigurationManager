@@ -26,12 +26,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置组集合的名称的集合。
         /// </summary>
-        public ICollection<string> Names => _groups.Keys;
+        public Dictionary<string, ConfigSectionGroup>.KeyCollection Names => _groups.Keys;
 
         /// <summary>
         /// 获取配置组集合。
         /// </summary>
-        public ICollection<ConfigSectionGroup> Values => _groups.Values;
+        public Dictionary<string, ConfigSectionGroup>.ValueCollection Values => _groups.Values;
 
         /// <summary>
         /// 获取具有指定名称的配置组的值。
