@@ -7,6 +7,7 @@
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
   - [CHANGELOG](#changelog)
+    - [1.2.3](#123)
     - [1.2.2](#122)
     - [1.2.1](#121)
     - [1.2.0](#120)
@@ -34,7 +35,7 @@
 
 ### 1.2.3
 
-**Feature* 移除了访问 ConnectionStrings 直接创建和访问实例的代码。提供 CreateInstance() 方法由用户主动调用。
+**Feature* 移除了访问 ConnectionStrings 直接创建和访问实例的代码。提供 CreateInstance() 方法主动调用。
 
 ### 1.2.2
 
