@@ -12,10 +12,110 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConnectionStringsPropertySet : IEnumerable<KeyValuePair<string, ConnectionStringsValue>>
     {
+        #region Class
+
+        /// <summary>
+        /// 代表此连接属性集合的名称的集合。
+        /// </summary>
+        public sealed class NameCollection : IEnumerable<string>, IEnumerable
+        {
+            #region Properties
+
+            private readonly Dictionary<string, ConnectionStringsValue> _properties;
+
+            /// <summary>
+            /// 获取连接属性集合的名称的元素数。
+            /// </summary>
+            public int Count => _properties.Count;
+
+            #endregion Properties
+
+            internal NameCollection(Dictionary<string, ConnectionStringsValue> groups)
+            {
+                _properties = groups;
+            }
+
+            /// <summary>
+            /// 从指定数组索引开始将名称元素复制到到指定数组。
+            /// </summary>
+            /// <param name="array"></param>
+            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
+            public void CopyTo(string[] array, int arrayIndex)
+            {
+                _properties.Keys.CopyTo(array, arrayIndex);
+            }
+
+            /// <summary>
+            /// 支持在泛型集合上进行简单迭代。
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator<string> GetEnumerator()
+            {
+                return _properties.Keys.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _properties.Keys.GetEnumerator();
+            }
+        }
+
+        /// <summary>
+        /// 代表此连接属性集合的值的集合。
+        /// </summary>
+        public sealed class ValueCollection : IEnumerable<ConnectionStringsValue>, IEnumerable
+        {
+            #region Properties
+
+            private readonly Dictionary<string, ConnectionStringsValue> _properties;
+
+            /// <summary>
+            /// 获取连接属性集合的值的元素数。
+            /// </summary>
+            public int Count => _properties.Count;
+
+            #endregion Properties
+
+            internal ValueCollection(Dictionary<string, ConnectionStringsValue> groups)
+            {
+                _properties = groups;
+            }
+
+            /// <summary>
+            /// 从指定数组索引开始将值元素复制到到指定数组。
+            /// </summary>
+            /// <param name="array"></param>
+            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
+            public void CopyTo(ConnectionStringsValue[] array, int arrayIndex)
+            {
+                _properties.Values.CopyTo(array, arrayIndex);
+            }
+
+            /// <summary>
+            /// 支持在泛型集合上进行简单迭代。
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator<ConnectionStringsValue> GetEnumerator()
+            {
+                return _properties.Values.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _properties.Values.GetEnumerator();
+            }
+        }
+
+        #endregion Class
+
+        #region Properties
+
         private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
+        private readonly NameCollection _nameExhibits;
         private readonly Dictionary<string, ConnectionStringsValue> _properties = new Dictionary<string, ConnectionStringsValue>();
         private readonly XElement _superior;
+        private readonly ValueCollection _valueExhibits;
 
         /// <summary>
         /// 获取连接属性集合中包含的元素数。
@@ -25,12 +125,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取连接属性集合的名称的集合。
         /// </summary>
-        public Dictionary<string, ConnectionStringsValue>.KeyCollection Names => _properties.Keys;
+        public NameCollection Names => _nameExhibits;
 
         /// <summary>
         /// 获取连接属性集合的值的集合。
         /// </summary>
-        public Dictionary<string, ConnectionStringsValue>.ValueCollection Values => _properties.Values;
+        public ValueCollection Values => _valueExhibits;
 
         /// <summary>
         /// 获取或设置具有指定名称的连接属性的值。直接赋值等同于 AddOrUpdate 方法。
@@ -43,6 +143,8 @@ namespace Honoo.Configuration
             get => _properties.TryGetValue(name, out ConnectionStringsValue value) ? value : null;
             set { AddOrUpdate(name, value); }
         }
+
+        #endregion Properties
 
         #region Construction
 
@@ -76,14 +178,9 @@ namespace Honoo.Configuration
                         comment = null;
                     }
                 }
-                //foreach (XElement content in superior.Elements("add"))
-                //{
-                //    string name = content.Attribute("name").Value;
-                //    ConnectionStringsValue value = new ConnectionStringsValue(content);
-                //    _properties.Add(name, value);
-                //    _contents.Add(name, content);
-                //}
             }
+            _nameExhibits = new NameCollection(_properties);
+            _valueExhibits = new ValueCollection(_properties);
         }
 
         #endregion Construction

@@ -7,6 +7,7 @@
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
   - [CHANGELOG](#changelog)
+    - [1.2.4](#124)
     - [1.2.3](#123)
     - [1.2.2](#122)
     - [1.2.1](#121)
@@ -32,6 +33,10 @@
 提供对 appSettings、connectionStrings、configSections 节点的有限读写支持。
 
 ## CHANGELOG
+
+### 1.2.4
+
+**Feature* TextSection 以 xml 方式处理。现在 TextSection 支持解析 CDATA 区段。
 
 ### 1.2.3
 
@@ -277,9 +282,15 @@ internal static void Create(string filePath)
         // 以文本方式创建。
         //
         TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
-        section4.SetAttribute("attr1", "属性值");
-        section4.SetValue("<arbitrarily>任意内容</arbitrarily>");
+        section4.SetAttribute("attr1", "attr1value");
+        section4.SetValue("<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>");
         manager.ConfigSections.Sections.TrySetComment("section4", "This is a text section");
+
+        TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
+        section5.SetValue("<![CDATA[<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>]]>");
+
+        TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
+        section6.SetValue("<arbitrarily>ghi</arbitrarily>");
         //
         // 保存到指定的文件。
         //
@@ -325,6 +336,14 @@ internal static void Load(string filePath)
         if (manager.ConfigSections.Sections.TryGetValue("section4", out TextSection section4))
         {
             Console.WriteLine(section4.GetXmlString());
+        }
+        if (manager.ConfigSections.Sections.TryGetValue("section5", out TextSection section5))
+        {
+            Console.WriteLine(section5.GetXmlString());
+        }
+        if (manager.ConfigSections.Sections.TryGetValue("section6", out TextSection section6))
+        {
+            Console.WriteLine(section6.GetXmlString());
         }
     }
 }

@@ -63,9 +63,15 @@ namespace Test
                 // 以文本方式创建。
                 //
                 TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
-                section4.SetAttribute("attr1", "属性值");
-                section4.SetValue("<arbitrarily>任意内容</arbitrarily>");
+                section4.SetAttribute("attr1", "attr1value");
+                section4.SetValue("<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>");
                 manager.ConfigSections.Sections.TrySetComment("section4", "This is a text section");
+
+                TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
+                section5.SetValue("<![CDATA[<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>]]>");
+
+                TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
+                section6.SetValue("<arbitrarily>ghi</arbitrarily>");
                 //
                 // 保存到指定的文件。
                 //
@@ -111,6 +117,14 @@ namespace Test
                 if (manager.ConfigSections.Sections.TryGetValue("section4", out TextSection section4))
                 {
                     Console.WriteLine(section4.GetXmlString());
+                }
+                if (manager.ConfigSections.Sections.TryGetValue("section5", out TextSection section5))
+                {
+                    Console.WriteLine(section5.GetXmlString());
+                }
+                if (manager.ConfigSections.Sections.TryGetValue("section6", out TextSection section6))
+                {
+                    Console.WriteLine(section6.GetXmlString());
                 }
             }
         }

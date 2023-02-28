@@ -11,12 +11,112 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConfigSectionGroupSet : IEnumerable<KeyValuePair<string, ConfigSectionGroup>>
     {
+        #region Class
+
+        /// <summary>
+        /// 代表此配置组集合的名称的集合。
+        /// </summary>
+        public sealed class NameCollection : IEnumerable<string>, IEnumerable
+        {
+            #region Properties
+
+            private readonly Dictionary<string, ConfigSectionGroup> _groups;
+
+            /// <summary>
+            /// 获取配置组集合的名称的元素数。
+            /// </summary>
+            public int Count => _groups.Count;
+
+            #endregion Properties
+
+            internal NameCollection(Dictionary<string, ConfigSectionGroup> groups)
+            {
+                _groups = groups;
+            }
+
+            /// <summary>
+            /// 从指定数组索引开始将名称元素复制到到指定数组。
+            /// </summary>
+            /// <param name="array"></param>
+            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
+            public void CopyTo(string[] array, int arrayIndex)
+            {
+                _groups.Keys.CopyTo(array, arrayIndex);
+            }
+
+            /// <summary>
+            /// 支持在泛型集合上进行简单迭代。
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator<string> GetEnumerator()
+            {
+                return _groups.Keys.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _groups.Keys.GetEnumerator();
+            }
+        }
+
+        /// <summary>
+        /// 代表此配置组集合的值的集合。
+        /// </summary>
+        public sealed class ValueCollection : IEnumerable<ConfigSectionGroup>, IEnumerable
+        {
+            #region Properties
+
+            private readonly Dictionary<string, ConfigSectionGroup> _groups;
+
+            /// <summary>
+            /// 获取配置组集合的值的元素数。
+            /// </summary>
+            public int Count => _groups.Count;
+
+            #endregion Properties
+
+            internal ValueCollection(Dictionary<string, ConfigSectionGroup> groups)
+            {
+                _groups = groups;
+            }
+
+            /// <summary>
+            /// 从指定数组索引开始将值元素复制到到指定数组。
+            /// </summary>
+            /// <param name="array"></param>
+            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
+            public void CopyTo(ConfigSectionGroup[] array, int arrayIndex)
+            {
+                _groups.Values.CopyTo(array, arrayIndex);
+            }
+
+            /// <summary>
+            /// 支持在泛型集合上进行简单迭代。
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator<ConfigSectionGroup> GetEnumerator()
+            {
+                return _groups.Values.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _groups.Values.GetEnumerator();
+            }
+        }
+
+        #endregion Class
+
+        #region Properties
+
         private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
         private readonly XElement _contentSuperior;
         private readonly Dictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
         private readonly Dictionary<string, ConfigSectionGroup> _groups = new Dictionary<string, ConfigSectionGroup>();
+        private readonly NameCollection _nameExhibits;
+        private readonly ValueCollection _valueExhibits;
 
         /// <summary>
         /// 获取配置组集合中包含的元素数。
@@ -26,12 +126,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置组集合的名称的集合。
         /// </summary>
-        public Dictionary<string, ConfigSectionGroup>.KeyCollection Names => _groups.Keys;
+        public NameCollection Names => _nameExhibits;
 
         /// <summary>
-        /// 获取配置组集合。
+        /// 获取配置组集合的值的集合。
         /// </summary>
-        public Dictionary<string, ConfigSectionGroup>.ValueCollection Values => _groups.Values;
+        public ValueCollection Values => _valueExhibits;
 
         /// <summary>
         /// 获取具有指定名称的配置组的值。
@@ -40,6 +140,8 @@ namespace Honoo.Configuration
         /// <returns></returns>
         /// <exception cref="Exception"/>
         public ConfigSectionGroup this[string name] => _groups.TryGetValue(name, out ConfigSectionGroup group) ? group : null;
+
+        #endregion Properties
 
         #region Construction
 
@@ -68,6 +170,8 @@ namespace Honoo.Configuration
                     }
                 }
             }
+            _nameExhibits = new NameCollection(_groups);
+            _valueExhibits = new ValueCollection(_groups);
         }
 
         #endregion Construction

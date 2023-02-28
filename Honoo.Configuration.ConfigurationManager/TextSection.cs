@@ -40,7 +40,38 @@ namespace Honoo.Configuration
         ///
         public void SetValue(string value)
         {
-            _content.SetValue(value ?? string.Empty);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                _content.SetValue(string.Empty);
+            }
+            else
+            {
+                value = value.Trim(' ', '\r', '\n');
+                if (value.StartsWith("<![CDATA[", StringComparison.InvariantCultureIgnoreCase)
+                    && value.EndsWith("]]>", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    XCData cData = new XCData(value.Substring(9, value.Length - 9 - 3));
+                    _content.RemoveNodes();
+                    _content.Add(cData);
+                }
+                else
+                {
+                    string tmp = $"<encirclement>{value}</encirclement>";
+                    XElement element = XElement.Parse(tmp);
+                    if (element.HasElements)
+                    {
+                        _content.RemoveNodes();
+                        foreach (XElement sub in element.Elements())
+                        {
+                            _content.Add(sub);
+                        }
+                    }
+                    else
+                    {
+                        _content.SetValue(value);
+                    }
+                }
+            }
         }
     }
 }

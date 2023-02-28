@@ -11,10 +11,110 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class NameValueSectionPropertySet : IEnumerable<KeyValuePair<string, string>>
     {
+        #region Class
+
+        /// <summary>
+        /// 代表此配置属性集合的键的集合。
+        /// </summary>
+        public sealed class KeyCollection : IEnumerable<string>, IEnumerable
+        {
+            #region Properties
+
+            private readonly Dictionary<string, string> _properties;
+
+            /// <summary>
+            /// 获取配置属性集合的键的元素数。
+            /// </summary>
+            public int Count => _properties.Count;
+
+            #endregion Properties
+
+            internal KeyCollection(Dictionary<string, string> properties)
+            {
+                _properties = properties;
+            }
+
+            /// <summary>
+            /// 从指定数组索引开始将键元素复制到到指定数组。
+            /// </summary>
+            /// <param name="array"></param>
+            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
+            public void CopyTo(string[] array, int arrayIndex)
+            {
+                _properties.Keys.CopyTo(array, arrayIndex);
+            }
+
+            /// <summary>
+            /// 支持在泛型集合上进行简单迭代。
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator<string> GetEnumerator()
+            {
+                return _properties.Keys.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _properties.Keys.GetEnumerator();
+            }
+        }
+
+        /// <summary>
+        /// 代表此配置属性集合的值的集合。
+        /// </summary>
+        public sealed class ValueCollection : IEnumerable<string>, IEnumerable
+        {
+            #region Properties
+
+            private readonly Dictionary<string, string> _properties;
+
+            /// <summary>
+            /// 获取配置属性集合的值的元素数。
+            /// </summary>
+            public int Count => _properties.Count;
+
+            #endregion Properties
+
+            internal ValueCollection(Dictionary<string, string> properties)
+            {
+                _properties = properties;
+            }
+
+            /// <summary>
+            /// 从指定数组索引开始将值元素复制到到指定数组。
+            /// </summary>
+            /// <param name="array"></param>
+            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
+            public void CopyTo(string[] array, int arrayIndex)
+            {
+                _properties.Values.CopyTo(array, arrayIndex);
+            }
+
+            /// <summary>
+            /// 支持在泛型集合上进行简单迭代。
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator<string> GetEnumerator()
+            {
+                return _properties.Values.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _properties.Values.GetEnumerator();
+            }
+        }
+
+        #endregion Class
+
+        #region Properties
+
         private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
+        private readonly KeyCollection _keyExhibits;
         private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
         private readonly XElement _superior;
+        private readonly ValueCollection _valueExhibits;
 
         /// <summary>
         /// 获取配置属性集合中包含的元素数。
@@ -24,12 +124,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置属性集合的键的集合。
         /// </summary>
-        public Dictionary<string, string>.KeyCollection Keys => _properties.Keys;
+        public KeyCollection Keys => _keyExhibits;
 
         /// <summary>
         /// 获取配置属性集合的值的集合。
         /// </summary>
-        public Dictionary<string, string>.ValueCollection Values => _properties.Values;
+        public ValueCollection Values => _valueExhibits;
 
         /// <summary>
         /// 获取或设置具有指定键的配置属性的值。直接赋值等同于 AddOrUpdate 方法。
@@ -42,6 +142,8 @@ namespace Honoo.Configuration
             get => _properties.TryGetValue(key, out string value) ? value : null;
             set { AddOrUpdate(key, value); }
         }
+
+        #endregion Properties
 
         #region Construction
 
@@ -76,6 +178,8 @@ namespace Honoo.Configuration
                     }
                 }
             }
+            _keyExhibits = new KeyCollection(_properties);
+            _valueExhibits = new ValueCollection(_properties);
         }
 
         #endregion Construction
