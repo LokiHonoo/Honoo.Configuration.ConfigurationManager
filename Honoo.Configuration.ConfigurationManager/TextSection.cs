@@ -18,7 +18,22 @@ namespace Honoo.Configuration
         #endregion Construction
 
         /// <summary>
-        /// 获取配置容器的内联文本。
+        /// 获取与指定名称关联的配置容器的属性的值。
+        /// </summary>
+        /// <param name="name">配置容器的属性的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string GetAttribute(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"The invalid attribute name - {nameof(name)}.");
+            }
+            return _content.Attribute(name)?.Value;
+        }
+
+        /// <summary>
+        /// 获取配置容器的内联缩进 XML 文本。
         /// </summary>
         /// <returns></returns>
         public string GetValue()
@@ -72,32 +87,6 @@ namespace Honoo.Configuration
                 {
                     _content.Add(node);
                 }
-            }
-        }
-
-        /// <summary>
-        /// 获取与指定名称关联的配置容器的属性值。
-        /// </summary>
-        /// <param name="name">配置容器的属性的名称。</param>
-        /// <param name="value">配置容器的属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetAttribute(string name, out string value)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid attribute name - {nameof(name)}.");
-            }
-            XAttribute attribute = _content.Attribute(name);
-            if (attribute == null)
-            {
-                value = null;
-                return false;
-            }
-            else
-            {
-                value = attribute.Value;
-                return true;
             }
         }
     }

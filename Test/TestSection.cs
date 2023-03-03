@@ -123,7 +123,7 @@ namespace Test
                     Console.WriteLine(section5.GetValue());
                 }
                 if (manager.ConfigSections.Sections.TryGetValue("section6", out TextSection section6))
-                {
+                {                   
                     Console.WriteLine(section6.GetValue());
                 }
             }
