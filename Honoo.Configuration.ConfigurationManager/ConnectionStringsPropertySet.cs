@@ -17,7 +17,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 代表此连接属性集合的名称的集合。
         /// </summary>
-        public sealed class NameCollection : IEnumerable<string>, IEnumerable
+        public sealed class NameCollection : IEnumerable<string>
         {
             #region Properties
 
@@ -38,7 +38,7 @@ namespace Honoo.Configuration
             /// <summary>
             /// 从指定数组索引开始将名称元素复制到到指定数组。
             /// </summary>
-            /// <param name="array"></param>
+            /// <param name="array">要复制到的目标数组。</param>
             /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
             public void CopyTo(string[] array, int arrayIndex)
             {
@@ -63,7 +63,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 代表此连接属性集合的值的集合。
         /// </summary>
-        public sealed class ValueCollection : IEnumerable<ConnectionStringsValue>, IEnumerable
+        public sealed class ValueCollection : IEnumerable<ConnectionStringsValue>
         {
             #region Properties
 
@@ -84,7 +84,7 @@ namespace Honoo.Configuration
             /// <summary>
             /// 从指定数组索引开始将值元素复制到到指定数组。
             /// </summary>
-            /// <param name="array"></param>
+            /// <param name="array">要复制到的目标数组。</param>
             /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
             public void CopyTo(ConnectionStringsValue[] array, int arrayIndex)
             {
