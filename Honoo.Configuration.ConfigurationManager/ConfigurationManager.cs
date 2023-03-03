@@ -163,7 +163,7 @@ namespace Honoo.Configuration
         #endregion Construction
 
         /// <summary>
-        /// 返回配置文件的缩进 XML 文本。
+        /// 返回配置文件的缩进 XML 文档文本。
         /// </summary>
         public string GetXmlString()
         {

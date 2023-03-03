@@ -7,7 +7,7 @@
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
   - [CHANGELOG](#changelog)
-    - [1.2.4](#124)
+    - [1.2.5](#125)
     - [1.2.3](#123)
     - [1.2.2](#122)
     - [1.2.1](#121)
@@ -34,7 +34,7 @@
 
 ## CHANGELOG
 
-### 1.2.4
+### 1.2.5
 
 **Feature* TextSection 以 xml 方式处理。现在 TextSection 支持解析 CDATA 区段。
 
@@ -46,7 +46,7 @@
 
 **Fix* 实例释放后仍可访问缓存后的节点的问题。
 
-**Feature* ConfigSectionType 更名 ConfigSectionKind。
+**Feature* ConfigSectionType 更名为 ConfigSectionKind。
 
 ### 1.2.1
 
@@ -283,14 +283,14 @@ internal static void Create(string filePath)
         //
         TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
         section4.SetAttribute("attr1", "attr1value");
-        section4.SetValue("<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>");
+        section4.SetValue("<!-- Comment --><arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>");
         manager.ConfigSections.Sections.TrySetComment("section4", "This is a text section");
 
         TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
         section5.SetValue("<![CDATA[<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>]]>");
 
         TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
-        section6.SetValue("<arbitrarily>ghi</arbitrarily>");
+        section6.SetValue("abcdefg");
         //
         // 保存到指定的文件。
         //
@@ -335,15 +335,15 @@ internal static void Load(string filePath)
         }
         if (manager.ConfigSections.Sections.TryGetValue("section4", out TextSection section4))
         {
-            Console.WriteLine(section4.GetXmlString());
+            Console.WriteLine(section4.GetValue());
         }
         if (manager.ConfigSections.Sections.TryGetValue("section5", out TextSection section5))
         {
-            Console.WriteLine(section5.GetXmlString());
+            Console.WriteLine(section5.GetValue());
         }
         if (manager.ConfigSections.Sections.TryGetValue("section6", out TextSection section6))
         {
-            Console.WriteLine(section6.GetXmlString());
+            Console.WriteLine(section6.GetValue());
         }
     }
 }

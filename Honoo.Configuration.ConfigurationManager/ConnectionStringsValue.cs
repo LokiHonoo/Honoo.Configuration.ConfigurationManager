@@ -61,6 +61,7 @@ namespace Honoo.Configuration
         /// 创建连接实例。如果连接属性中没有数据库引擎参数，或者工程没有引用相关类库，将引发异常。
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="Exception"/>
         public DbConnection CreateInstance()
         {
             Type type;

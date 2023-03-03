@@ -35,15 +35,6 @@ namespace Honoo.Configuration
         #endregion Construction
 
         /// <summary>
-        /// 返回节点的缩进 XML 文本。
-        /// </summary>
-        /// <returns></returns>
-        public string GetXmlString()
-        {
-            return _content.ToString();
-        }
-
-        /// <summary>
         /// 方法已重写。返回节点的缩进 XML 文本。
         /// </summary>
         /// <returns></returns>
