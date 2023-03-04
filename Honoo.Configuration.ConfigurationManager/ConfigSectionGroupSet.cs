@@ -45,7 +45,7 @@ namespace Honoo.Configuration
             }
 
             /// <summary>
-            /// 支持在泛型集合上进行简单迭代。
+            /// 返回循环访问集合的枚举数。
             /// </summary>
             /// <returns></returns>
             public IEnumerator<string> GetEnumerator()
@@ -91,7 +91,7 @@ namespace Honoo.Configuration
             }
 
             /// <summary>
-            /// 支持在泛型集合上进行简单迭代。
+            /// 返回循环访问集合的枚举数。
             /// </summary>
             /// <returns></returns>
             public IEnumerator<ConfigSectionGroup> GetEnumerator()
@@ -200,7 +200,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 支持在泛型集合上进行简单迭代。
+        /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
         public IEnumerator<KeyValuePair<string, ConfigSectionGroup>> GetEnumerator()
