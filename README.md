@@ -36,29 +36,29 @@
 
 ### 1.2.5
 
-**Feature* TextSection 以 xml 方式处理。现在 TextSection 支持解析 CDATA 区段。
+**Features* TextSection 以 xml 方式处理。现在 TextSection 支持解析 CDATA 区段。
 
 ### 1.2.3
 
-**Feature* 移除了访问 ConnectionStrings 直接创建和访问实例的代码。提供 CreateInstance() 方法主动调用。
+**Changed* 移除了访问 ConnectionStrings 直接创建和访问实例的代码。提供 CreateInstance() 方法主动调用。
 
 ### 1.2.2
 
-**Fix* 实例释放后仍可访问缓存后的节点的问题。
+**Fixed* 实例释放后仍可访问缓存后的节点的问题。
 
-**Feature* ConfigSectionType 更名为 ConfigSectionKind。
+**Changed* ConfigSectionType 更名为 ConfigSectionKind。
 
 ### 1.2.1
 
-**Fix* 创建 TextSection 时遗漏了 type 属性。
+**Fixed* 创建 TextSection 时遗漏了 type 属性。
 
-**Fix* 读取 DictionarySection 时遗漏了 type 属性。
+**Fixed* 读取 DictionarySection 时遗漏了 type 属性。
 
 ### 1.2.0
 
-**Feature* 移除了原有的自动保存的代码，现在在事件中实现自动保存。
+**Changed* 移除了原有的自动保存的代码，现在在事件中实现自动保存。
 
-**Feature* 现在支持读写注释（comment）节点。
+**Features* 现在支持读写注释（comment）节点。
 
 ## USAGE
 
