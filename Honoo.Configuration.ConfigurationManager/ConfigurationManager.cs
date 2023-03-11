@@ -101,7 +101,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                throw new ArgumentException($"The invalid file path - {nameof(filePath)}.");
+                throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
             }
             _root = XElement.Load(filePath);
             _root.Changed += OnContentChanged;
@@ -184,7 +184,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                throw new ArgumentException($"The invalid file path - {nameof(filePath)}.");
+                throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
             }
             using (XmlWriter writer = XmlWriter.Create(filePath, _writerSettings))
             {

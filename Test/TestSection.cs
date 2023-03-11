@@ -112,6 +112,7 @@ namespace Test
                         {
                             Console.WriteLine($"{prop.Value.GetType().Name,-10}{prop.Value}");
                         }
+                        Console.WriteLine(section3.Properties.GetValue("prop99", 12345678L));
                     }
                 }
                 if (manager.ConfigSections.Sections.TryGetValue("section4", out TextSection section4))
@@ -123,7 +124,7 @@ namespace Test
                     Console.WriteLine(section5.GetValue());
                 }
                 if (manager.ConfigSections.Sections.TryGetValue("section6", out TextSection section6))
-                {                   
+                {
                     Console.WriteLine(section6.GetValue());
                 }
             }

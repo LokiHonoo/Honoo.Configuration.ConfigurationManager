@@ -193,10 +193,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string name, ConnectionStringsValue value)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
             if (value == null)
             {
                 AddOrUpdate(name, null, null);
@@ -215,10 +211,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string name, DbConnection connection)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
             if (connection == null)
             {
                 AddOrUpdate(name, null, null);
@@ -238,9 +230,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string name, string connectionString, string providerName)
         {
-            if (name == null)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
             }
             if (connectionString == null && providerName == null)
             {
@@ -323,8 +315,21 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
+        /// 获取与指定名称关联的连接属性的值。
+        ///  <br/>如果没有找到指定名称，返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="defaultValue">没有找到指定名称时的连接属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConnectionStringsValue GetValue(string name, ConnectionStringsValue defaultValue)
+        {
+            return _properties.TryGetValue(name, out ConnectionStringsValue value) ? value : defaultValue;
+        }
+
+        /// <summary>
         /// 从连接属性集合中移除带有指定名称的连接属性。和指定名称关联的连接属性的注释一并移除。
-        /// <para/>如果该元素成功移除，返回 true。如果没有找到指定名称，则仍返回 false。
+        /// <br/>如果该元素成功移除，返回 <paramref name="true"/>。如果没有找到指定名称，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
         /// <returns></returns>
@@ -347,7 +352,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的连接属性的注释。
-        /// <para/>如果没有找到指定名称，返回 false。如果找到了指定名称但没有注释节点，则仍返回 false。
+        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
         /// <param name="comment">连接属性的注释。</param>
@@ -412,10 +417,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TrySetComment(string name, string comment)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
             if (comment == null)
             {
                 if (_comments.TryGetValue(name, out XComment comment_))

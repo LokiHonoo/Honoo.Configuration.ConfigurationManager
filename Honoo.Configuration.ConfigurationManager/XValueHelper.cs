@@ -72,7 +72,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(hex))
             {
-                throw new ArgumentException($"The invalid hex string - {nameof(hex)}.");
+                throw new ArgumentException($"The invalid argument - {nameof(hex)}.");
             }
             byte[] result = new byte[hex.Length / 2];
             for (int i = 0; i < result.Length; i++)

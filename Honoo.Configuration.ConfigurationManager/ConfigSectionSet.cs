@@ -249,7 +249,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException($"The invalid name - {nameof(name)}.");
+                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
             }
             if (_sections.TryGetValue(name, out ConfigSection section))
             {
@@ -283,7 +283,7 @@ namespace Honoo.Configuration
                         value = new DictionarySection(content);
                         break;
 
-                    default: throw new ArgumentException($"The invalid type - {nameof(kind)}.");
+                    default: throw new ArgumentException($"The invalid argument - {nameof(kind)}.");
                 }
                 _sections.Add(name, value);
                 _declarations.Add(name, declaration);
@@ -321,7 +321,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的注释。
-        /// <para/>如果没有找到指定名称，返回 false。如果找到了指定名称但没有注释节点，则仍返回 false。
+        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="comment">配置容器的注释。</param>
@@ -344,6 +344,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。
+        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="value">配置容器的值。</param>
@@ -353,18 +354,19 @@ namespace Honoo.Configuration
         {
             if (_sections.TryGetValue(name, out ConfigSection val))
             {
-                value = (TextSection)val;
-                return true;
+                if (val is TextSection section)
+                {
+                    value = section;
+                    return true;
+                }
             }
-            else
-            {
-                value = null;
-                return false;
-            }
+            value = null;
+            return false;
         }
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。
+        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="value">配置容器的值。</param>
@@ -374,18 +376,19 @@ namespace Honoo.Configuration
         {
             if (_sections.TryGetValue(name, out ConfigSection val))
             {
-                value = (DictionarySection)val;
-                return true;
+                if (val is DictionarySection section)
+                {
+                    value = section;
+                    return true;
+                }
             }
-            else
-            {
-                value = null;
-                return false;
-            }
+            value = null;
+            return false;
         }
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。
+        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="value">配置容器的值。</param>
@@ -395,18 +398,19 @@ namespace Honoo.Configuration
         {
             if (_sections.TryGetValue(name, out ConfigSection val))
             {
-                value = (NameValueSection)val;
-                return true;
+                if (val is NameValueSection section)
+                {
+                    value = section;
+                    return true;
+                }
             }
-            else
-            {
-                value = null;
-                return false;
-            }
+            value = null;
+            return false;
         }
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。
+        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="value">配置容器的值。</param>
@@ -416,14 +420,14 @@ namespace Honoo.Configuration
         {
             if (_sections.TryGetValue(name, out ConfigSection val))
             {
-                value = (SingleTagSection)val;
-                return true;
+                if (val is SingleTagSection section)
+                {
+                    value = section;
+                    return true;
+                }
             }
-            else
-            {
-                value = null;
-                return false;
-            }
+            value = null;
+            return false;
         }
 
         /// <summary>
@@ -446,10 +450,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TrySetComment(string name, string comment)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
             if (comment == null)
             {
                 if (_comments.TryGetValue(name, out XComment comment_))

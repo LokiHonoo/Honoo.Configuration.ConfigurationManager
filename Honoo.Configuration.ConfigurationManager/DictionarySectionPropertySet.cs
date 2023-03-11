@@ -192,9 +192,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, object value)
         {
-            if (key == null)
+            if (string.IsNullOrWhiteSpace(key))
             {
-                throw new ArgumentNullException(nameof(key));
+                throw new ArgumentException($"The invalid argument - {nameof(key)}.");
             }
             if (value == null)
             {
@@ -263,7 +263,41 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        ///  <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public object GetValue(string key, object defaultValue)
+        {
+            return _properties.TryGetValue(key, out object value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        ///  <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但指定的类型不符，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public T GetValue<T>(string key, T defaultValue)
+        {
+            if (_properties.TryGetValue(key, out object value))
+            {
+                return value is T val ? val : defaultValue;
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+        /// <summary>
         /// 从配置属性集合中移除带有指定键的配置属性。和指定键关联的配置属性的注释一并移除。
+        /// <br/>如果该元素成功移除，返回 <paramref name="true"/>。如果没有找到指定键，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
@@ -286,7 +320,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定键关联的配置属性的注释。
-        /// <para/>如果没有找到指定键，返回 false。如果找到了指定键但没有注释节点，则仍返回 false。
+        /// <br/>如果没有找到指定键，返回 <paramref name="false"/>。如果找到了指定键但没有注释节点，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="comment">配置属性的注释。</param>
@@ -327,10 +361,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TrySetComment(string key, string comment)
         {
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
             if (comment == null)
             {
                 if (_comments.TryGetValue(key, out XComment comment_))

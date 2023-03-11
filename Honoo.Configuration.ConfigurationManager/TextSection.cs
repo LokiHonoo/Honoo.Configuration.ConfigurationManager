@@ -27,7 +27,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException($"The invalid attribute name - {nameof(name)}.");
+                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
             }
             return _content.Attribute(name)?.Value;
         }
@@ -61,7 +61,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException($"The invalid attribute name - {nameof(name)}.");
+                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
             }
             _content.SetAttributeValue(name, value);
         }

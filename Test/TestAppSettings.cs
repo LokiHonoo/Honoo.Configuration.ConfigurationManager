@@ -58,6 +58,8 @@ namespace Test
                 }
                 value = manager.AppSettings.Properties["prop3"];
                 Console.WriteLine(value);
+                value = manager.AppSettings.Properties.GetValue("prop1", "prop1 not fount default value.");
+                Console.WriteLine(value);
                 //
                 // 取出注释。
                 //

@@ -127,6 +127,8 @@ internal static void Load(string filePath)
         }
         value = manager.AppSettings.Properties["prop3"];
         Console.WriteLine(value);
+        value = manager.AppSettings.Properties.GetValue("prop1", "prop1 not fount default value.");
+        Console.WriteLine(value);
         //
         // 取出注释。
         //
@@ -331,6 +333,7 @@ internal static void Load(string filePath)
                 {
                     Console.WriteLine($"{prop.Value.GetType().Name,-10}{prop.Value}");
                 }
+                Console.WriteLine(section3.Properties.GetValue("prop99", 12345678L));
             }
         }
         if (manager.ConfigSections.Sections.TryGetValue("section4", out TextSection section4))

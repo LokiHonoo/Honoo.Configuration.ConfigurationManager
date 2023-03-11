@@ -5,7 +5,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 表示任何配置容器从中继承的基本类型。
     /// </summary>
-    public abstract class ConfigSection
+    public abstract class ConfigSection : IConfigSection
     {
         /// <summary>
         ///
@@ -22,7 +22,7 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 创建 ConfigurationSection 的新实例。
+        /// 创建 ConfigSection 的新实例。
         /// </summary>
         /// <param name="content"></param>
         /// <param name="kind"></param>

@@ -222,7 +222,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException($"The invalid name - {nameof(name)}.");
+                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
             }
             if (_groups.TryGetValue(name, out ConfigSectionGroup group))
             {
@@ -270,7 +270,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置组的注释。
-        /// <para/>如果没有找到指定名称，返回 false。如果找到了指定名称但没有注释节点，则仍返回 false。
+        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="name">配置组的名称。</param>
         /// <param name="comment">配置组的注释。</param>
@@ -311,10 +311,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TrySetComment(string name, string comment)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
             if (comment == null)
             {
                 if (_comments.TryGetValue(name, out XComment comment_))

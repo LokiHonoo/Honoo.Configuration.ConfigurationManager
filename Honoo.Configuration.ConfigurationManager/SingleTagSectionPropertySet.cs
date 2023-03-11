@@ -170,7 +170,7 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new ArgumentException($"The invalid key - {nameof(key)}.");
+                throw new ArgumentException($"The invalid argument - {nameof(key)}.");
             }
             if (value == null)
             {
@@ -229,7 +229,21 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        ///  <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string GetValue(string key, string defaultValue)
+        {
+            return _properties.TryGetValue(key, out string value) ? value : defaultValue;
+        }
+
+        /// <summary>
         /// 从配置属性集合中移除带有指定键的配置属性。
+        /// <br/>如果该元素成功移除，返回 <paramref name="true"/>。如果没有找到指定键，则仍返回 <paramref name="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
