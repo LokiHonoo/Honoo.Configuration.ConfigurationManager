@@ -35,27 +35,26 @@ namespace Test
                 };
                 MySqlConnection conn2 = new MySqlConnection(builder2.ConnectionString);
                 //
-                // 直接赋值等同于 AddOrUpdate 方法。不设置引擎参数，读取时不能访问连接实例。
+                // 如果不设置引擎参数，读取时不能访问连接实例。
                 //
-                manager.ConnectionStrings.Properties["prop1"] = new ConnectionStringsValue(conn1.ConnectionString, null);
-                manager.ConnectionStrings.Properties["prop2"] = new ConnectionStringsValue(conn1);
+                manager.ConnectionStrings.Properties["prop1"] = new ConnectionStringsValue(conn1);
+                manager.ConnectionStrings.Properties["prop2"] = new ConnectionStringsValue(conn1.ConnectionString, null);
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop3", conn1);
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop4", conn2.ConnectionString, conn2.GetType().Namespace);
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop5", conn2.ConnectionString, typeof(MySqlConnection).AssemblyQualifiedName);
                 //
                 // 设置注释。
                 //
-                manager.ConnectionStrings.Properties.TrySetComment("prop1", string.Empty);
-                manager.ConnectionStrings.Properties.TrySetComment("prop2", "This is \"sql server connection\" comment");
-                manager.ConnectionStrings.Properties.TrySetComment("prop3", null);
-                manager.ConnectionStrings.Properties.TrySetComment("prop4", "This is \"mysql connection\" comment ");
-                manager.ConnectionStrings.Properties.TrySetComment("prop5", "This is \"mysql connection\" comment used assembly qualified name");
+                manager.ConnectionStrings.Properties.TrySetComment("prop1", "It's will remove this.");
+                manager.ConnectionStrings.Properties.TrySetComment("prop2", "This is \"sql server connection\" comment without provider name.");
+                manager.ConnectionStrings.Properties.TrySetComment("prop3", "This is \"sql server connection\" comment.");
+                manager.ConnectionStrings.Properties.TrySetComment("prop4", "This is \"mysql connection\" comment with assembly namespace.");
+                manager.ConnectionStrings.Properties.TrySetComment("prop5", "This is \"mysql connection\" comment with assembly qualified name.");
                 //
                 // 移除属性的方法。选择其一。移除属性时相关注释一并移除。
                 //
                 manager.ConnectionStrings.Properties.Remove("prop1");
                 manager.ConnectionStrings.Properties["prop1"] = null;
-                manager.ConnectionStrings.Properties.AddOrUpdate("prop1", (DbConnection)null);
                 //
                 // 保存到指定的文件。
                 //
@@ -84,9 +83,20 @@ namespace Test
                 //
                 DbConnection connection = manager.ConnectionStrings.Properties["prop4"].CreateInstance();
                 Console.WriteLine(connection.ConnectionString);
-
+                //
                 MySqlConnection mysql = (MySqlConnection)manager.ConnectionStrings.Properties["prop5"].CreateInstance();
                 Console.WriteLine(mysql.ConnectionString);
+                //
+                // 取出注释。
+                //
+                if (manager.AppSettings.Properties.TryGetComment("prop1", out string comment))
+                {
+                    Console.WriteLine(comment);
+                }
+                if (manager.AppSettings.Properties.TryGetComment("prop2", out comment))
+                {
+                    Console.WriteLine(comment);
+                }
             }
         }
     }

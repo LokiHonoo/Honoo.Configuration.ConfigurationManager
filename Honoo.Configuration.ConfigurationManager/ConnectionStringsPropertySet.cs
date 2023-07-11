@@ -186,6 +186,8 @@ namespace Honoo.Configuration
 
         #endregion Construction
 
+        #region AddOrUpdate
+
         /// <summary>
         /// 添加或更新一个连接属性。
         /// </summary>
@@ -237,13 +239,7 @@ namespace Honoo.Configuration
             }
             if (connectionString == null && providerName == null)
             {
-                if (_properties.Remove(name))
-                {
-                    _contents[name].Remove();
-                    _contents.Remove(name);
-                    _comments[name]?.Remove();
-                    _comments.Remove(name);
-                }
+                Remove(name);
             }
             else if (connectionString == null)
             {
@@ -279,100 +275,9 @@ namespace Honoo.Configuration
             }
         }
 
-        /// <summary>
-        /// 从连接属性集合中移除所有连接属性。
-        /// </summary>
-        public void Clear()
-        {
-            _properties.Clear();
-            _contents.Clear();
-            _comments.Clear();
-            _superior.RemoveNodes();
-        }
+        #endregion AddOrUpdate
 
-        /// <summary>
-        /// 确定连接属性集合是否包含带有指定名称的连接属性。
-        /// </summary>
-        /// <param name="name">连接属性的名称。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool ContainsName(string name)
-        {
-            return _properties.ContainsKey(name);
-        }
-
-        /// <summary>
-        /// 返回循环访问集合的枚举数。
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, ConnectionStringsValue>> GetEnumerator()
-        {
-            return _properties.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _properties.GetEnumerator();
-        }
-
-        /// <summary>
-        /// 获取与指定名称关联的连接属性的值。
-        ///  <br/>如果没有找到指定名称，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="name">连接属性的名称。</param>
-        /// <param name="defaultValue">没有找到指定名称时的连接属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public ConnectionStringsValue GetValue(string name, ConnectionStringsValue defaultValue)
-        {
-            return _properties.TryGetValue(name, out ConnectionStringsValue value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 从连接属性集合中移除带有指定名称的连接属性。和指定名称关联的连接属性的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定名称，则返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="name">连接属性的名称。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool Remove(string name)
-        {
-            if (_properties.Remove(name))
-            {
-                _contents[name].Remove();
-                _contents.Remove(name);
-                _comments[name]?.Remove();
-                _comments.Remove(name);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 获取与指定名称关联的连接属性的注释。
-        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="name">连接属性的名称。</param>
-        /// <param name="comment">连接属性的注释。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetComment(string name, out string comment)
-        {
-            _comments.TryGetValue(name, out XComment comment_);
-            if (comment_ == null)
-            {
-                comment = null;
-                return false;
-            }
-            else
-            {
-                comment = comment_.Value;
-                return true;
-            }
-        }
+        #region TryGetValue
 
         /// <summary>
         /// 获取与指定名称关联的连接属性的值。
@@ -410,6 +315,52 @@ namespace Honoo.Configuration
             }
         }
 
+        #endregion TryGetValue
+
+        #region Comment
+
+        /// <summary>
+        /// 删除一个与指定名称关联的连接属性的注释。
+        /// </summary>
+        /// <param name="name">配置属性的键。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool RemoveComment(string name)
+        {
+            if (_comments.TryGetValue(name, out XComment comment_))
+            {
+                if (comment_ != null)
+                {
+                    comment_.Remove();
+                    _comments[name] = null;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定名称关联的连接属性的注释。
+        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="comment">连接属性的注释。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetComment(string name, out string comment)
+        {
+            if (_comments.TryGetValue(name, out XComment comment_))
+            {
+                if (comment_ != null)
+                {
+                    comment = comment_.Value;
+                    return true;
+                }
+            }
+            comment = null;
+            return false;
+        }
+
         /// <summary>
         /// 添加或更新或删除一个与指定名称关联的连接属性的注释。
         /// </summary>
@@ -420,15 +371,8 @@ namespace Honoo.Configuration
         {
             if (comment == null)
             {
-                if (_comments.TryGetValue(name, out XComment comment_))
-                {
-                    if (comment_ != null)
-                    {
-                        comment_.Remove();
-                        _comments[name] = null;
-                    }
-                    return true;
-                }
+                RemoveComment(name);
+                return true;
             }
             else
             {
@@ -448,6 +392,84 @@ namespace Honoo.Configuration
                 }
             }
             return false;
+        }
+
+        #endregion Comment
+
+        /// <summary>
+        /// 从连接属性集合中移除所有连接属性。
+        /// </summary>
+        public void Clear()
+        {
+            _properties.Clear();
+            _contents.Clear();
+            _comments.Clear();
+            _superior.RemoveNodes();
+        }
+
+        /// <summary>
+        /// 确定连接属性集合是否包含带有指定名称的连接属性。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool ContainsName(string name)
+        {
+            return _properties.ContainsKey(name);
+        }
+
+        /// <summary>
+        /// 返回循环访问集合的枚举数。
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<KeyValuePair<string, ConnectionStringsValue>> GetEnumerator()
+        {
+            return _properties.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _properties.GetEnumerator();
+        }
+
+        #region GetValue
+
+        /// <summary>
+        /// 获取与指定名称关联的连接属性的值。
+        /// <br/>如果没有找到指定名称，返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="defaultValue">没有找到指定名称时的连接属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConnectionStringsValue GetValue(string name, ConnectionStringsValue defaultValue)
+        {
+            return _properties.TryGetValue(name, out ConnectionStringsValue value) ? value : defaultValue;
+        }
+
+        #endregion GetValue
+
+        /// <summary>
+        /// 从连接属性集合中移除带有指定名称的连接属性。和指定名称关联的连接属性的注释一并移除。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定名称，则返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool Remove(string name)
+        {
+            if (_properties.Remove(name))
+            {
+                _contents[name].Remove();
+                _contents.Remove(name);
+                _comments[name]?.Remove();
+                _comments.Remove(name);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

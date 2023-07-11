@@ -11,15 +11,17 @@ namespace Honoo.Configuration
     {
         private readonly XElement _content;
         private readonly ConfigSectionKind _kind;
+        private XComment _comment = null;
 
         /// <inheritdoc/>
         public ConfigSectionKind Kind => _kind;
 
         #region Construction
 
-        internal TextSection(XElement content)
+        internal TextSection(XElement content, XComment comment)
         {
             _kind = ConfigSectionKind.TextSection;
+            _comment = comment;
             _content = content;
         }
 
@@ -40,6 +42,18 @@ namespace Honoo.Configuration
             return _content.Attribute(name)?.Value;
         }
 
+        /// <inheritdoc/>
+        public bool TryGetComment(out string comment)
+        {
+            if (_comment != null)
+            {
+                comment = _comment.Value;
+                return true;
+            }
+            comment = null;
+            return false;
+        }
+
         /// <summary>
         /// 获取配置容器的内联缩进 XML 文本。
         /// </summary>
@@ -58,6 +72,16 @@ namespace Honoo.Configuration
             return result.ToString();
         }
 
+        /// <inheritdoc/>
+        public void RemoveComment()
+        {
+            if (_comment != null)
+            {
+                _comment.Remove();
+                _comment = null;
+            }
+        }
+
         /// <summary>
         /// 设置配置容器属性的值、添加或删除配置容器属性。
         /// </summary>
@@ -72,6 +96,27 @@ namespace Honoo.Configuration
                 throw new ArgumentException($"The invalid argument - {nameof(name)}.");
             }
             _content.SetAttributeValue(name, value);
+        }
+
+        /// <inheritdoc/>
+        public void SetComment(string comment)
+        {
+            if (comment == null)
+            {
+                RemoveComment();
+            }
+            else
+            {
+                if (_comment == null)
+                {
+                    _comment = new XComment(comment);
+                    _content.AddBeforeSelf(_comment);
+                }
+                else
+                {
+                    _comment.Value = comment;
+                }
+            }
         }
 
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿using Honoo.Configuration;
 using System;
-using System.Collections.Generic;
 
 namespace Test
 {
@@ -22,57 +21,54 @@ namespace Test
                 // System.Configuration.NameValueSectionHandler
                 // System.Configuration.SingleTagSectionHandler
                 //
-                // 直接赋值等同于 AddOrUpdate 方法。
-                //
-                SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionKind.SingleTagSection);
-                section1.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
-                section1.Properties["prop2"] = Common.Random.NextDouble().ToString();
-                NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
-                section2.Properties.AddOrUpdate("prop1", Common.Random.NextDouble().ToString());
-                section2.Properties["prop2"] = Common.Random.NextDouble().ToString();
-                section2.Properties.TrySetComment("prop1", "This is a name value section child");
-                section2.Properties.TrySetComment("prop2", "This is a name value section child");
-                //
-                // 配置组和注释。
+                // 配置组。
                 //
                 ConfigSectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
-                manager.ConfigSections.Groups.TrySetComment("sectionGroup1", "This is a section group");
+                group.SetComment("This is \"ConfigSectionGroup\" comment.");
                 //
-                // 配置容器和注释。
+                // 配置容器。
                 //
+                SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionKind.SingleTagSection);
+                NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
                 DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
-                group.Sections.TrySetComment("section3", "This is a dictionary section");
                 //
-                section3.Properties.AddOrUpdate("prop1", true);
-                section3.Properties.AddOrUpdate("prop2", sbyte.MaxValue);
-                section3.Properties.AddOrUpdate("prop3", byte.MaxValue);
-                section3.Properties.AddOrUpdate("prop4", short.MaxValue);
-                section3.Properties.AddOrUpdate("prop5", ushort.MaxValue);
-                section3.Properties.AddOrUpdate("prop6", int.MaxValue);
-                section3.Properties.AddOrUpdate("prop7", uint.MaxValue);
-                section3.Properties["prop8"] = long.MaxValue;
-                section3.Properties["prop9"] = ulong.MaxValue;
-                section3.Properties["prop10"] = float.MaxValue / 2;
-                section3.Properties["prop11"] = double.MaxValue / 2;
-                section3.Properties["prop12"] = decimal.MaxValue;
-                section3.Properties["prop13"] = (char)Common.Random.Next(65, 91);
-                section3.Properties["prop14"] = new byte[] { 0x01, 0x02, 0x03, 0x0A, 0x0B, 0x0C };
-                section3.Properties["prop15"] = "支持 15 种可序列化类型";
-                section3.Properties.TrySetComment("prop15", "This is a dictionary section child");
-
+                // SingleTagSection 属性操作与 appSettings 节点相同。不支持属性值注释。
+                //
+                section1.Properties["prop1"] = 0.6789d.ToString();
+                section1.SetComment("This is \"SingleTagSection\" comment.");
+                //section1.SetComment("prop1", "This is \"SingleTagSection\" prop1  comment.");
+                //
+                // DictionarySection 属性操作和注释操作与 appSettings 节点相同。
+                //
+                section3.Properties.AddOrUpdate("prop1", new byte[] { 0x01, 0x02, 0x03, 0xAA, 0xBB, 0xCC, });
+                section3.Properties.TrySetComment("prop1", "This is \"DictionarySection\" prop1 comment.");
+                section3.SetComment("This is \"DictionarySection\" comment.");
+                //
+                // NameValueSection 属性以数组操作，注释需指定索引。
+                //
+                section2.Properties.AddOrUpdate("prop1", new double[] { 155.66d, 7.9992d });
+                section2.Properties.TrySetComment("prop1", 0, "This is \"NameValueSection\" prop1 sub 0 comment.");
+                section2.Properties.TrySetComment("prop1", 1, "This is \"NameValueSection\" prop1 sub 1 comment.");
+                section2.SetComment("This is \"NameValueSection\" comment.");
                 //
                 // 以文本方式创建。
                 //
                 TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
                 section4.SetAttribute("attr1", "attr1value");
                 section4.SetValue("<!-- Comment --><arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>");
-                manager.ConfigSections.Sections.TrySetComment("section4", "This is a text section");
+                section4.SetComment("This is \"TextSection\" comment.");
 
                 TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
                 section5.SetValue("<![CDATA[<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>]]>");
 
                 TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
                 section6.SetValue("abcdefg");
+                //
+                //
+                //
+                NameValueSection section7 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section7", ConfigSectionKind.NameValueSection);
+                section7.SetComment("It's will remove this.");
+                manager.ConfigSections.Sections.Remove("section7");
                 //
                 // 保存到指定的文件。
                 //
@@ -88,46 +84,46 @@ namespace Test
             using (ConfigurationManager manager = new ConfigurationManager(filePath))
             {
                 //
+                // 取出容器。
+                //
+                ConfigSectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
+                SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionKind.SingleTagSection);
+                NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
+                DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
+                TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
+                TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
+                TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
+                //
                 // 取出属性。
                 //
-                if (manager.ConfigSections.Sections.TryGetValue("section1", out SingleTagSection section1))
+                Console.WriteLine(section1.Properties.GetValue("prop1", string.Empty));
+                Console.WriteLine(section3.Properties.GetValue("prop1", string.Empty));
+                double[] value2 = section2.Properties.GetValues("prop1", new double[] { 11, 22, 33 });
+                foreach (double v in value2)
                 {
-                    foreach (KeyValuePair<string, string> prop in section1.Properties)
-                    {
-                        Console.WriteLine(prop.Value);
-                    }
+                    Console.WriteLine(v);
                 }
-                if (manager.ConfigSections.Sections.TryGetValue("section2", out NameValueSection section2))
+                //
+                // 取出注释。
+                //
+                if (section1.TryGetComment(out string comment))
                 {
-                    foreach (KeyValuePair<string, string> prop in section2.Properties)
-                    {
-                        Console.WriteLine(prop.Value);
-                    }
+                    Console.WriteLine(comment);
                 }
-                if (manager.ConfigSections.Groups.TryGetValue("sectionGroup1", out ConfigSectionGroup group))
+                if (section2.Properties.TryGetComment("prop1", 0, out comment))
                 {
-                    if (group.Sections.TryGetValue("section3", out DictionarySection section3))
-                    {
-                        // 根据 type 参数返回强类型值。如果没有 type 参数，以 string 类型处理。
-                        foreach (KeyValuePair<string, object> prop in section3.Properties)
-                        {
-                            Console.WriteLine($"{prop.Value.GetType().Name,-10}{prop.Value}");
-                        }
-                        Console.WriteLine(section3.Properties.GetValue("prop99", 12345678L));
-                    }
+                    Console.WriteLine(comment);
                 }
-                if (manager.ConfigSections.Sections.TryGetValue("section4", out TextSection section4))
+                if (section3.Properties.TryGetComment("prop1", out comment))
                 {
-                    Console.WriteLine(section4.GetValue());
+                    Console.WriteLine(comment);
                 }
-                if (manager.ConfigSections.Sections.TryGetValue("section5", out TextSection section5))
-                {
-                    Console.WriteLine(section5.GetValue());
-                }
-                if (manager.ConfigSections.Sections.TryGetValue("section6", out TextSection section6))
-                {
-                    Console.WriteLine(section6.GetValue());
-                }
+                //
+                // 以文本方式取出节点内容。
+                //
+                Console.WriteLine(section4.GetValue());
+                Console.WriteLine(section5.GetValue());
+                Console.WriteLine(section6.GetValue());
             }
         }
     }

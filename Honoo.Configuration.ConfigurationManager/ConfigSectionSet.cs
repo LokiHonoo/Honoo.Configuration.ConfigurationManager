@@ -14,34 +14,34 @@ namespace Honoo.Configuration
         #region Class
 
         /// <summary>
-        /// 代表此配置容器集合的名称的集合。
+        /// 代表此配置属性集合的键的集合。
         /// </summary>
-        public sealed class NameCollection : IEnumerable<string>
+        public sealed class KeyCollection : IEnumerable<string>
         {
             #region Properties
 
-            private readonly Dictionary<string, IConfigSection> _sections;
+            private readonly Dictionary<string, IConfigSection> _properties;
 
             /// <summary>
-            /// 获取配置容器集合的名称的元素数。
+            /// 获取配置属性集合的键的元素数。
             /// </summary>
-            public int Count => _sections.Count;
+            public int Count => _properties.Count;
 
             #endregion Properties
 
-            internal NameCollection(Dictionary<string, IConfigSection> groups)
+            internal KeyCollection(Dictionary<string, IConfigSection> properties)
             {
-                _sections = groups;
+                _properties = properties;
             }
 
             /// <summary>
-            /// 从指定数组索引开始将名称元素复制到到指定数组。
+            /// 从指定数组索引开始将键元素复制到到指定数组。
             /// </summary>
             /// <param name="array">要复制到的目标数组。</param>
             /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
             public void CopyTo(string[] array, int arrayIndex)
             {
-                _sections.Keys.CopyTo(array, arrayIndex);
+                _properties.Keys.CopyTo(array, arrayIndex);
             }
 
             /// <summary>
@@ -50,34 +50,34 @@ namespace Honoo.Configuration
             /// <returns></returns>
             public IEnumerator<string> GetEnumerator()
             {
-                return _sections.Keys.GetEnumerator();
+                return _properties.Keys.GetEnumerator();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return _sections.Keys.GetEnumerator();
+                return _properties.Keys.GetEnumerator();
             }
         }
 
         /// <summary>
-        /// 代表此配置容器集合的值的集合。
+        /// 代表此配置属性集合的值的集合。
         /// </summary>
         public sealed class ValueCollection : IEnumerable<IConfigSection>
         {
             #region Properties
 
-            private readonly Dictionary<string, IConfigSection> _sections;
+            private readonly Dictionary<string, IConfigSection> _properties;
 
             /// <summary>
-            /// 获取配置容器集合的值的元素数。
+            /// 获取配置属性集合的值的元素数。
             /// </summary>
-            public int Count => _sections.Count;
+            public int Count => _properties.Count;
 
             #endregion Properties
 
-            internal ValueCollection(Dictionary<string, IConfigSection> groups)
+            internal ValueCollection(Dictionary<string, IConfigSection> properties)
             {
-                _sections = groups;
+                _properties = properties;
             }
 
             /// <summary>
@@ -87,7 +87,7 @@ namespace Honoo.Configuration
             /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
             public void CopyTo(IConfigSection[] array, int arrayIndex)
             {
-                _sections.Values.CopyTo(array, arrayIndex);
+                _properties.Values.CopyTo(array, arrayIndex);
             }
 
             /// <summary>
@@ -96,12 +96,12 @@ namespace Honoo.Configuration
             /// <returns></returns>
             public IEnumerator<IConfigSection> GetEnumerator()
             {
-                return _sections.Values.GetEnumerator();
+                return _properties.Values.GetEnumerator();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return _sections.Values.GetEnumerator();
+                return _properties.Values.GetEnumerator();
             }
         }
 
@@ -109,12 +109,11 @@ namespace Honoo.Configuration
 
         #region Properties
 
-        private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
         private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
         private readonly XElement _contentSuperior;
         private readonly Dictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
-        private readonly NameCollection _nameExhibits;
+        private readonly KeyCollection _keyExhibits;
         private readonly Dictionary<string, IConfigSection> _sections = new Dictionary<string, IConfigSection>();
         private readonly ValueCollection _valueExhibits;
 
@@ -126,7 +125,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置容器集合的名称的集合。
         /// </summary>
-        public NameCollection Names => _nameExhibits;
+        public KeyCollection Names => _keyExhibits;
 
         /// <summary>
         /// 获取配置容器集合的值的集合。
@@ -157,88 +156,53 @@ namespace Honoo.Configuration
                     string name = declaration.Attribute("name").Value;
                     string type = declaration.Attribute("type").Value;
                     XElement content = contentSuperior.Element(name);
-                    IConfigSection value;
-                    switch (type)
+                    if (content != null)
                     {
-                        case "SingleTagSectionHandler":
-                        case "System.Configuration.SingleTagSectionHandler":
-                        case "System.Configuration.SingleTagSectionHandler, System.Configuration":
-                            value = new SingleTagSection(content);
-                            break;
+                        XComment comment = null;
+                        XNode pre = content.PreviousNode;
+                        if (pre != null && pre.NodeType == XmlNodeType.Comment)
+                        {
+                            comment = (XComment)pre;
+                        }
+                        IConfigSection value;
+                        switch (type)
+                        {
+                            case "SingleTagSectionHandler":
+                            case "System.Configuration.SingleTagSectionHandler":
+                            case "System.Configuration.SingleTagSectionHandler, System.Configuration":
+                                value = new SingleTagSection(content, comment);
+                                break;
 
-                        case "NameValueSectionHandler":
-                        case "System.Configuration.NameValueSectionHandler":
-                        case "System.Configuration.NameValueSectionHandler, System.Configuration":
-                            value = new NameValueSection(content);
-                            break;
+                            case "NameValueSectionHandler":
+                            case "System.Configuration.NameValueSectionHandler":
+                            case "System.Configuration.NameValueSectionHandler, System.Configuration":
+                                value = new NameValueSection(content, comment);
+                                break;
 
-                        case "DictionarySectionHandler":
-                        case "System.Configuration.DictionarySectionHandler":
-                        case "System.Configuration.DictionarySectionHandler, System.Configuration":
-                            value = new DictionarySection(content);
-                            break;
+                            case "DictionarySectionHandler":
+                            case "System.Configuration.DictionarySectionHandler":
+                            case "System.Configuration.DictionarySectionHandler, System.Configuration":
+                                value = new DictionarySection(content, comment);
+                                break;
 
-                        case "TextSectionHandler":
-                        case "Honoo.Configuration.TextSectionHandler":
-                        case "Honoo.Configuration.TextSectionHandler, Honoo.Configuration":
-                        default: value = new TextSection(content); break;
-                    }
-                    _sections.Add(name, value);
-                    _declarations.Add(name, declaration);
-                    _contents.Add(name, content);
-                    XNode pre = content.PreviousNode;
-                    if (pre != null && pre.NodeType == XmlNodeType.Comment)
-                    {
-                        _comments.Add(name, (XComment)pre);
-                    }
-                    else
-                    {
-                        _comments.Add(name, null);
+                            case "TextSectionHandler":
+                            case "Honoo.Configuration.TextSectionHandler":
+                            case "Honoo.Configuration.TextSectionHandler, Honoo.Configuration":
+                            default: value = new TextSection(content, comment); break;
+                        }
+                        _sections.Add(name, value);
+                        _contents.Add(name, content);
+                        _declarations.Add(name, declaration);
                     }
                 }
             }
-            _nameExhibits = new NameCollection(_sections);
+            _keyExhibits = new KeyCollection(_sections);
             _valueExhibits = new ValueCollection(_sections);
         }
 
         #endregion Construction
 
-        /// <summary>
-        /// 从配置容器集合中移除所有配置容器。
-        /// </summary>
-        public void Clear()
-        {
-            _sections.Clear();
-            _declarations.Clear();
-            _declarationSuperior.RemoveNodes();
-            _contents.Clear();
-            _contentSuperior.RemoveNodes();
-        }
-
-        /// <summary>
-        /// 确定配置容器集合是否包含带有指定名称的配置容器。
-        /// </summary>
-        /// <param name="name">配置容器的名称。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool ContainsName(string name)
-        {
-            return _sections.ContainsKey(name);
-        }
-
-        /// <summary>
-        /// 返回循环访问集合的枚举数。
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, IConfigSection>> GetEnumerator()
-        {
-            return _sections.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _sections.GetEnumerator();
-        }
+        #region GetOrAdd
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个配置容器并返回值。
@@ -266,83 +230,38 @@ namespace Honoo.Configuration
                 {
                     case ConfigSectionKind.TextSection:
                         declaration.SetAttributeValue("type", "Honoo.Configuration.TextSectionHandler");
-                        value = new TextSection(content);
+                        value = new TextSection(content, null);
                         break;
 
                     case ConfigSectionKind.SingleTagSection:
                         declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
-                        value = new SingleTagSection(content);
+                        value = new SingleTagSection(content, null);
                         break;
 
                     case ConfigSectionKind.NameValueSection:
                         declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
-                        value = new NameValueSection(content);
+                        value = new NameValueSection(content, null);
                         break;
 
                     case ConfigSectionKind.DictionarySection:
                         declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
-                        value = new DictionarySection(content);
+                        value = new DictionarySection(content, null);
                         break;
 
                     default: throw new ArgumentException($"The invalid argument - {nameof(kind)}.");
                 }
                 _sections.Add(name, value);
-                _declarations.Add(name, declaration);
                 _contents.Add(name, content);
-                _comments.Add(name, null);
+                _declarations.Add(name, declaration);
                 _contentSuperior.Add(content);
                 _declarationSuperior.Add(declaration);
                 return value;
             }
         }
 
-        /// <summary>
-        /// 从配置容器集合中移除带有指定名称的配置容器。和指定名称关联的配置容器的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定名称，则返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="name">配置容器的名称。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool Remove(string name)
-        {
-            if (_sections.Remove(name))
-            {
-                _declarations[name].Remove();
-                _declarations.Remove(name);
-                _contents[name].Remove();
-                _contents.Remove(name);
-                _comments[name]?.Remove();
-                _comments.Remove(name);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        #endregion GetOrAdd
 
-        /// <summary>
-        /// 获取与指定名称关联的配置容器的注释。
-        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="name">配置容器的名称。</param>
-        /// <param name="comment">配置容器的注释。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetComment(string name, out string comment)
-        {
-            _comments.TryGetValue(name, out XComment comment_);
-            if (comment_ == null)
-            {
-                comment = null;
-                return false;
-            }
-            else
-            {
-                comment = comment_.Value;
-                return true;
-            }
-        }
+        #region TryGetValue
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。
@@ -444,44 +363,68 @@ namespace Honoo.Configuration
             return _sections.TryGetValue(name, out value);
         }
 
+        #endregion TryGetValue
+
         /// <summary>
-        /// 添加或更新或删除一个与指定名称关联的配置容器的注释。
+        /// 从配置容器集合中移除所有配置容器。
+        /// </summary>
+        public void Clear()
+        {
+            _sections.Clear();
+            _contents.Clear();
+            _declarations.Clear();
+            _declarationSuperior.RemoveNodes();
+            _contentSuperior.RemoveNodes();
+        }
+
+        /// <summary>
+        /// 确定配置容器集合是否包含带有指定名称的配置容器。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
-        /// <param name="comment">配置容器的注释。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TrySetComment(string name, string comment)
+        public bool ContainsName(string name)
         {
-            if (comment == null)
+            return _sections.ContainsKey(name);
+        }
+
+        /// <summary>
+        /// 返回循环访问集合的枚举数。
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<KeyValuePair<string, IConfigSection>> GetEnumerator()
+        {
+            return _sections.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _sections.GetEnumerator();
+        }
+
+        /// <summary>
+        /// 从配置容器集合中移除带有指定名称的配置容器。和指定名称关联的配置容器的注释一并移除。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定名称，则返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="name">配置容器的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool Remove(string name)
+        {
+            if (_sections.TryGetValue(name, out IConfigSection section))
             {
-                if (_comments.TryGetValue(name, out XComment comment_))
-                {
-                    if (comment_ != null)
-                    {
-                        comment_.Remove();
-                        _comments[name] = null;
-                    }
-                    return true;
-                }
+                section.RemoveComment();
+                _sections.Remove(name);
+                _contents[name].Remove();
+                _contents.Remove(name);
+                _declarations[name].Remove();
+                _declarations.Remove(name);
+                return true;
             }
             else
             {
-                if (_comments.TryGetValue(name, out XComment comment_))
-                {
-                    if (comment_ == null)
-                    {
-                        comment_ = new XComment(comment);
-                        _contents[name].AddBeforeSelf(comment_);
-                        _comments[name] = comment_;
-                    }
-                    else
-                    {
-                        comment_.Value = comment;
-                    }
-                    return true;
-                }
+                return false;
             }
-            return false;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net40;net461;netstandard2.0</TargetFrameworks>
     <PackageId>Honoo.Configuration.ConfigurationManager</PackageId>
     <Company>Loki Honoo</Company>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -20,8 +20,8 @@ Limited read/write support for appSettings, connectionStrings, configSections no
     <PackageTags>Honoo Configuration ConfigurationManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-    <Version>1.3.0</Version>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Version>1.3.1</Version>
+    <PackageReadmeFile>README-Nuget.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -34,7 +34,7 @@ Limited read/write support for appSettings, connectionStrings, configSections no
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\README.md">
+    <None Include="README-Nuget.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -45,6 +45,13 @@ Limited read/write support for appSettings, connectionStrings, configSections no
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README-Nuget.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
  
 </Project>

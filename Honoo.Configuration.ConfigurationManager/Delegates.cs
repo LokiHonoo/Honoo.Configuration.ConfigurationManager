@@ -11,6 +11,4 @@
     /// </summary>
     /// <param name="manager">ConfigurationManager 实例。</param>
     public delegate void OnDisposingEventHandler(ConfigurationManager manager);
-
-
 }
