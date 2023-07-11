@@ -7,6 +7,7 @@
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
   - [CHANGELOG](#changelog)
+    - [1.3.0](#130)
     - [1.2.5](#125)
     - [1.2.3](#123)
     - [1.2.2](#122)
@@ -30,9 +31,15 @@
 
 用于 .NET Framework 4.0+/.NET Standard 2.0+ 中读写默认配置文件或自定义配置文件。
 
-提供对 appSettings、connectionStrings、configSections 节点的有限读写支持。
+提供对标准节点 appSettings、connectionStrings、configSections 节点的有限读写支持。
 
 ## CHANGELOG
+
+### 1.3.0
+
+**Changed* 移除了 ConfigSection 基类，更改为 IConfigSection 接口方式。
+
+**Features* 新增 GetValue(string, string) 方法，在取值时设置没有找到指定键时的默认值。
 
 ### 1.2.5
 
@@ -83,8 +90,7 @@ internal static void Create(string filePath)
     //
     // 使用 .NET 程序的默认配置文件或自定义配置文件。
     //
-    bool exists = File.Exists(filePath);
-    using (ConfigurationManager manager = exists ? new ConfigurationManager(filePath) : new ConfigurationManager())
+    using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
         //
         // 直接赋值等同于 AddOrUpdate 方法。

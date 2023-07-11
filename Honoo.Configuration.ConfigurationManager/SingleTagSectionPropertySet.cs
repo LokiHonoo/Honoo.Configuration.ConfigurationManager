@@ -130,6 +130,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取或设置具有指定键的配置属性的值。直接赋值等同于 AddOrUpdate 方法。
+        /// <br/>取值时如果没有找到指定键，返回 <see langword="null"/>。使用 <see cref="GetValue(string, string)"/> 设置没有找到指定键时的默认值。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
@@ -243,7 +244,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 从配置属性集合中移除带有指定键的配置属性。
-        /// <br/>如果该元素成功移除，返回 <paramref name="true"/>。如果没有找到指定键，则仍返回 <paramref name="false"/>。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定键，则返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>

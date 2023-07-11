@@ -135,6 +135,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取具有指定名称的配置组的值。
+        /// <br/>取值时如果没有找到指定名称，返回 <see langword="null"/>。
         /// </summary>
         /// <param name="name">配置组的名称。</param>
         /// <returns></returns>
@@ -246,6 +247,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 从配置组集合中移除带有指定名称的配置组。和指定名称关联的配置组的注释一并移除。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定名称，则返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置组的名称。</param>
         /// <returns></returns>
@@ -268,9 +270,10 @@ namespace Honoo.Configuration
             }
         }
 
+
         /// <summary>
         /// 获取与指定名称关联的配置组的注释。
-        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <paramref name="false"/>。
+        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置组的名称。</param>
         /// <param name="comment">配置组的注释。</param>

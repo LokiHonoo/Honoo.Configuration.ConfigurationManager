@@ -1,6 +1,5 @@
 ﻿using Honoo.Configuration;
 using System;
-using System.IO;
 
 namespace Test
 {
@@ -14,8 +13,7 @@ namespace Test
             //
             // 使用 .NET 程序的默认配置文件或自定义配置文件。
             //
-            bool exists = File.Exists(filePath);
-            using (ConfigurationManager manager = exists ? new ConfigurationManager(filePath) : new ConfigurationManager())
+            using (ConfigurationManager manager = new ConfigurationManager(filePath))
             {
                 //
                 // 直接赋值等同于 AddOrUpdate 方法。

@@ -134,6 +134,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取或设置具有指定名称的连接属性的值。直接赋值等同于 AddOrUpdate 方法。
+        /// <br/>取值时如果没有找到指定名称，返回 <see langword="null"/>。使用 <see cref="GetValue(string , ConnectionStringsValue)"/> 设置没有找到指定名称时的默认值。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
         /// <returns></returns>
@@ -329,7 +330,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 从连接属性集合中移除带有指定名称的连接属性。和指定名称关联的连接属性的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <paramref name="true"/>。如果没有找到指定名称，则仍返回 <paramref name="false"/>。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定名称，则返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
         /// <returns></returns>
@@ -352,7 +353,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的连接属性的注释。
-        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <paramref name="false"/>。
+        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
         /// <param name="comment">连接属性的注释。</param>

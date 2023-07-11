@@ -9,7 +9,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器集合。
     /// </summary>
-    public sealed class ConfigSectionSet : IEnumerable<KeyValuePair<string, ConfigSection>>
+    public sealed class ConfigSectionSet : IEnumerable<KeyValuePair<string, IConfigSection>>
     {
         #region Class
 
@@ -20,7 +20,7 @@ namespace Honoo.Configuration
         {
             #region Properties
 
-            private readonly Dictionary<string, ConfigSection> _sections;
+            private readonly Dictionary<string, IConfigSection> _sections;
 
             /// <summary>
             /// 获取配置容器集合的名称的元素数。
@@ -29,7 +29,7 @@ namespace Honoo.Configuration
 
             #endregion Properties
 
-            internal NameCollection(Dictionary<string, ConfigSection> groups)
+            internal NameCollection(Dictionary<string, IConfigSection> groups)
             {
                 _sections = groups;
             }
@@ -62,11 +62,11 @@ namespace Honoo.Configuration
         /// <summary>
         /// 代表此配置容器集合的值的集合。
         /// </summary>
-        public sealed class ValueCollection : IEnumerable<ConfigSection>
+        public sealed class ValueCollection : IEnumerable<IConfigSection>
         {
             #region Properties
 
-            private readonly Dictionary<string, ConfigSection> _sections;
+            private readonly Dictionary<string, IConfigSection> _sections;
 
             /// <summary>
             /// 获取配置容器集合的值的元素数。
@@ -75,7 +75,7 @@ namespace Honoo.Configuration
 
             #endregion Properties
 
-            internal ValueCollection(Dictionary<string, ConfigSection> groups)
+            internal ValueCollection(Dictionary<string, IConfigSection> groups)
             {
                 _sections = groups;
             }
@@ -85,7 +85,7 @@ namespace Honoo.Configuration
             /// </summary>
             /// <param name="array">要复制到的目标数组。</param>
             /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
-            public void CopyTo(ConfigSection[] array, int arrayIndex)
+            public void CopyTo(IConfigSection[] array, int arrayIndex)
             {
                 _sections.Values.CopyTo(array, arrayIndex);
             }
@@ -94,7 +94,7 @@ namespace Honoo.Configuration
             /// 返回循环访问集合的枚举数。
             /// </summary>
             /// <returns></returns>
-            public IEnumerator<ConfigSection> GetEnumerator()
+            public IEnumerator<IConfigSection> GetEnumerator()
             {
                 return _sections.Values.GetEnumerator();
             }
@@ -115,7 +115,7 @@ namespace Honoo.Configuration
         private readonly Dictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
         private readonly NameCollection _nameExhibits;
-        private readonly Dictionary<string, ConfigSection> _sections = new Dictionary<string, ConfigSection>();
+        private readonly Dictionary<string, IConfigSection> _sections = new Dictionary<string, IConfigSection>();
         private readonly ValueCollection _valueExhibits;
 
         /// <summary>
@@ -135,11 +135,12 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取具有指定名称的配置容器的值。
+        /// <br/>取值时如果没有找到指定名称，返回 <see langword="null"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConfigSection this[string name] => _sections.TryGetValue(name, out ConfigSection section) ? section : null;
+        public IConfigSection this[string name] => _sections.TryGetValue(name, out IConfigSection section) ? section : null;
 
         #endregion Properties
 
@@ -156,7 +157,7 @@ namespace Honoo.Configuration
                     string name = declaration.Attribute("name").Value;
                     string type = declaration.Attribute("type").Value;
                     XElement content = contentSuperior.Element(name);
-                    ConfigSection value;
+                    IConfigSection value;
                     switch (type)
                     {
                         case "SingleTagSectionHandler":
@@ -229,7 +230,7 @@ namespace Honoo.Configuration
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, ConfigSection>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, IConfigSection>> GetEnumerator()
         {
             return _sections.GetEnumerator();
         }
@@ -245,13 +246,13 @@ namespace Honoo.Configuration
         /// <param name="name">配置容器的名称。</param>
         /// <param name="kind">配置容器的类型。</param>
         /// <exception cref="Exception"/>
-        public ConfigSection GetOrAdd(string name, ConfigSectionKind kind)
+        public IConfigSection GetOrAdd(string name, ConfigSectionKind kind)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException($"The invalid argument - {nameof(name)}.");
             }
-            if (_sections.TryGetValue(name, out ConfigSection section))
+            if (_sections.TryGetValue(name, out IConfigSection section))
             {
                 return section;
             }
@@ -260,7 +261,7 @@ namespace Honoo.Configuration
                 XElement declaration = new XElement("section");
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
-                ConfigSection value;
+                IConfigSection value;
                 switch (kind)
                 {
                     case ConfigSectionKind.TextSection:
@@ -297,6 +298,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 从配置容器集合中移除带有指定名称的配置容器。和指定名称关联的配置容器的注释一并移除。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定名称，则返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
@@ -321,7 +323,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的注释。
-        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <paramref name="false"/>。
+        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但没有注释节点，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="comment">配置容器的注释。</param>
@@ -344,7 +346,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。
-        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <paramref name="false"/>。
+        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="value">配置容器的值。</param>
@@ -352,7 +354,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out TextSection value)
         {
-            if (_sections.TryGetValue(name, out ConfigSection val))
+            if (_sections.TryGetValue(name, out IConfigSection val))
             {
                 if (val is TextSection section)
                 {
@@ -366,7 +368,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。
-        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <paramref name="false"/>。
+        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="value">配置容器的值。</param>
@@ -374,7 +376,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out DictionarySection value)
         {
-            if (_sections.TryGetValue(name, out ConfigSection val))
+            if (_sections.TryGetValue(name, out IConfigSection val))
             {
                 if (val is DictionarySection section)
                 {
@@ -388,7 +390,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。
-        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <paramref name="false"/>。
+        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="value">配置容器的值。</param>
@@ -396,7 +398,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out NameValueSection value)
         {
-            if (_sections.TryGetValue(name, out ConfigSection val))
+            if (_sections.TryGetValue(name, out IConfigSection val))
             {
                 if (val is NameValueSection section)
                 {
@@ -410,7 +412,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。
-        /// <br/>如果没有找到指定名称，返回 <paramref name="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <paramref name="false"/>。
+        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="value">配置容器的值。</param>
@@ -418,7 +420,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out SingleTagSection value)
         {
-            if (_sections.TryGetValue(name, out ConfigSection val))
+            if (_sections.TryGetValue(name, out IConfigSection val))
             {
                 if (val is SingleTagSection section)
                 {
@@ -437,7 +439,7 @@ namespace Honoo.Configuration
         /// <param name="value">配置容器的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out ConfigSection value)
+        public bool TryGetValue(string name, out IConfigSection value)
         {
             return _sections.TryGetValue(name, out value);
         }

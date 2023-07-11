@@ -7,7 +7,7 @@ using System.Xml.Linq;
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 配置管理器。
+    /// 配置管理器。提供对标准节点 appSettings、connectionStrings、configSections 的有限读写支持。
     /// </summary>
     public sealed class ConfigurationManager : IDisposable
     {
@@ -70,7 +70,7 @@ namespace Honoo.Configuration
         #region Event
 
         /// <summary>
-        /// 在内容改变时执行。
+        /// 在 ConfigurationManager 实例内容改变时执行。
         /// </summary>
         public event OnChangedEventHandler OnChanged;
 
@@ -95,7 +95,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 创建 ConfigurationManager 的新实例。
         /// </summary>
-        /// <param name="filePath">指定配置文件的路径。</param>
+        /// <param name="filePath">指定配置文件的路径。如果配置文件不存在，创建新的空白配置（保存前不会创建磁盘文件）。</param>
         /// <exception cref="Exception"/>
         public ConfigurationManager(string filePath)
         {
@@ -103,7 +103,18 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
             }
-            _root = XElement.Load(filePath);
+            if (File.Exists(filePath))
+            {
+                _root = XElement.Load(filePath);
+                if (_root.Name != "configuration")
+                {
+                    throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
+                }
+            }
+            else
+            {
+                _root = new XElement("configuration");
+            }
             _root.Changed += OnContentChanged;
         }
 
@@ -113,18 +124,22 @@ namespace Honoo.Configuration
         /// <param name="stream">指定配置文件的流。</param>
         /// <param name="closeStream">读取完成后关闭流。</param>
         /// <exception cref="Exception"/>
-        public ConfigurationManager(Stream stream, bool closeStream = false)
+        public ConfigurationManager(Stream stream, bool closeStream = true)
         {
             if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
             _root = XElement.Load(stream);
-            _root.Changed += OnContentChanged;
             if (closeStream)
             {
                 stream.Close();
             }
+            if (_root.Name != "configuration")
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(stream)}.");
+            }
+            _root.Changed += OnContentChanged;
         }
 
         /// <summary>

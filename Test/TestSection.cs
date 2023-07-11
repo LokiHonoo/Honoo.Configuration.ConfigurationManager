@@ -59,6 +59,7 @@ namespace Test
                 section3.Properties["prop14"] = new byte[] { 0x01, 0x02, 0x03, 0x0A, 0x0B, 0x0C };
                 section3.Properties["prop15"] = "支持 15 种可序列化类型";
                 section3.Properties.TrySetComment("prop15", "This is a dictionary section child");
+
                 //
                 // 以文本方式创建。
                 //

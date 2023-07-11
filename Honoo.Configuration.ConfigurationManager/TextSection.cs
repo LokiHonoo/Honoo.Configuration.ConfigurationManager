@@ -7,12 +7,20 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器。
     /// </summary>
-    public sealed class TextSection : ConfigSection
+    public sealed class TextSection : IConfigSection
     {
+        private readonly XElement _content;
+        private readonly ConfigSectionKind _kind;
+
+        /// <inheritdoc/>
+        public ConfigSectionKind Kind => _kind;
+
         #region Construction
 
-        internal TextSection(XElement content) : base(content, ConfigSectionKind.TextSection)
+        internal TextSection(XElement content)
         {
+            _kind = ConfigSectionKind.TextSection;
+            _content = content;
         }
 
         #endregion Construction
@@ -88,6 +96,15 @@ namespace Honoo.Configuration
                     _content.Add(node);
                 }
             }
+        }
+
+        /// <summary>
+        /// 方法已重写。返回节点的缩进 XML 文本。
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return _content.ToString();
         }
     }
 }
