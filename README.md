@@ -6,20 +6,21 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
+  - [Project](#project)
+    - [NuGet](#nuget)
   - [CHANGELOG](#changelog)
+    - [1.3.2](#132)
     - [1.3.1](#131)
     - [1.2.5](#125)
     - [1.2.3](#123)
-    - [1.2.2](#122)
-    - [1.2.1](#121)
     - [1.2.0](#120)
   - [USAGE](#usage)
-    - [NuGet](#nuget)
     - [Namespace](#namespace)
     - [appSettings](#appsettings)
     - [connectionStrings](#connectionstrings)
     - [sectionGroup/section](#sectiongroupsection)
     - [Auto save](#auto-save)
+    - [Protection](#protection)
     - [UWP](#uwp)
   - [LICENSE](#license)
 
@@ -33,7 +34,23 @@
 
 提供对标准节点 appSettings、connectionStrings、configSections 节点的有限读写支持。
 
+提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
+
+## Project
+
+### NuGet
+
+<https://www.nuget.org/packages/Honoo.Configuration.ConfigurationManager/>
+
 ## CHANGELOG
+
+### 1.3.2
+
+**Features* 提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
+
+**Features* 新增 &lt;assemblyBinding /&gt; 节点支持。
+
+**Features* 读取 &lt;remove /&gt; &lt;clear /&gt; 标签时采用标签的默认行为。标签产生的删除行为会体现在配置文件中。例如 &lt;clear /&gt; 标签之前的 所有标签都会被移除。
 
 ### 1.3.1
 
@@ -55,31 +72,15 @@
 
 ### 1.2.3
 
-**Changed* 移除了访问 ConnectionStrings 直接创建和访问实例的代码。提供 CreateInstance() 方法主动调用。
-
-### 1.2.2
-
-**Fixed* 实例释放后仍可访问缓存后的节点的问题。
-
-**Changed* ConfigSectionType 更名为 ConfigSectionKind。
-
-### 1.2.1
-
-**Fixed* 创建 TextSection 时遗漏了 type 属性。
-
-**Fixed* 读取 DictionarySection 时遗漏了 type 属性。
+**Changed* 移除了访问 ConnectionStrings 直接创建和访问实例的代码。提供 CreateInstance() 方法主动创建实例。如果没有引用相关的数据库程序集，在主动创建实例前不会抛出异常。
 
 ### 1.2.0
 
-**Changed* 移除了原有的自动保存的代码，现在在事件中实现自动保存。
+**Changed* 移除了原有的自动保存的代码，增加了事件，可在 OnChanged，OnDisposing 事件中实现自动保存。
 
 **Features* 现在支持读写注释（comment）节点。
 
 ## USAGE
-
-### NuGet
-
-<https://www.nuget.org/packages/Honoo.Configuration.ConfigurationManager/>
 
 ### Namespace
 
@@ -407,9 +408,31 @@ private static void Manager_OnDisposing(ConfigurationManager manager)
 
 ```
 
-### UWP
+### Protection
 
-必须使用流方式。
+提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
+
+```c#
+
+internal static void Create(string filePath)
+{
+    RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+    rsa.FromXmlString(keyStored);
+    //
+    // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
+    //
+    using (ConfigurationManager manager = new ConfigurationManager(filePath, rsa))
+    {
+        //
+        // 加密方式保存到指定的文件。
+        //
+        manager.Save(filePath, rsa);
+    }
+}
+
+```
+
+### UWP
 
 ```c#
 
@@ -431,4 +454,4 @@ public static async void Test()
 
 ## LICENSE
 
-[MIT](LICENSE).
+This project based on [MIT](LICENSE) license.

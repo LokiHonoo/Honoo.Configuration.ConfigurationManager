@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -158,6 +159,10 @@ namespace Honoo.Configuration
                     XElement content = contentSuperior.Element(name);
                     if (content != null)
                     {
+                        if (content.Attribute("configProtectionProvider") != null)
+                        {
+                            throw new CryptographicException("Encryped configuration sections are not supported.");
+                        }
                         XComment comment = null;
                         XNode pre = content.PreviousNode;
                         if (pre != null && pre.NodeType == XmlNodeType.Comment)

@@ -1,8 +1,5 @@
-﻿using Honoo.Configuration;
-using System;
-using System.Collections.Specialized;
+﻿using System;
 using System.IO;
-using System.Reflection;
 
 namespace Test
 {
@@ -10,7 +7,7 @@ namespace Test
     {
         private static void Main()
         {
-            string filePath = Assembly.GetEntryAssembly().Location + ".config";
+            string filePath = "test.config.xml";
             //
             // 清除内容。
             //
@@ -27,6 +24,8 @@ namespace Test
             //
             TestAppSettings.Create(filePath);
             TestAppSettings.Load(filePath);
+            TestAssemblyBinding.Create(filePath);
+            TestAssemblyBinding.Load(filePath);
             TestConnectionStrings.Create(filePath);
             TestConnectionStrings.Load(filePath);
             TestSection.Create(filePath);
@@ -37,6 +36,14 @@ namespace Test
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine(File.ReadAllText(filePath));
+            Console.ReadKey(true);
+            //
+            string filePath2 = "protection.config.xml";
+            TestProtection.Create(filePath2);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine(File.ReadAllText(filePath2));
             Console.ReadKey(true);
         }
     }

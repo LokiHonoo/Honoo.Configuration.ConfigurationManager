@@ -28,33 +28,6 @@ namespace Honoo.Configuration
         #endregion Construction
 
         /// <summary>
-        /// 获取与指定名称关联的配置容器的属性的值。
-        /// </summary>
-        /// <param name="name">配置容器的属性的名称。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public string GetAttribute(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
-            return _content.Attribute(name)?.Value;
-        }
-
-        /// <inheritdoc/>
-        public bool TryGetComment(out string comment)
-        {
-            if (_comment != null)
-            {
-                comment = _comment.Value;
-                return true;
-            }
-            comment = null;
-            return false;
-        }
-
-        /// <summary>
         /// 获取配置容器的内联缩进 XML 文本。
         /// </summary>
         /// <returns></returns>
@@ -73,13 +46,15 @@ namespace Honoo.Configuration
         }
 
         /// <inheritdoc/>
-        public void RemoveComment()
+        public bool RemoveComment()
         {
             if (_comment != null)
             {
                 _comment.Remove();
                 _comment = null;
+                return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -150,6 +125,41 @@ namespace Honoo.Configuration
         public override string ToString()
         {
             return _content.ToString();
+        }
+
+        /// <summary>
+        /// 获取与指定名称关联的配置容器的属性的值。
+        /// <br/>如果没有找到指定属性，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="name">配置容器的属性的名称。</param>
+        /// <param name="value">配置容器的属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetAttribute(string name, out string value)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
+            }
+            if (_content.Attribute(name) is XAttribute attribute)
+            {
+                value = attribute.Value;
+                return true;
+            }
+            value = null;
+            return false;
+        }
+
+        /// <inheritdoc/>
+        public bool TryGetComment(out string comment)
+        {
+            if (_comment != null)
+            {
+                comment = _comment.Value;
+                return true;
+            }
+            comment = null;
+            return false;
         }
     }
 }

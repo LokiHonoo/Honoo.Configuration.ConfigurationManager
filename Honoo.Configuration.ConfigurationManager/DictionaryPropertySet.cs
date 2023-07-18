@@ -170,13 +170,25 @@ namespace Honoo.Configuration
                             {
                                 string key = content.Attribute("key").Value;
                                 string value = content.Attribute("value").Value;
-                                if (_properties.TryGetValue(key, out _))
+                                if (_properties.ContainsKey(key))
                                 {
                                     Remove(key);
                                 }
                                 _properties.Add(key, value);
                                 _contents.Add(key, content);
                                 _comments.Add(key, comment);
+                            }
+                            else if (content.Name == "remove")
+                            {
+                                string key = content.Attribute("key").Value;
+                                Remove(key);
+                            }
+                            else if (content.Name == "clear")
+                            {
+                                foreach (var key in _properties.Keys)
+                                {
+                                    Remove(key);
+                                }
                             }
                         }
                         comment = null;
@@ -209,7 +221,7 @@ namespace Honoo.Configuration
             }
             else
             {
-                if (_properties.TryGetValue(key, out _))
+                if (_properties.ContainsKey(key))
                 {
                     _contents[key].SetAttributeValue("value", value);
                     _properties[key] = value;

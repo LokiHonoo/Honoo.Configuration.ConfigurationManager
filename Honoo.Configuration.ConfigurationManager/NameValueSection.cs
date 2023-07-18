@@ -33,13 +33,15 @@ namespace Honoo.Configuration
         #endregion Construction
 
         /// <inheritdoc/>
-        public void RemoveComment()
+        public bool RemoveComment()
         {
             if (_comment != null)
             {
                 _comment.Remove();
                 _comment = null;
+                return true;
             }
+            return false;
         }
 
         /// <inheritdoc/>

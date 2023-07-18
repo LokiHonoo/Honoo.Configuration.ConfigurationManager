@@ -10,17 +10,16 @@
     <AssemblyOriginatorKeyFile>Honoo.Configuration.ConfigurationManager.snk</AssemblyOriginatorKeyFile>
     <Authors>Loki Honoo</Authors>
     <Description>The project is a replacement for System.Configuration.ConfigurationManager.
-
 Used to read/write default profiles or custom profiles in the .NET Framework 4.0+/.NET Standard 2.0+.
-
-Limited read/write support for appSettings, connectionStrings, configSections nodes.</Description>
+Limited read/write support for appSettings, connectionStrings, configSections nodes.
+Provides an method to encrypt the configuration file. This is different from the encryption method for ASP.NET, and the generated encryption file can only using by this project tool.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager</PackageProjectUrl>
     <RepositoryUrl>https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager</RepositoryUrl>
-    <PackageTags>Honoo Configuration ConfigurationManager</PackageTags>
+    <PackageTags>Honoo;Configuration;ConfigurationManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-    <Version>1.3.1</Version>
+	<VersionPrefix>1.3.2</VersionPrefix>
     <PackageReadmeFile>README-Nuget.md</PackageReadmeFile>
   </PropertyGroup>
 

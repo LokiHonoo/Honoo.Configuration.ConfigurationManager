@@ -40,7 +40,7 @@ namespace Test
                 //
                 // DictionarySection 属性操作和注释操作与 appSettings 节点相同。
                 //
-                section3.Properties.AddOrUpdate("prop1", new byte[] { 0x01, 0x02, 0x03, 0xAA, 0xBB, 0xCC, });
+                section3.Properties.AddOrUpdate("prop1", "DictionarySection prop.");
                 section3.Properties.TrySetComment("prop1", "This is \"DictionarySection\" prop1 comment.");
                 section3.SetComment("This is \"DictionarySection\" comment.");
                 //

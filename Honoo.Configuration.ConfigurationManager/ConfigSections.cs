@@ -29,7 +29,15 @@ namespace Honoo.Configuration
             if (_content == null)
             {
                 _content = new XElement("configSections");
-                root.AddFirst(_content);
+                XElement assemblyBinding = root.Element("assemblyBinding");
+                if (assemblyBinding == null)
+                {
+                    root.AddFirst(_content);
+                }
+                else
+                {
+                    assemblyBinding.AddAfterSelf(_content);
+                }
             }
             _groups = new ConfigSectionGroupSet(_content, root);
             _sections = new ConfigSectionSet(_content, root);

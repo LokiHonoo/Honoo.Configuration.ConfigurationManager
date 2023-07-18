@@ -37,12 +37,12 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取注释。
-        /// <br/>如果没有找到注释，返回 <see langword="null"/>。
+        /// <br/>如果没有找到注释，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="comment">配置容器的注释。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool GetComment(out string comment)
+        public bool TryGetComment(out string comment)
         {
             if (_comment != null)
             {
@@ -55,15 +55,18 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 删除注释。
+        /// <br/>如果注释成功删除，返回 <see langword="true"/>。如果没有找到注释节点，则返回 <see langword="false"/>。
         /// </summary>
         /// <exception cref="Exception"/>
-        public void RemoveComment()
+        public bool RemoveComment()
         {
             if (_comment != null)
             {
                 _comment.Remove();
                 _comment = null;
+                return true;
             }
+            return false;
         }
 
         /// <summary>

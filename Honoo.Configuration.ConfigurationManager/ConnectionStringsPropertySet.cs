@@ -247,7 +247,7 @@ namespace Honoo.Configuration
             }
             else
             {
-                if (_properties.TryGetValue(name, out _))
+                if (_properties.ContainsKey(name))
                 {
                     XElement content = _contents[name];
                     content.SetAttributeValue("connectionString", connectionString);

@@ -178,6 +178,18 @@ namespace Honoo.Configuration
                                     _comments.Add(key, new List<XComment>() { comment });
                                 }
                             }
+                            else if (content.Name == "remove")
+                            {
+                                string key = content.Attribute("key").Value;
+                                Remove(key);
+                            }
+                            else if (content.Name == "clear")
+                            {
+                                foreach (var key in _properties.Keys)
+                                {
+                                    Remove(key);
+                                }
+                            }
                         }
                         comment = null;
                     }
@@ -209,7 +221,7 @@ namespace Honoo.Configuration
             }
             else
             {
-                if (_properties.TryGetValue(key, out _))
+                if (_properties.ContainsKey(key))
                 {
                     Remove(key);
                 }
@@ -1632,6 +1644,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 删除一个与指定键关联的配置属性的注释。
+        /// <br/>如果注释成功删除，返回 <see langword="true"/>。如果找到了指定键但没有注释节点，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="index">和键相关的配置属性值列表的索引。</param>
