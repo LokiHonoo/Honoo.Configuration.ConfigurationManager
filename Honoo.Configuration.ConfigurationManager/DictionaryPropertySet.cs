@@ -178,18 +178,18 @@ namespace Honoo.Configuration
                                 _contents.Add(key, content);
                                 _comments.Add(key, comment);
                             }
-                            else if (content.Name == "remove")
-                            {
-                                string key = content.Attribute("key").Value;
-                                Remove(key);
-                            }
-                            else if (content.Name == "clear")
-                            {
-                                foreach (var key in _properties.Keys)
-                                {
-                                    Remove(key);
-                                }
-                            }
+                            //else if (content.Name == "remove")
+                            //{
+                            //    string key = content.Attribute("key").Value;
+                            //    Remove(key);
+                            //}
+                            //else if (content.Name == "clear")
+                            //{
+                            //    foreach (var key in _properties.Keys)
+                            //    {
+                            //        Remove(key);
+                            //    }
+                            //}
                         }
                         comment = null;
                     }

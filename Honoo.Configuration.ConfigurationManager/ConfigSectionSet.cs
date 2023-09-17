@@ -10,7 +10,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器集合。
     /// </summary>
-    public sealed class ConfigSectionSet : IEnumerable<KeyValuePair<string, IConfigSection>>
+    public sealed class ConfigSectionSet : IEnumerable<KeyValuePair<string, ConfigSection>>
     {
         #region Class
 
@@ -21,7 +21,7 @@ namespace Honoo.Configuration
         {
             #region Properties
 
-            private readonly Dictionary<string, IConfigSection> _properties;
+            private readonly Dictionary<string, ConfigSection> _properties;
 
             /// <summary>
             /// 获取配置属性集合的键的元素数。
@@ -30,7 +30,7 @@ namespace Honoo.Configuration
 
             #endregion Properties
 
-            internal KeyCollection(Dictionary<string, IConfigSection> properties)
+            internal KeyCollection(Dictionary<string, ConfigSection> properties)
             {
                 _properties = properties;
             }
@@ -63,11 +63,11 @@ namespace Honoo.Configuration
         /// <summary>
         /// 代表此配置属性集合的值的集合。
         /// </summary>
-        public sealed class ValueCollection : IEnumerable<IConfigSection>
+        public sealed class ValueCollection : IEnumerable<ConfigSection>
         {
             #region Properties
 
-            private readonly Dictionary<string, IConfigSection> _properties;
+            private readonly Dictionary<string, ConfigSection> _properties;
 
             /// <summary>
             /// 获取配置属性集合的值的元素数。
@@ -76,7 +76,7 @@ namespace Honoo.Configuration
 
             #endregion Properties
 
-            internal ValueCollection(Dictionary<string, IConfigSection> properties)
+            internal ValueCollection(Dictionary<string, ConfigSection> properties)
             {
                 _properties = properties;
             }
@@ -86,7 +86,7 @@ namespace Honoo.Configuration
             /// </summary>
             /// <param name="array">要复制到的目标数组。</param>
             /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
-            public void CopyTo(IConfigSection[] array, int arrayIndex)
+            public void CopyTo(ConfigSection[] array, int arrayIndex)
             {
                 _properties.Values.CopyTo(array, arrayIndex);
             }
@@ -95,7 +95,7 @@ namespace Honoo.Configuration
             /// 返回循环访问集合的枚举数。
             /// </summary>
             /// <returns></returns>
-            public IEnumerator<IConfigSection> GetEnumerator()
+            public IEnumerator<ConfigSection> GetEnumerator()
             {
                 return _properties.Values.GetEnumerator();
             }
@@ -115,7 +115,7 @@ namespace Honoo.Configuration
         private readonly Dictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
         private readonly XElement _declarationSuperior;
         private readonly KeyCollection _keyExhibits;
-        private readonly Dictionary<string, IConfigSection> _sections = new Dictionary<string, IConfigSection>();
+        private readonly Dictionary<string, ConfigSection> _sections = new Dictionary<string, ConfigSection>();
         private readonly ValueCollection _valueExhibits;
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Honoo.Configuration
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public IConfigSection this[string name] => _sections.TryGetValue(name, out IConfigSection section) ? section : null;
+        public ConfigSection this[string name] => _sections.TryGetValue(name, out ConfigSection section) ? section : null;
 
         #endregion Properties
 
@@ -169,7 +169,7 @@ namespace Honoo.Configuration
                         {
                             comment = (XComment)pre;
                         }
-                        IConfigSection value;
+                        ConfigSection value;
                         switch (type)
                         {
                             case "SingleTagSectionHandler":
@@ -193,7 +193,9 @@ namespace Honoo.Configuration
                             case "TextSectionHandler":
                             case "Honoo.Configuration.TextSectionHandler":
                             case "Honoo.Configuration.TextSectionHandler, Honoo.Configuration":
-                            default: value = new TextSection(content, comment); break;
+                            default:
+                                value = new TextSection(content, comment);
+                                break;
                         }
                         _sections.Add(name, value);
                         _contents.Add(name, content);
@@ -210,18 +212,18 @@ namespace Honoo.Configuration
         #region GetOrAdd
 
         /// <summary>
-        /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个配置容器并返回值。
+        /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个 <paramref name="kind"/> 参数指定类型的配置容器并返回值。
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
-        /// <param name="kind">配置容器的类型。</param>
+        /// <param name="kind">添加配置容器时使用的类型。</param>
         /// <exception cref="Exception"/>
-        public IConfigSection GetOrAdd(string name, ConfigSectionKind kind)
+        public ConfigSection GetOrAdd(string name, ConfigSectionKind kind)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException($"The invalid argument - {nameof(name)}.");
             }
-            if (_sections.TryGetValue(name, out IConfigSection section))
+            if (_sections.TryGetValue(name, out ConfigSection section))
             {
                 return section;
             }
@@ -230,7 +232,7 @@ namespace Honoo.Configuration
                 XElement declaration = new XElement("section");
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
-                IConfigSection value;
+                ConfigSection value;
                 switch (kind)
                 {
                     case ConfigSectionKind.TextSection:
@@ -278,7 +280,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out TextSection value)
         {
-            if (_sections.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out ConfigSection val))
             {
                 if (val is TextSection section)
                 {
@@ -300,7 +302,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out DictionarySection value)
         {
-            if (_sections.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out ConfigSection val))
             {
                 if (val is DictionarySection section)
                 {
@@ -322,7 +324,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out NameValueSection value)
         {
-            if (_sections.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out ConfigSection val))
             {
                 if (val is NameValueSection section)
                 {
@@ -344,7 +346,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out SingleTagSection value)
         {
-            if (_sections.TryGetValue(name, out IConfigSection val))
+            if (_sections.TryGetValue(name, out ConfigSection val))
             {
                 if (val is SingleTagSection section)
                 {
@@ -363,7 +365,7 @@ namespace Honoo.Configuration
         /// <param name="value">配置容器的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out IConfigSection value)
+        public bool TryGetValue(string name, out ConfigSection value)
         {
             return _sections.TryGetValue(name, out value);
         }
@@ -397,7 +399,7 @@ namespace Honoo.Configuration
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, IConfigSection>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, ConfigSection>> GetEnumerator()
         {
             return _sections.GetEnumerator();
         }
@@ -416,7 +418,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(string name)
         {
-            if (_sections.TryGetValue(name, out IConfigSection section))
+            if (_sections.TryGetValue(name, out ConfigSection section))
             {
                 section.RemoveComment();
                 _sections.Remove(name);

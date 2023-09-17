@@ -4,7 +4,7 @@ using System.Xml.Linq;
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 映射到标准格式的 "assemblyBinding" 节点。
+    /// 映射到标准格式的 "assemblyBinding" 节点。这是配置级的程序集绑定策略节点。
     /// </summary>
     public sealed class AssemblyBinding
     {
@@ -20,10 +20,11 @@ namespace Honoo.Configuration
 
         internal AssemblyBinding(XElement root)
         {
-            _content = root.Element("assemblyBinding");
+            XNamespace ns = "urn:schemas-microsoft-com:asm.v1";
+            _content = root.Element(ns + "assemblyBinding");
             if (_content == null)
             {
-                _content = new XElement("assemblyBinding");
+                _content = new XElement(ns + "assemblyBinding");
                 root.AddFirst(_content);
             }
             else if (_content.Attribute("configProtectionProvider") != null)

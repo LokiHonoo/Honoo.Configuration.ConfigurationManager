@@ -38,7 +38,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 设置 "file" 属性的值、添加或删除 "file" 属性。
         /// </summary>
-        /// <param name="value">"file" 属性的值。"file" 特性指定的配置文件必须有一个根节点为 &lt;appSettings&gt;，而不是 &lt;configuration&gt;。</param>
+        /// <param name="value">"file" 属性的值。"file" 特性指向一个根节点为 &lt;appSettings&gt; 的配置文件。</param>
         /// <returns></returns>
         public void SetFileAttribute(string value)
         {

@@ -10,7 +10,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// Honoo.Configuration.TextSectionHandler 类型。
         /// </summary>
-        [Description("Honoo.Configuration.ConfigurationSectionHandler")]
+        [Description("Honoo.Configuration.TextSectionHandler")]
         TextSection = 0,
 
         /// <summary>

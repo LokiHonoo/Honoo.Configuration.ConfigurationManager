@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -38,7 +39,8 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 映射到标准格式的 "assemblyBinding" 节点。
+        /// 映射到标准格式的 "assemblyBinding" 节点。这是配置级的程序集绑定策略节点。
+
         /// </summary>
         public AssemblyBinding AssemblyBinding
         {
@@ -84,6 +86,27 @@ namespace Honoo.Configuration
 
         #endregion Properties
 
+        #region Delegate
+
+        /// <summary>
+        /// 在 ConfigurationManager 实例内容改变时执行。
+        /// </summary>
+        /// <param name="manager">ConfigurationManager 实例。</param>
+        public delegate void OnChangedEventHandler(ConfigurationManager manager);
+
+        /// <summary>
+        /// 在 ConfigurationManager 实例释放后执行。
+        /// </summary>
+        public delegate void OnDisposedEventHandler();
+
+        /// <summary>
+        /// 在 ConfigurationManager 实例正在释放时执行。
+        /// </summary>
+        /// <param name="manager">ConfigurationManager 实例。</param>
+        public delegate void OnDisposingEventHandler(ConfigurationManager manager);
+
+        #endregion Delegate
+
         #region Event
 
         /// <summary>
@@ -97,7 +120,7 @@ namespace Honoo.Configuration
         public event OnDisposedEventHandler OnDisposed;
 
         /// <summary>
-        /// 在 ConfigurationManager 实例正在释放时执行。
+        /// 在 ConfigurationManager 实例准备释放时执行。
         /// </summary>
         public event OnDisposingEventHandler OnDisposing;
 
@@ -121,7 +144,7 @@ namespace Honoo.Configuration
         /// <param name="protectionAlgorithm">
         /// 指定一个非对称加密算法，用于读取加密配置文件。
         /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法必须是私钥。
+        /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
         public ConfigurationManager(string filePath, RSACryptoServiceProvider protectionAlgorithm = null)
@@ -285,14 +308,13 @@ namespace Honoo.Configuration
         /// 格式化为缩进 XML 文档并保存到指定的流。
         /// </summary>
         /// <param name="stream">指定配置文件的流。</param>
-        /// <param name="closeStream">写入完成后关闭流。</param>
         /// <param name="protectionAlgorithm">
         /// 指定一个非对称加密算法，用于保存加密配置文件。
         /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
         /// <br/>算法可以是公钥或私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public void Save(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public void Save(Stream stream, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (stream == null)
             {
@@ -307,24 +329,19 @@ namespace Honoo.Configuration
             {
                 root.Save(writer);
             }
-            if (closeStream)
-            {
-                stream.Close();
-            }
         }
 
         /// <summary>
         /// 保存到指定的读取器。
         /// </summary>
         /// <param name="writer">指定配置文件的读取器。</param>
-        /// <param name="closeWriter">写入完成后关闭读取器。</param>
         /// <param name="protectionAlgorithm">
         /// 指定一个非对称加密算法，用于保存加密配置文件。
         /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
         /// <br/>算法可以是公钥或私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public void Save(TextWriter writer, bool closeWriter = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public void Save(TextWriter writer, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (writer == null)
             {
@@ -336,10 +353,6 @@ namespace Honoo.Configuration
                 root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
             }
             root.Save(writer);
-            if (closeWriter)
-            {
-                writer.Close();
-            }
         }
 
         /// <summary>
@@ -353,14 +366,19 @@ namespace Honoo.Configuration
 
         private XElement Clean(XElement root)
         {
+            XNamespace ns = "urn:schemas-microsoft-com:asm.v1";
             XElement result = XElement.Parse(root.ToString());
             if (_appSettings != null && _appSettings.Properties.Count == 0)
             {
-                result.Element("appSettings").Remove();
+                XElement element = result.Element("appSettings");
+                if (!element.HasElements)
+                {
+                    element.Remove();
+                }
             }
             if (_assemblyBinding != null && _assemblyBinding.Properties.Count == 0)
             {
-                result.Element("assemblyBinding").Remove();
+                result.Element(ns + "assemblyBinding").Remove();
             }
             if (_connectionStrings != null && _connectionStrings.Properties.Count == 0)
             {

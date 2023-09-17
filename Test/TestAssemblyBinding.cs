@@ -18,9 +18,10 @@ namespace Test
                 //
                 // 赋值。
                 //
-                manager.AssemblyBinding.Properties.Add("file://c:\\aa.tt");
-                manager.AssemblyBinding.Properties.Add("file://c:\\aa.tt");
-                manager.AssemblyBinding.Properties.Add("file://c:\\aa.tt");
+                while (manager.AssemblyBinding.Properties.Count < 3)
+                {
+                    manager.AssemblyBinding.Properties.Add("file://c:\\aa.tt");
+                }
                 //
                 // 设置注释。
                 //

@@ -152,6 +152,36 @@ namespace Honoo.Configuration
             _superior.Add(content);
         }
 
+        /// <summary>
+        /// 插入一个配置属性。
+        /// </summary>
+        /// <param name="index">在此索引处插入配置属性。</param>
+        /// <param name="href">要包含的配置文件的 URL。 href 属性支持的唯一格式是 file://。 支持本地文件和 UNC 文件。</param>
+        /// <exception cref="Exception"/>
+        public void Insert(int index, string href)
+        {
+            if (href == null)
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(href)}.");
+            }
+            XElement content = new XElement("linkedConfiguration");
+            content.SetAttributeValue("href", href);
+            if (_comments[index] == null)
+            {
+                _properties.Insert(index, href);
+                _contents.Insert(index, content);
+                _comments.Insert(index, null);
+                _contents[index].AddBeforeSelf(content);
+            }
+            else
+            {
+                _properties.Insert(index, href);
+                _contents.Insert(index, content);
+                _comments.Insert(index, null);
+                _comments[index].AddBeforeSelf(content);
+            }
+        }
+
         #endregion Add
 
         #region GetValue

@@ -7,8 +7,10 @@
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
   - [Project](#project)
+    - [Github](#github)
     - [NuGet](#nuget)
   - [CHANGELOG](#changelog)
+    - [1.3.3](#133)
     - [1.3.2](#132)
     - [1.3.1](#131)
     - [1.2.5](#125)
@@ -38,11 +40,23 @@
 
 ## Project
 
+### Github
+
+<https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager>
+
 ### NuGet
 
 <https://www.nuget.org/packages/Honoo.Configuration.ConfigurationManager/>
 
 ## CHANGELOG
+
+### 1.3.3
+
+**Fixed* 修复了 AssemblyBinding 节点缺少命名空间的问题。
+
+**Changed* 移除了 IConfigSection 接口方式，更改为 ConfigSection 基类。
+
+**Deprecated*  取消了 &lt;remove /&gt; &lt;clear /&gt; 标签行为。
 
 ### 1.3.2
 
@@ -54,6 +68,10 @@
 
 ### 1.3.1
 
+**Changed* SectionGroup 和 Section 的注释（comment）设置从父级方法更改为自身方法。
+
+**Changed* 移除了 ConfigSection 基类，更改为 IConfigSection 接口方式。
+
 **Features* AppSettings、DictionarySection 读取同名键值不再抛出异常，使用最后读取的值。
 
 **Features* NameValueSection 支持数组模式。
@@ -61,10 +79,6 @@
 **Features* 属性值支持枚举类型。
 
 **Features* 新增 GetValue(string, string) 方法，在取值时设置没有找到指定键时的默认值。
-
-**Changed* SectionGroup 和 Section 的注释（comment）设置从父级移动到自身。
-
-**Changed* 移除了 ConfigSection 基类，更改为 IConfigSection 接口方式。
 
 ### 1.2.5
 
