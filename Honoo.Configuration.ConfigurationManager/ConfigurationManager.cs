@@ -40,7 +40,6 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 映射到标准格式的 "assemblyBinding" 节点。这是配置级的程序集绑定策略节点。
-
         /// </summary>
         public AssemblyBinding AssemblyBinding
         {
