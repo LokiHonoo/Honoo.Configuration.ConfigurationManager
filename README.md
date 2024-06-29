@@ -10,7 +10,8 @@
     - [Github](#github)
     - [NuGet](#nuget)
   - [CHANGELOG](#changelog)
-    - [1.3.3](#133)
+    - [1.4.0](#140)
+    - [1.3.4](#134)
     - [1.3.2](#132)
     - [1.3.1](#131)
     - [1.2.5](#125)
@@ -50,7 +51,11 @@
 
 ## CHANGELOG
 
-### 1.3.3
+### 1.4.0
+
+**Refactored* 完全重构。现在能以文本方式处理混乱的 &lt;remove /&gt; &lt;clear /&gt; 标签。
+
+### 1.3.4
 
 **Fixed* 修复了 AssemblyBinding 节点缺少命名空间的问题。
 
@@ -114,24 +119,16 @@ internal static void Create(string filePath)
     using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
         //
-        // 直接赋值必须转换为 string 类型。
+        // 赋值并设置注释。
         //
-        manager.AppSettings.Properties["prop1"] = "It's will remove this.";
-        manager.AppSettings.Properties.AddOrUpdate("prop2", "This is \"appSettings\" prop2 value.");
+        manager.AppSettings.Properties.AddOrUpdate("prop1", "It's will remove this.").SetComment("It's will remove this.");
+        manager.AppSettings.Properties.AddOrUpdate("prop2", "This is \"appSettings\" prop2 value.").SetComment("This is \"appSettings\" prop2 comment.");
         manager.AppSettings.Properties.AddOrUpdate("prop3", 1234567);
         manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
         //
-        // 设置注释。
-        //
-        manager.AppSettings.Properties.TrySetComment("prop1", "It's will remove this.");
-        manager.AppSettings.Properties.TrySetComment("prop2", "This is \"appSettings\" prop2 comment.");
-        manager.AppSettings.Properties.TrySetComment("prop3", "This is \"appSettings\" prop3 comment.");
-        manager.AppSettings.Properties.TrySetComment("prop4", "This is \"appSettings\" prop4 comment.");
-        //
-        // 移除属性的方法。选择其一。移除属性时相关注释一并移除。
+        // 移除属性的方法。移除属性时相关注释一并移除。
         //
         manager.AppSettings.Properties.Remove("prop1");
-        manager.AppSettings.Properties["prop1"] = null;
         //
         // 保存到指定的文件。
         //
@@ -147,26 +144,21 @@ internal static void Load(string filePath)
     using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
         //
-        // 取出属性。
+        // 取出属性和注释。
         //
-        string value1 = manager.AppSettings.Properties.GetValue("prop1", "This is default value when prop1 not fount.");
-        Console.WriteLine(value1);
-        string value2 = manager.AppSettings.Properties.GetValue("prop2", "This is default value when prop2 not fount.");
-        Console.WriteLine(value2);
-        double value3 = manager.AppSettings.Properties.GetValue("prop3", 0.77777777d);
-        Console.WriteLine(value3);
-        LoaderOptimization value4 = manager.AppSettings.Properties.GetValue("prop4", LoaderOptimization.MultiDomainHost);
-        Console.WriteLine(value4);
-        //
-        // 取出注释。
-        //
-        if (manager.AppSettings.Properties.TryGetComment("prop1", out string comment))
+        AddProperty value2 = manager.AppSettings.Properties.GetValue("prop2");
+        if (value2.TryGetComment(out string comment2))
         {
-            Console.WriteLine(comment);
+            Console.WriteLine(comment2);
         }
-        if (manager.AppSettings.Properties.TryGetComment("prop2", out comment))
+        Console.WriteLine(value2.Value);
+        //
+        int value3 = manager.AppSettings.Properties.GetValue("prop3", 55555);
+        Console.WriteLine(value3);
+        //
+        if (manager.AppSettings.Properties.TryGetValue("prop4", out LoaderOptimization value4))
         {
-            Console.WriteLine(comment);
+            Console.WriteLine(value4);
         }
     }
 }
@@ -201,26 +193,16 @@ internal static void Create(string filePath)
         };
         MySqlConnection conn2 = new MySqlConnection(builder2.ConnectionString);
         //
-        // 如果不设置引擎参数，读取时不能访问连接实例。
+        // 赋值并设置注释。如果不设置引擎参数，读取时不能访问连接实例。
         //
-        manager.ConnectionStrings.Properties["prop1"] = new ConnectionStringsValue(conn1);
-        manager.ConnectionStrings.Properties["prop2"] = new ConnectionStringsValue(conn1.ConnectionString, null);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop3", conn1);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop4", conn2.ConnectionString, conn2.GetType().Namespace);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop5", conn2.ConnectionString, typeof(MySqlConnection).AssemblyQualifiedName);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop1", conn1).SetComment("This is \"connectionStrings\" prop1 comment.");
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop2", conn1.ConnectionString, conn2.GetType().Namespace);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop3", conn2.ConnectionString, typeof(MySqlConnection).AssemblyQualifiedName);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop4", conn2).SetComment("It's will remove this.");
         //
-        // 设置注释。
+        // 移除属性的方法。
         //
-        manager.ConnectionStrings.Properties.TrySetComment("prop1", "It's will remove this.");
-        manager.ConnectionStrings.Properties.TrySetComment("prop2", "This is \"sql server connection\" comment without provider name.");
-        manager.ConnectionStrings.Properties.TrySetComment("prop3", "This is \"sql server connection\" comment.");
-        manager.ConnectionStrings.Properties.TrySetComment("prop4", "This is \"mysql connection\" comment with assembly namespace.");
-        manager.ConnectionStrings.Properties.TrySetComment("prop5", "This is \"mysql connection\" comment with assembly qualified name.");
-        //
-        // 移除属性的方法。选择其一。移除属性时相关注释一并移除。
-        //
-        manager.ConnectionStrings.Properties.Remove("prop1");
-        manager.ConnectionStrings.Properties["prop1"] = null;
+        manager.ConnectionStrings.Properties.Remove("prop4");
         //
         // 保存到指定的文件。
         //
@@ -236,32 +218,23 @@ internal static void Load(string filePath)
     using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
         //
-        // 取出属性。
+        // 取出属性和注释。
         //
-        if (manager.ConnectionStrings.Properties.TryGetValue("prop2", out ConnectionStringsValue value))
+        ConnectionStringProperty value1 = manager.ConnectionStrings.Properties.GetValue("prop1");
+        if (value1.TryGetComment(out string comment1))
         {
-            Console.WriteLine(value.ConnectionString);
+            Console.WriteLine(comment1);
         }
-        string connectionString = manager.ConnectionStrings.Properties["prop3"].ConnectionString;
-        Console.WriteLine(connectionString);
+        Console.WriteLine(value1.ConnectionString);
         //
-        // 访问实例。
-        //
-        DbConnection connection = manager.ConnectionStrings.Properties["prop4"].CreateInstance();
-        Console.WriteLine(connection.ConnectionString);
-        //
-        MySqlConnection mysql = (MySqlConnection)manager.ConnectionStrings.Properties["prop5"].CreateInstance();
-        Console.WriteLine(mysql.ConnectionString);
-        //
-        // 取出注释。
-        //
-        if (manager.AppSettings.Properties.TryGetComment("prop1", out string comment))
+        if (manager.ConnectionStrings.Properties.TryGetValue("prop2", out ConnectionStringProperty value2))
         {
-            Console.WriteLine(comment);
-        }
-        if (manager.AppSettings.Properties.TryGetComment("prop2", out comment))
-        {
-            Console.WriteLine(comment);
+            Console.WriteLine(value2.ConnectionString);
+            //
+            // 访问实例。
+            //
+            DbConnection connection = value2.CreateInstance();
+            Console.WriteLine(connection.ConnectionString);
         }
     }
 }
@@ -296,24 +269,22 @@ internal static void Create(string filePath)
         NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
         DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
         //
-        // SingleTagSection 属性操作与 appSettings 节点相同。不支持属性值注释。
+        // SingleTagSection 使用唯一键值。不支持属性值注释。
         //
-        section1.Properties["prop1"] = 0.6789d.ToString();
+        section1.Properties.AddOrUpdate("prop1", 0.6789d);
         section1.SetComment("This is \"SingleTagSection\" comment.");
-        //section1.SetComment("prop1", "This is \"SingleTagSection\" prop1  comment.");
         //
-        // DictionarySection 属性操作和注释操作与 appSettings 节点相同。
+        // NameValueSection 允许同名键值。
         //
-        section3.Properties.AddOrUpdate("prop1", new byte[] { 0x01, 0x02, 0x03, 0xAA, 0xBB, 0xCC, });
-        section3.Properties.TrySetComment("prop1", "This is \"DictionarySection\" prop1 comment.");
-        section3.SetComment("This is \"DictionarySection\" comment.");
-        //
-        // NameValueSection 属性以数组操作，注释需指定索引。
-        //
-        section2.Properties.AddOrUpdate("prop1", new double[] { 155.66d, 7.9992d });
-        section2.Properties.TrySetComment("prop1", 0, "This is \"NameValueSection\" prop1 sub 0 comment.");
-        section2.Properties.TrySetComment("prop1", 1, "This is \"NameValueSection\" prop1 sub 1 comment.");
+        section2.Properties.Add("prop1", 155.66d).SetComment("This is \"NameValueSection\" prop1 comment.");
+        section2.Properties.Add("prop1", 7.9992d).SetComment("This is \"NameValueSection\" prop1 comment.");
         section2.SetComment("This is \"NameValueSection\" comment.");
+        //
+        // DictionarySection 使用唯一键值。
+        //
+        section3.Properties.AddOrUpdate("prop1", "DictionarySection prop.").SetComment("This is \"DictionarySection\" prop1 comment.");
+        section3.SetComment("This is \"DictionarySection\" comment.");
+
         //
         // 以文本方式创建。
         //
@@ -358,30 +329,16 @@ internal static void Load(string filePath)
         TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
         TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
         //
-        // 取出属性。
+        // 取出属性和注释。
         //
-        Console.WriteLine(section1.Properties.GetValue("prop1", string.Empty));
+        Console.WriteLine(section1.Properties.GetValue("prop1", 0d));
+        //
+        AddProperty[] value2 = section2.Properties.GetValue("prop1");
+        foreach (AddProperty val in value2)
+        {
+            Console.WriteLine(val.Value);
+        }
         Console.WriteLine(section3.Properties.GetValue("prop1", string.Empty));
-        double[] value2 = section2.Properties.GetValues("prop1", new double[] { 11, 22, 33 });
-        foreach (double v in value2)
-        {
-            Console.WriteLine(v);
-        }
-        //
-        // 取出注释。
-        //
-        if (section1.TryGetComment(out string comment))
-        {
-            Console.WriteLine(comment);
-        }
-        if (section2.Properties.TryGetComment("prop1", 0, out comment))
-        {
-            Console.WriteLine(comment);
-        }
-        if (section3.Properties.TryGetComment("prop1", out comment))
-        {
-            Console.WriteLine(comment);
-        }
         //
         // 以文本方式取出节点内容。
         //

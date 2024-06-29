@@ -11,11 +11,32 @@ namespace Honoo.Configuration
     {
         #region Construction
 
-        internal TextSection(XElement content, XComment comment) : base(ConfigSectionKind.TextSection, content, comment)
+        internal TextSection(XElement declaration, XElement content, XComment comment) : base(ConfigSectionKind.TextSection, declaration, content, comment)
         {
         }
 
         #endregion Construction
+
+        /// <summary>
+        /// 获取与指定名称关联的配置容器的属性的值。
+        /// <br/>如果没有找到指定属性，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="name">配置容器的属性的名称。</param>
+        /// <param name="value">配置容器的属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string GetAttribute(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
+            }
+            if (_content.Attribute(name) is XAttribute attribute)
+            {
+                return attribute.Value;
+            }
+            return null;
+        }
 
         /// <summary>
         /// 获取配置容器的内联缩进 XML 文本。

@@ -16,18 +16,12 @@ namespace Test
             using (ConfigurationManager manager = new ConfigurationManager(filePath))
             {
                 //
-                // 赋值。
+                // 赋值并设置注释。
                 //
                 while (manager.AssemblyBinding.Properties.Count < 3)
                 {
-                    manager.AssemblyBinding.Properties.Add("file://c:\\aa.tt");
+                    manager.AssemblyBinding.Properties.Add("file://c:\\aa.tt").SetComment("This is \"linkedConfiguration\" comment.");
                 }
-                //
-                // 设置注释。
-                //
-                manager.AssemblyBinding.Properties.TrySetComment(0, "Comment");
-                manager.AssemblyBinding.Properties.TrySetComment(1, "Comment");
-                manager.AssemblyBinding.Properties.TrySetComment(2, "Comment");
                 //
                 // 移除属性的方法。
                 //
@@ -47,22 +41,22 @@ namespace Test
             using (ConfigurationManager manager = new ConfigurationManager(filePath))
             {
                 //
-                // 取出属性。
+                // 取出属性和注释。
                 //
-                string value1 = manager.AssemblyBinding.Properties.GetValue(0, "This is default value when prop1 not fount.");
-                Console.WriteLine(value1);
-                string value2 = manager.AssemblyBinding.Properties.GetValue(1, "This is default value when prop2 not fount.");
-                Console.WriteLine(value2);
-                //
-                // 取出注释。
-                //
-                if (manager.AssemblyBinding.Properties.TryGetComment(0, out string comment))
+                LinkedConfigurationProperty value2 = manager.AssemblyBinding.Properties.GetValue(0);
+                if (value2.TryGetComment(out string comment2))
                 {
-                    Console.WriteLine(comment);
+                    Console.WriteLine(comment2);
                 }
-                if (manager.AssemblyBinding.Properties.TryGetComment(1, out comment))
+                Console.WriteLine(value2.Href);
+                //
+                if (manager.AssemblyBinding.Properties.TryGetValue(1, out LinkedConfigurationProperty value3))
                 {
-                    Console.WriteLine(comment);
+                    if (value3.TryGetComment(out string comment3))
+                    {
+                        Console.WriteLine(comment3);
+                    }
+                    Console.WriteLine(value3.Href);
                 }
             }
         }

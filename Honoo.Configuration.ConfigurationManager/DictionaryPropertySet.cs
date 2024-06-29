@@ -9,151 +9,29 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性集合。
     /// </summary>
-    public class DictionaryPropertySet : IEnumerable<KeyValuePair<string, string>>
+    public class DictionaryPropertySet : IEnumerable<ConfigurationProperty>
     {
-        #region Class
-
-        /// <summary>
-        /// 代表此配置属性集合的键的集合。
-        /// </summary>
-        public sealed class KeyCollection : IEnumerable<string>
-        {
-            #region Properties
-
-            private readonly Dictionary<string, string> _properties;
-
-            /// <summary>
-            /// 获取配置属性集合的键的元素数。
-            /// </summary>
-            public int Count => _properties.Count;
-
-            #endregion Properties
-
-            internal KeyCollection(Dictionary<string, string> properties)
-            {
-                _properties = properties;
-            }
-
-            /// <summary>
-            /// 从指定数组索引开始将键元素复制到到指定数组。
-            /// </summary>
-            /// <param name="array">要复制到的目标数组。</param>
-            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
-            public void CopyTo(string[] array, int arrayIndex)
-            {
-                _properties.Keys.CopyTo(array, arrayIndex);
-            }
-
-            /// <summary>
-            /// 返回循环访问集合的枚举数。
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerator<string> GetEnumerator()
-            {
-                return _properties.Keys.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _properties.Keys.GetEnumerator();
-            }
-        }
-
-        /// <summary>
-        /// 代表此配置属性集合的值的集合。
-        /// </summary>
-        public sealed class ValueCollection : IEnumerable<string>
-        {
-            #region Properties
-
-            private readonly Dictionary<string, string> _properties;
-
-            /// <summary>
-            /// 获取配置属性集合的值的元素数。
-            /// </summary>
-            public int Count => _properties.Count;
-
-            #endregion Properties
-
-            internal ValueCollection(Dictionary<string, string> properties)
-            {
-                _properties = properties;
-            }
-
-            /// <summary>
-            /// 从指定数组索引开始将值元素复制到到指定数组。
-            /// </summary>
-            /// <param name="array">要复制到的目标数组。</param>
-            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
-            public void CopyTo(string[] array, int arrayIndex)
-            {
-                _properties.Values.CopyTo(array, arrayIndex);
-            }
-
-            /// <summary>
-            /// 返回循环访问集合的枚举数。
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerator<string> GetEnumerator()
-            {
-                return _properties.Values.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _properties.Values.GetEnumerator();
-            }
-        }
-
-        #endregion Class
-
         #region Properties
 
-        private readonly Dictionary<string, XComment> _comments = new Dictionary<string, XComment>();
-        private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
-        private readonly KeyCollection _keyExhibits;
-        private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
-        private readonly XElement _superior;
-        private readonly ValueCollection _valueExhibits;
+        private readonly XElement _container;
+        private readonly HashSet<string> _keys = new HashSet<string>();
+        private readonly List<ConfigurationProperty> _properties = new List<ConfigurationProperty>();
 
         /// <summary>
         /// 获取配置属性集合中包含的元素数。
         /// </summary>
         public int Count => _properties.Count;
 
-        /// <summary>
-        /// 获取配置属性集合的键的集合。
-        /// </summary>
-        public KeyCollection Keys => _keyExhibits;
-
-        /// <summary>
-        /// 获取配置属性集合的值的集合。
-        /// </summary>
-        public ValueCollection Values => _valueExhibits;
-
-        /// <summary>
-        /// 获取或设置具有指定键的配置属性的值。直接赋值等同于 AddOrUpdate 方法。
-        /// <br/>取值时如果没有找到指定键，返回 <see langword="null"/>。使用 <see cref="GetValue(string, string)"/> 设置没有找到指定键时的默认值。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public string this[string key]
-        {
-            get => _properties.TryGetValue(key, out string value) ? value : null;
-            set { AddOrUpdate(key, value); }
-        }
-
         #endregion Properties
 
         #region Construction
 
-        internal DictionaryPropertySet(XElement superior)
+        internal DictionaryPropertySet(XElement container)
         {
-            _superior = superior;
-            if (superior.HasElements)
+            _container = container;
+            if (_container.HasElements)
             {
-                IEnumerator<XNode> enumerator = superior.Nodes().GetEnumerator();
+                IEnumerator<XNode> enumerator = _container.Nodes().GetEnumerator();
                 XComment comment = null;
                 while (enumerator.MoveNext())
                 {
@@ -168,75 +46,356 @@ namespace Honoo.Configuration
                             XElement content = (XElement)enumerator.Current;
                             if (content.Name == "add")
                             {
-                                string key = content.Attribute("key").Value;
-                                string value = content.Attribute("value").Value;
-                                if (_properties.ContainsKey(key))
+                                AddProperty property = new AddProperty(content, comment);
+                                if (_keys.Contains(property.Key))
                                 {
-                                    Remove(key);
+                                    for (int i = _properties.Count - 1; i >= 0; i--)
+                                    {
+                                        if (_properties[i] is AddProperty prop)
+                                        {
+                                            if (prop.Key == property.Key)
+                                            {
+                                                _keys.Remove(property.Key);
+                                                _properties.RemoveAt(i);
+                                            }
+                                        }
+                                    }
                                 }
-                                _properties.Add(key, value);
-                                _contents.Add(key, content);
-                                _comments.Add(key, comment);
+                                _keys.Add(property.Key);
+                                _properties.Add(property);
                             }
                             else if (content.Name == "remove")
                             {
-                                string key = content.Attribute("key").Value;
-                                Remove(key);
+                                RemoveProperty property = new RemoveProperty(content, comment);
+                                _properties.Add(property);
                             }
                             else if (content.Name == "clear")
                             {
-                                foreach (var key in _properties.Keys)
-                                {
-                                    Remove(key);
-                                }
+                                ClearProperty property = new ClearProperty(content, comment);
+                                _properties.Add(property);
                             }
                         }
                         comment = null;
                     }
                 }
             }
-            _keyExhibits = new KeyCollection(_properties);
-            _valueExhibits = new ValueCollection(_properties);
         }
 
         #endregion Construction
+
+        #region Add
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="property">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConfigurationProperty Add(ConfigurationProperty property)
+        {
+            if (property == null)
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
+            }
+            switch (property.Kind)
+            {
+                case ConfigurationPropertyKind.AddProperty: return Add((AddProperty)property);
+                case ConfigurationPropertyKind.RemoveProperty: return Add((RemoveProperty)property);
+                case ConfigurationPropertyKind.ClearProperty: return Add((ClearProperty)property);
+                default: throw new ArgumentException($"The invalid property kind - {nameof(property)}.");
+            }
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="property">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(AddProperty property)
+        {
+            if (string.IsNullOrWhiteSpace(property.Key))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
+            }
+            if (property.Comment != null)
+            {
+                _container.Add(property.Comment);
+            }
+            _container.Add(property.Content);
+            _keys.Add(property.Key);
+            _properties.Add(property);
+            return property;
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="property">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public RemoveProperty Add(RemoveProperty property)
+        {
+            if (string.IsNullOrWhiteSpace(property.Key))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
+            }
+            if (property.Comment != null)
+            {
+                _container.Add(property.Comment);
+            }
+            _container.Add(property.Content);
+            _properties.Add(property);
+            return property;
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="property">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ClearProperty Add(ClearProperty property)
+        {
+            if (property.Comment != null)
+            {
+                _container.Add(property.Comment);
+            }
+            _container.Add(property.Content);
+            _properties.Add(property);
+            return property;
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, string value)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(key)}.");
+            }
+            return Add(new AddProperty(key, value));
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, bool value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, sbyte value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, byte value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, short value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, ushort value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, int value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, uint value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, long value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, ulong value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, float value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, double value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, decimal value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, char value)
+        {
+            return Add(key, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, byte[] value)
+        {
+            return Add(key, BitConverter.ToString(value).Replace("-", string.Empty));
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add<TEnum>(string key, TEnum value) where TEnum : Enum
+        {
+            return Add(key, value.ToString());
+        }
+
+        #endregion Add
 
         #region AddOrUpdate
 
         /// <summary>
         /// 添加或更新一个配置属性。
         /// </summary>
+        /// <param name="property">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty AddOrUpdate(AddProperty property)
+        {
+            if (string.IsNullOrWhiteSpace(property.Key))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
+            }
+            Remove(property.Key);
+            return Add(property);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, string value)
+        public AddProperty AddOrUpdate(string key, string value)
         {
             if (string.IsNullOrWhiteSpace(key))
             {
                 throw new ArgumentException($"The invalid argument - {nameof(key)}.");
             }
-            if (value == null)
-            {
-                Remove(key);
-            }
-            else
-            {
-                if (_properties.ContainsKey(key))
-                {
-                    _contents[key].SetAttributeValue("value", value);
-                    _properties[key] = value;
-                }
-                else
-                {
-                    XElement content = new XElement("add");
-                    content.SetAttributeValue("key", key);
-                    content.SetAttributeValue("value", value);
-                    _properties.Add(key, value);
-                    _contents.Add(key, content);
-                    _comments.Add(key, null);
-                    _superior.Add(content);
-                }
-            }
+            return AddOrUpdate(new AddProperty(key, value));
         }
 
         /// <summary>
@@ -244,10 +403,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, bool value)
+        public AddProperty AddOrUpdate(string key, bool value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -255,10 +415,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, sbyte value)
+        public AddProperty AddOrUpdate(string key, sbyte value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -266,10 +427,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, byte value)
+        public AddProperty AddOrUpdate(string key, byte value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -277,10 +439,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, short value)
+        public AddProperty AddOrUpdate(string key, short value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -288,10 +451,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, ushort value)
+        public AddProperty AddOrUpdate(string key, ushort value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -299,10 +463,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, int value)
+        public AddProperty AddOrUpdate(string key, int value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -310,10 +475,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, uint value)
+        public AddProperty AddOrUpdate(string key, uint value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -321,10 +487,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, long value)
+        public AddProperty AddOrUpdate(string key, long value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -332,10 +499,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, ulong value)
+        public AddProperty AddOrUpdate(string key, ulong value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -343,10 +511,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, float value)
+        public AddProperty AddOrUpdate(string key, float value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -354,10 +523,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, double value)
+        public AddProperty AddOrUpdate(string key, double value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -365,10 +535,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, decimal value)
+        public AddProperty AddOrUpdate(string key, decimal value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -376,10 +547,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, char value)
+        public AddProperty AddOrUpdate(string key, char value)
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
@@ -387,17 +559,11 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, byte[] value)
+        public AddProperty AddOrUpdate(string key, byte[] value)
         {
-            if (value == null)
-            {
-                Remove(key);
-            }
-            else
-            {
-                AddOrUpdate(key, BitConverter.ToString(value).Replace("-", string.Empty));
-            }
+            return AddOrUpdate(key, BitConverter.ToString(value).Replace("-", string.Empty));
         }
 
         /// <summary>
@@ -405,335 +571,45 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate<TEnum>(string key, TEnum value) where TEnum : Enum
+        public AddProperty AddOrUpdate<TEnum>(string key, TEnum value) where TEnum : Enum
         {
-            AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString());
         }
 
         #endregion AddOrUpdate
 
-        #region GetValue
+        #region TryGetValue
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="property">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string GetValue(string key, string defaultValue)
+        public bool TryGetValue(string key, out AddProperty property)
         {
-            return _properties.TryGetValue(key, out string value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool GetValue(string key, bool defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (string.IsNullOrWhiteSpace(key))
             {
-                if (bool.TryParse(stringValue, out bool value))
-                {
-                    return value;
-                }
+                throw new ArgumentException($"The invalid argument - {nameof(key)}.");
             }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public sbyte GetValue(string key, sbyte defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
+            for (int i = _properties.Count - 1; i >= 0; i--)
             {
-                if (sbyte.TryParse(stringValue, out sbyte value))
+                if (_properties[i] is AddProperty prop)
                 {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public byte GetValue(string key, byte defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (byte.TryParse(stringValue, out byte value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public short GetValue(string key, short defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (short.TryParse(stringValue, out short value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public ushort GetValue(string key, ushort defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (ushort.TryParse(stringValue, out ushort value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public int GetValue(string key, int defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (int.TryParse(stringValue, out int value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public uint GetValue(string key, uint defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (uint.TryParse(stringValue, out uint value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public long GetValue(string key, long defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (long.TryParse(stringValue, out long value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public ulong GetValue(string key, ulong defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (ulong.TryParse(stringValue, out ulong value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public float GetValue(string key, float defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (float.TryParse(stringValue, out float value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public double GetValue(string key, double defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (double.TryParse(stringValue, out double value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public decimal GetValue(string key, decimal defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (decimal.TryParse(stringValue, out decimal value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public char GetValue(string key, char defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (char.TryParse(stringValue, out char value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public byte[] GetValue(string key, byte[] defaultValue)
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (XValueHelper.TryParse(stringValue, out byte[] value))
-                {
-                    return value;
-                }
-            }
-            return defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public TEnum GetValue<TEnum>(string key, TEnum defaultValue) where TEnum : struct
-        {
-            if (_properties.TryGetValue(key, out string stringValue))
-            {
-                if (typeof(TEnum).BaseType.FullName == "System.Enum")
-                {
-                    if (Enum.TryParse(stringValue, false, out TEnum value))
+                    if (prop.Key == key)
                     {
-                        return value;
+                        property = prop;
+                        return true;
                     }
                 }
             }
-            return defaultValue;
+            property = null;
+            return false;
         }
-
-        #endregion GetValue
-
-        #region TryGetValue
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。
@@ -745,7 +621,13 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out string value)
         {
-            return _properties.TryGetValue(key, out value);
+            if (TryGetValue(key, out AddProperty val))
+            {
+                value = val.Value;
+                return true;
+            }
+            value = default;
+            return false;
         }
 
         /// <summary>
@@ -758,9 +640,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out bool value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return bool.TryParse(stringValue, out value);
+                return bool.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -776,9 +658,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out sbyte value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return sbyte.TryParse(stringValue, out value);
+                return sbyte.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -794,9 +676,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out byte value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return byte.TryParse(stringValue, out value);
+                return byte.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -812,9 +694,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out short value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return short.TryParse(stringValue, out value);
+                return short.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -830,9 +712,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out ushort value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return ushort.TryParse(stringValue, out value);
+                return ushort.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -848,9 +730,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out int value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return int.TryParse(stringValue, out value);
+                return int.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -866,9 +748,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out uint value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return uint.TryParse(stringValue, out value);
+                return uint.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -884,9 +766,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out long value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return long.TryParse(stringValue, out value);
+                return long.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -902,9 +784,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out ulong value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return ulong.TryParse(stringValue, out value);
+                return ulong.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -920,9 +802,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out float value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return float.TryParse(stringValue, out value);
+                return float.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -938,9 +820,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out double value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return double.TryParse(stringValue, out value);
+                return double.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -956,9 +838,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out decimal value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return decimal.TryParse(stringValue, out value);
+                return decimal.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -974,9 +856,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out char value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return char.TryParse(stringValue, out value);
+                return char.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -992,9 +874,9 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out byte[] value)
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (TryGetValue(key, out AddProperty val))
             {
-                return XValueHelper.TryParse(stringValue, out value);
+                return XValueHelper.TryParse(val.Value, out value);
             }
             value = default;
             return false;
@@ -1010,11 +892,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue<TEnum>(string key, out TEnum value) where TEnum : struct
         {
-            if (_properties.TryGetValue(key, out string stringValue))
+            if (typeof(TEnum).BaseType.FullName == "System.Enum")
             {
-                if (typeof(TEnum).BaseType.FullName == "System.Enum")
+                if (TryGetValue(key, out AddProperty val))
                 {
-                    return Enum.TryParse(stringValue, false, out value);
+                    return Enum.TryParse(val.Value, false, out value);
                 }
             }
             value = default;
@@ -1023,95 +905,237 @@ namespace Honoo.Configuration
 
         #endregion TryGetValue
 
-        #region Comment
+        #region GetValue
 
         /// <summary>
-        /// 删除一个与指定键关联的配置属性的注释。
+        /// 获取与指定键关联的配置属性的值。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool RemoveComment(string key)
+        public AddProperty GetValue(string key)
         {
-            if (_comments.TryGetValue(key, out XComment comment_))
-            {
-                if (comment_ != null)
-                {
-                    comment_.Remove();
-                    _comments[key] = null;
-                }
-                return true;
-            }
-            return false;
+            return TryGetValue(key, out AddProperty value) ? value : null;
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的注释。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但没有注释节点，则仍返回 <see langword="false"/>。
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="comment">配置属性的注释。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetComment(string key, out string comment)
+        public string GetValue(string key, string defaultValue)
         {
-            if (_comments.TryGetValue(key, out XComment comment_))
-            {
-                if (comment_ != null)
-                {
-                    comment = comment_.Value;
-                    return true;
-                }
-            }
-            comment = null;
-            return false;
+            return TryGetValue(key, out string value) ? value : defaultValue;
         }
 
         /// <summary>
-        /// 添加或更新或删除一个与指定键关联的配置属性的注释。
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="comment">配置属性的注释。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TrySetComment(string key, string comment)
+        public bool GetValue(string key, bool defaultValue)
         {
-            if (comment == null)
-            {
-                RemoveComment(key);
-                return true;
-            }
-            else
-            {
-                if (_comments.TryGetValue(key, out XComment comment_))
-                {
-                    if (comment_ == null)
-                    {
-                        comment_ = new XComment(comment);
-                        _contents[key].AddBeforeSelf(comment_);
-                        _comments[key] = comment_;
-                    }
-                    else
-                    {
-                        comment_.Value = comment;
-                    }
-                    return true;
-                }
-            }
-            return false;
+            return TryGetValue(key, out bool value) ? value : defaultValue;
         }
 
-        #endregion Comment
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public sbyte GetValue(string key, sbyte defaultValue)
+        {
+            return TryGetValue(key, out sbyte value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public byte GetValue(string key, byte defaultValue)
+        {
+            return TryGetValue(key, out byte value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public short GetValue(string key, short defaultValue)
+        {
+            return TryGetValue(key, out short value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ushort GetValue(string key, ushort defaultValue)
+        {
+            return TryGetValue(key, out ushort value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public int GetValue(string key, int defaultValue)
+        {
+            return TryGetValue(key, out int value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public uint GetValue(string key, uint defaultValue)
+        {
+            return TryGetValue(key, out uint value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public long GetValue(string key, long defaultValue)
+        {
+            return TryGetValue(key, out long value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ulong GetValue(string key, ulong defaultValue)
+        {
+            return TryGetValue(key, out ulong value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public float GetValue(string key, float defaultValue)
+        {
+            return TryGetValue(key, out float value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public double GetValue(string key, double defaultValue)
+        {
+            return TryGetValue(key, out double value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public decimal GetValue(string key, decimal defaultValue)
+        {
+            return TryGetValue(key, out decimal value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public char GetValue(string key, char defaultValue)
+        {
+            return TryGetValue(key, out char value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public byte[] GetValue(string key, byte[] defaultValue)
+        {
+            return TryGetValue(key, out byte[] value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public TEnum GetValue<TEnum>(string key, TEnum defaultValue) where TEnum : struct
+        {
+            return TryGetValue(key, out TEnum value) ? value : defaultValue;
+        }
+
+        #endregion GetValue
 
         /// <summary>
         /// 从配置属性集合中移除所有配置属性。
         /// </summary>
         public void Clear()
         {
+            _container.RemoveNodes();
+            _keys.Clear();
             _properties.Clear();
-            _contents.Clear();
-            _comments.Clear();
-            _superior.RemoveNodes();
         }
 
         /// <summary>
@@ -1120,16 +1144,16 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool ContainsKey(string key)
+        public bool Contains(string key)
         {
-            return _properties.ContainsKey(key);
+            return _keys.Contains(key);
         }
 
         /// <summary>
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        public IEnumerator<ConfigurationProperty> GetEnumerator()
         {
             return _properties.GetEnumerator();
         }
@@ -1140,26 +1164,48 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
+        /// 从配置属性集合中移除配置属性。配置属性的注释一并移除。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="property">配置属性。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool Remove(ConfigurationProperty property)
+        {
+            bool removed = _properties.Remove(property);
+            property.Comment?.Remove();
+            property.Content.Remove();
+            if (property is AddProperty prop)
+            {
+                _keys.Remove(prop.Key);
+            }
+            return removed;
+        }
+
+        /// <summary>
         /// 从配置属性集合中移除带有指定键的配置属性。和指定键关联的配置属性的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定键，则返回 <see langword="false"/>。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
         public bool Remove(string key)
         {
-            if (_properties.Remove(key))
+            for (int i = _properties.Count - 1; i >= 0; i--)
             {
-                _contents[key].Remove();
-                _contents.Remove(key);
-                _comments[key]?.Remove();
-                _comments.Remove(key);
-                return true;
+                if (_properties[i] is AddProperty property)
+                {
+                    if (property.Key == key)
+                    {
+                        property.Comment?.Remove();
+                        property.Content.Remove();
+                        _keys.Remove(key);
+                        _properties.RemoveAt(i);
+                        return true;
+                    }
+                }
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
     }
 }

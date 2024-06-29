@@ -9,12 +9,12 @@ namespace Honoo.Configuration
     public sealed class AppSettings
     {
         private readonly XElement _content;
-        private readonly AppSettingsPropertySet _properties;
+        private readonly DictionaryPropertySet _properties;
 
         /// <summary>
         /// 获取配置属性集合。
         /// </summary>
-        public AppSettingsPropertySet Properties => _properties;
+        public DictionaryPropertySet Properties => _properties;
 
         #region Construction
 
@@ -30,7 +30,7 @@ namespace Honoo.Configuration
             {
                 throw new CryptographicException("Encryped configuration sections are not supported.");
             }
-            _properties = new AppSettingsPropertySet(_content);
+            _properties = new DictionaryPropertySet(_content);
         }
 
         #endregion Construction

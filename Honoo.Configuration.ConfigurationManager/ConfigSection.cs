@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Xml.Linq;
 
 namespace Honoo.Configuration
 {
@@ -13,6 +14,11 @@ namespace Honoo.Configuration
         protected readonly XElement _content;
 
         /// <summary>
+        /// 获取此配置容器的描述节点。
+        /// </summary>
+        protected readonly XElement _declaration;
+
+        /// <summary>
         /// 获取此配置容器的类型。
         /// </summary>
         protected readonly ConfigSectionKind _kind;
@@ -20,12 +26,16 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取此配置容器的注释节点。
         /// </summary>
-        protected XComment _comment = null;
+        protected XComment _comment;
 
         /// <summary>
         /// 获取此配置容器的类型。
         /// </summary>
         public ConfigSectionKind Kind => _kind;
+
+        internal XComment Comment => _comment;
+        internal XElement Content => _content;
+        internal XElement Declaration => _declaration;
 
         #region Construction
 
@@ -33,16 +43,29 @@ namespace Honoo.Configuration
         /// 创建 ConfigSection 的新实例。
         /// </summary>
         /// <param name="kind">配置容器的类型。</param>
+        /// <param name="declaration">配置容器的描述节点。</param>
         /// <param name="content">配置容器的内容节点。</param>
         /// <param name="comment">配置容器的注释节点。</param>
-        protected ConfigSection(ConfigSectionKind kind, XElement content, XComment comment)
+        protected ConfigSection(ConfigSectionKind kind, XElement declaration, XElement content, XComment comment)
         {
             _kind = kind;
-            _comment = comment;
+            _declaration = declaration;
             _content = content;
+            _comment = comment;
         }
 
         #endregion Construction
+
+        #region Comment
+
+        /// <summary>
+        /// 获取注释。
+        /// </summary>
+        /// <returns></returns>
+        public string GetComment()
+        {
+            return TryGetComment(out string comment) ? comment : null;
+        }
 
         /// <summary>
         /// 删除注释。
@@ -61,43 +84,32 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新或删除注释。
+        /// 添加或更新注释。
         /// </summary>
-        /// <param name="comment">配置容器的注释。</param>
+        /// <param name="comment">注释文本。</param>
+        /// <exception cref="Exception"/>
         public void SetComment(string comment)
         {
-            if (comment == null)
+            if (string.IsNullOrEmpty(comment))
             {
-                RemoveComment();
+                throw new ArgumentException($"The invalid argument - {nameof(comment)}.");
+            }
+            if (_comment == null)
+            {
+                _comment = new XComment(comment);
+                _content.AddBeforeSelf(_comment);
             }
             else
             {
-                if (_comment == null)
-                {
-                    _comment = new XComment(comment);
-                    _content.AddBeforeSelf(_comment);
-                }
-                else
-                {
-                    _comment.Value = comment;
-                }
+                _comment.Value = comment;
             }
-        }
-
-        /// <summary>
-        /// 方法已重写。返回节点的缩进 XML 文本。
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return _content.ToString();
         }
 
         /// <summary>
         /// 获取注释。
         /// <br/>如果没有找到注释，返回 <see langword="false"/>。
         /// </summary>
-        /// <param name="comment">配置容器的注释。</param>
+        /// <param name="comment">注释文本。</param>
         /// <returns></returns>
         public bool TryGetComment(out string comment)
         {
@@ -108,6 +120,17 @@ namespace Honoo.Configuration
             }
             comment = null;
             return false;
+        }
+
+        #endregion Comment
+
+        /// <summary>
+        /// 方法已重写。返回节点的缩进 XML 文本。
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return _content.ToString();
         }
     }
 }

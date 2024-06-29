@@ -1,50 +1,51 @@
-﻿using System;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
+using System;
 
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 配置组。
+    /// 配置属性的基类。
     /// </summary>
-    public sealed class ConfigSectionGroup
+    public abstract class ConfigurationProperty
     {
-        private readonly XElement _content;
+        /// <summary>
+        /// 配置属性的节点。
+        /// </summary>
+        protected readonly XElement _content;
 
         /// <summary>
-        /// 获取此配置组集合的描述节点。
+        /// 配置属性的注释节点。
         /// </summary>
-        private readonly XElement _declaration;
+        protected XComment _comment;
 
-        private readonly ConfigSectionGroupSet _groups;
-        private readonly ConfigSectionSet _sections;
-        private XComment _comment;
+        private readonly ConfigurationPropertyKind _kind;
 
         /// <summary>
-        /// 获取配置组集合。
+        /// 获取配置属性的类型。
         /// </summary>
-        public ConfigSectionGroupSet Groups => _groups;
-
-        /// <summary>
-        /// 获取配置容器集合。
-        /// </summary>
-        public ConfigSectionSet Sections => _sections;
+        public ConfigurationPropertyKind Kind => _kind;
 
         internal XComment Comment => _comment;
         internal XElement Content => _content;
-        internal XElement Declaration => _declaration;
 
         #region Construction
 
-        internal ConfigSectionGroup(XElement declaration, XElement content, XComment comment)
+        /// <summary>
+        /// 创建 ConfigurationProperty 的新实例。
+        /// </summary>
+        /// <param name="kind">配置属性的类型。</param>
+        /// <param name="content">配置属性的节点。</param>
+        /// <param name="comment">配置属性的节点。</param>
+        protected ConfigurationProperty(ConfigurationPropertyKind kind, XElement content, XComment comment)
         {
-            _declaration = declaration;
             _content = content;
             _comment = comment;
-            _groups = new ConfigSectionGroupSet(declaration, content);
-            _sections = new ConfigSectionSet(declaration, content);
+            _kind = kind;
         }
 
         #endregion Construction
+
+        #region Comment
 
         /// <summary>
         /// 获取注释。
@@ -94,15 +95,6 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 方法已重写。返回节点的缩进 XML 文本。
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return _content.ToString();
-        }
-
-        /// <summary>
         /// 获取注释。
         /// <br/>如果没有找到注释，返回 <see langword="false"/>。
         /// </summary>
@@ -117,6 +109,17 @@ namespace Honoo.Configuration
             }
             comment = null;
             return false;
+        }
+
+        #endregion Comment
+
+        /// <summary>
+        /// 方法已重写。返回节点的缩进 XML 文本。
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return _content.ToString();
         }
     }
 }

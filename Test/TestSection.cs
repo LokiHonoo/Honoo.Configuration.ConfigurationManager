@@ -32,24 +32,22 @@ namespace Test
                 NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
                 DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
                 //
-                // SingleTagSection 属性操作与 appSettings 节点相同。不支持属性值注释。
+                // SingleTagSection 使用唯一键值。不支持属性值注释。
                 //
-                section1.Properties["prop1"] = 0.6789d.ToString();
+                section1.Properties.AddOrUpdate("prop1", 0.6789d);
                 section1.SetComment("This is \"SingleTagSection\" comment.");
-                //section1.SetComment("prop1", "This is \"SingleTagSection\" prop1  comment.");
                 //
-                // DictionarySection 属性操作和注释操作与 appSettings 节点相同。
+                // NameValueSection 允许同名键值。
                 //
-                section3.Properties.AddOrUpdate("prop1", "DictionarySection prop.");
-                section3.Properties.TrySetComment("prop1", "This is \"DictionarySection\" prop1 comment.");
-                section3.SetComment("This is \"DictionarySection\" comment.");
-                //
-                // NameValueSection 属性以数组操作，注释需指定索引。
-                //
-                section2.Properties.AddOrUpdate("prop1", new double[] { 155.66d, 7.9992d });
-                section2.Properties.TrySetComment("prop1", 0, "This is \"NameValueSection\" prop1 sub 0 comment.");
-                section2.Properties.TrySetComment("prop1", 1, "This is \"NameValueSection\" prop1 sub 1 comment.");
+                section2.Properties.Add("prop1", 155.66d).SetComment("This is \"NameValueSection\" prop1 comment.");
+                section2.Properties.Add("prop1", 7.9992d).SetComment("This is \"NameValueSection\" prop1 comment.");
                 section2.SetComment("This is \"NameValueSection\" comment.");
+                //
+                // DictionarySection 使用唯一键值。
+                //
+                section3.Properties.AddOrUpdate("prop1", "DictionarySection prop.").SetComment("This is \"DictionarySection\" prop1 comment.");
+                section3.SetComment("This is \"DictionarySection\" comment.");
+
                 //
                 // 以文本方式创建。
                 //
@@ -94,30 +92,16 @@ namespace Test
                 TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
                 TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
                 //
-                // 取出属性。
+                // 取出属性和注释。
                 //
-                Console.WriteLine(section1.Properties.GetValue("prop1", string.Empty));
+                Console.WriteLine(section1.Properties.GetValue("prop1", 0d));
+                //
+                AddProperty[] value2 = section2.Properties.GetValue("prop1");
+                foreach (AddProperty val in value2)
+                {
+                    Console.WriteLine(val.Value);
+                }
                 Console.WriteLine(section3.Properties.GetValue("prop1", string.Empty));
-                double[] value2 = section2.Properties.GetValues("prop1", new double[] { 11, 22, 33 });
-                foreach (double v in value2)
-                {
-                    Console.WriteLine(v);
-                }
-                //
-                // 取出注释。
-                //
-                if (section1.TryGetComment(out string comment))
-                {
-                    Console.WriteLine(comment);
-                }
-                if (section2.Properties.TryGetComment("prop1", 0, out comment))
-                {
-                    Console.WriteLine(comment);
-                }
-                if (section3.Properties.TryGetComment("prop1", out comment))
-                {
-                    Console.WriteLine(comment);
-                }
                 //
                 // 以文本方式取出节点内容。
                 //

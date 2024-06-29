@@ -7,7 +7,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConfigSections
     {
-        private readonly XElement _content;
+        private readonly XElement _declarationContainer;
         private readonly ConfigSectionGroupSet _groups;
         private readonly ConfigSectionSet _sections;
 
@@ -25,33 +25,33 @@ namespace Honoo.Configuration
 
         internal ConfigSections(XElement root)
         {
-            _content = root.Element("configSections");
-            if (_content == null)
+            _declarationContainer = root.Element("configSections");
+            if (_declarationContainer == null)
             {
-                _content = new XElement("configSections");
+                _declarationContainer = new XElement("configSections");
                 XElement assemblyBinding = root.Element("assemblyBinding");
                 if (assemblyBinding == null)
                 {
-                    root.AddFirst(_content);
+                    root.AddFirst(_declarationContainer);
                 }
                 else
                 {
-                    assemblyBinding.AddAfterSelf(_content);
+                    assemblyBinding.AddAfterSelf(_declarationContainer);
                 }
             }
-            _groups = new ConfigSectionGroupSet(_content, root);
-            _sections = new ConfigSectionSet(_content, root);
+            _groups = new ConfigSectionGroupSet(_declarationContainer, root);
+            _sections = new ConfigSectionSet(_declarationContainer, root);
         }
 
         #endregion Construction
 
         /// <summary>
-        /// 方法已重写。返回节点的缩进 XML 文本。
+        /// 方法已重写。返回描述节点的缩进 XML 文本。
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return _content.ToString();
+            return _declarationContainer.ToString();
         }
     }
 }

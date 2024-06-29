@@ -3,158 +3,40 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Honoo.Configuration
 {
     /// <summary>
     ///  配置组集合。
     /// </summary>
-    public sealed class ConfigSectionGroupSet : IEnumerable<KeyValuePair<string, ConfigSectionGroup>>
+    public sealed class ConfigSectionGroupSet : IEnumerable<ConfigSectionGroup>
     {
-        #region Class
-
-        /// <summary>
-        /// 代表此配置属性集合的键的集合。
-        /// </summary>
-        public sealed class KeyCollection : IEnumerable<string>
-        {
-            #region Properties
-
-            private readonly Dictionary<string, ConfigSectionGroup> _properties;
-
-            /// <summary>
-            /// 获取配置属性集合的键的元素数。
-            /// </summary>
-            public int Count => _properties.Count;
-
-            #endregion Properties
-
-            internal KeyCollection(Dictionary<string, ConfigSectionGroup> properties)
-            {
-                _properties = properties;
-            }
-
-            /// <summary>
-            /// 从指定数组索引开始将键元素复制到到指定数组。
-            /// </summary>
-            /// <param name="array">要复制到的目标数组。</param>
-            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
-            public void CopyTo(string[] array, int arrayIndex)
-            {
-                _properties.Keys.CopyTo(array, arrayIndex);
-            }
-
-            /// <summary>
-            /// 返回循环访问集合的枚举数。
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerator<string> GetEnumerator()
-            {
-                return _properties.Keys.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _properties.Keys.GetEnumerator();
-            }
-        }
-
-        /// <summary>
-        /// 代表此配置属性集合的值的集合。
-        /// </summary>
-        public sealed class ValueCollection : IEnumerable<ConfigSectionGroup>
-        {
-            #region Properties
-
-            private readonly Dictionary<string, ConfigSectionGroup> _properties;
-
-            /// <summary>
-            /// 获取配置属性集合的值的元素数。
-            /// </summary>
-            public int Count => _properties.Count;
-
-            #endregion Properties
-
-            internal ValueCollection(Dictionary<string, ConfigSectionGroup> properties)
-            {
-                _properties = properties;
-            }
-
-            /// <summary>
-            /// 从指定数组索引开始将值元素复制到到指定数组。
-            /// </summary>
-            /// <param name="array">要复制到的目标数组。</param>
-            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
-            public void CopyTo(ConfigSectionGroup[] array, int arrayIndex)
-            {
-                _properties.Values.CopyTo(array, arrayIndex);
-            }
-
-            /// <summary>
-            /// 返回循环访问集合的枚举数。
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerator<ConfigSectionGroup> GetEnumerator()
-            {
-                return _properties.Values.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _properties.Values.GetEnumerator();
-            }
-        }
-
-        #endregion Class
-
         #region Properties
 
-        private readonly Dictionary<string, XElement> _contents = new Dictionary<string, XElement>();
-        private readonly XElement _contentSuperior;
-        private readonly Dictionary<string, XElement> _declarations = new Dictionary<string, XElement>();
-        private readonly XElement _declarationSuperior;
+        private readonly XElement _contentContainer;
+        private readonly XElement _declarationContainer;
         private readonly Dictionary<string, ConfigSectionGroup> _groups = new Dictionary<string, ConfigSectionGroup>();
-        private readonly KeyCollection _keyExhibits;
-        private readonly ValueCollection _valueExhibits;
 
         /// <summary>
         /// 获取配置组集合中包含的元素数。
         /// </summary>
         public int Count => _groups.Count;
 
-        /// <summary>
-        /// 获取配置组集合的名称的集合。
-        /// </summary>
-        public KeyCollection Names => _keyExhibits;
-
-        /// <summary>
-        /// 获取配置组集合的值的集合。
-        /// </summary>
-        public ValueCollection Values => _valueExhibits;
-
-        /// <summary>
-        /// 获取具有指定名称的配置组的值。
-        /// <br/>取值时如果没有找到指定名称，返回 <see langword="null"/>。
-        /// </summary>
-        /// <param name="name">配置组的名称。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public ConfigSectionGroup this[string name] => _groups.TryGetValue(name, out ConfigSectionGroup group) ? group : null;
-
         #endregion Properties
 
         #region Construction
 
-        internal ConfigSectionGroupSet(XElement declarationSuperior, XElement contentSuperior)
+        internal ConfigSectionGroupSet(XElement declarationContainer, XElement contentContainer)
         {
-            _declarationSuperior = declarationSuperior;
-            _contentSuperior = contentSuperior;
-            if (declarationSuperior.HasElements)
+            _declarationContainer = declarationContainer;
+            _contentContainer = contentContainer;
+            if (_declarationContainer.HasElements)
             {
-                foreach (XElement declaration in declarationSuperior.Elements("sectionGroup"))
+                foreach (XElement declaration in _declarationContainer.Elements("sectionGroup"))
                 {
                     string name = declaration.Attribute("name").Value;
-                    XElement content = contentSuperior.Element(name);
+                    XElement content = _contentContainer.Element(name);
                     if (content != null)
                     {
                         XComment comment = null;
@@ -163,55 +45,16 @@ namespace Honoo.Configuration
                         {
                             comment = (XComment)pre;
                         }
-                        ConfigSectionGroup value = new ConfigSectionGroup(declaration, content, comment);
-                        _groups.Add(name, value);
-                        _declarations.Add(name, declaration);
-                        _contents.Add(name, content);
+                        ConfigSectionGroup group = new ConfigSectionGroup(declaration, content, comment);
+                        _groups.Add(name, group);
                     }
                 }
             }
-            _keyExhibits = new KeyCollection(_groups);
-            _valueExhibits = new ValueCollection(_groups);
         }
 
         #endregion Construction
 
-        /// <summary>
-        /// 从配置组集合中移除所有配置组。
-        /// </summary>
-        public void Clear()
-        {
-            _groups.Clear();
-            _declarations.Clear();
-            _declarationSuperior.RemoveNodes();
-            _contents.Clear();
-            _contentSuperior.RemoveNodes();
-        }
-
-        /// <summary>
-        /// 确定配置组集合是否包含带有指定名称的配置组。
-        /// </summary>
-        /// <param name="name">配置组的名称。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool ContainsName(string name)
-        {
-            return _groups.ContainsKey(name);
-        }
-
-        /// <summary>
-        /// 返回循环访问集合的枚举数。
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, ConfigSectionGroup>> GetEnumerator()
-        {
-            return _groups.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _groups.GetEnumerator();
-        }
+        #region GetOrAdd
 
         /// <summary>
         /// 获取与指定名称关联的配置组的值。如果不存在，添加一个配置组并返回值。
@@ -224,23 +67,94 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException($"The invalid argument - {nameof(name)}.");
             }
-            if (_groups.TryGetValue(name, out ConfigSectionGroup group))
+            if (_groups.TryGetValue(name, out ConfigSectionGroup value))
             {
-                return group;
+                return value;
             }
             else
             {
                 XElement declaration = new XElement("sectionGroup");
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
-                ConfigSectionGroup value = new ConfigSectionGroup(declaration, content, null);
+                ConfigSectionGroup group = new ConfigSectionGroup(declaration, content, null);
+                _declarationContainer.Add(declaration);
+                _contentContainer.Add(content);
                 _groups.Add(name, value);
-                _declarations.Add(name, declaration);
-                _contents.Add(name, content);
-                _declarationSuperior.Add(declaration);
-                _contentSuperior.Add(content);
-                return value;
+                return group;
             }
+        }
+
+        #endregion GetOrAdd
+
+        #region TryGetValue
+
+        /// <summary>
+        /// 获取与指定名称关联的配置组的值。
+        /// </summary>
+        /// <param name="name">配置组的名称。</param>
+        /// <param name="group">配置组的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string name, out ConfigSectionGroup group)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
+            }
+            return _groups.TryGetValue(name, out group);
+        }
+
+        #endregion TryGetValue
+
+        #region GetValue
+
+        /// <summary>
+        /// 获取与指定名称关联的配置组的值。
+        /// </summary>
+        /// <param name="name">配置组的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConfigSectionGroup GetValue(string name)
+        {
+            return TryGetValue(name, out ConfigSectionGroup group) ? group : null;
+        }
+
+        #endregion GetValue
+
+        /// <summary>
+        /// 从配置组集合中移除所有配置组。
+        /// </summary>
+        public void Clear()
+        {
+            foreach (string name in _groups.Keys)
+            {
+                Remove(name);
+            }
+        }
+
+        /// <summary>
+        /// 确定配置组集合是否包含带有指定名称的配置组。
+        /// </summary>
+        /// <param name="name">配置组的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool Contains(string name)
+        {
+            return _groups.ContainsKey(name);
+        }
+
+        /// <summary>
+        /// 返回循环访问集合的枚举数。
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<ConfigSectionGroup> GetEnumerator()
+        {
+            return _groups.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _groups.Values.GetEnumerator();
         }
 
         /// <summary>
@@ -252,31 +166,15 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(string name)
         {
-            if (_groups.TryGetValue(name, out ConfigSectionGroup group))
+            if (_groups.TryGetValue(name, out ConfigSectionGroup value))
             {
-                group.RemoveComment();
-                _declarations[name].Remove();
-                _declarations.Remove(name);
-                _contents[name].Remove();
-                _contents.Remove(name);
+                value.Comment?.Remove();
+                value.Declaration.Remove();
+                value.Content.Remove();
+                _groups.Remove(name);
                 return true;
             }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 获取与指定名称关联的配置组的值。
-        /// </summary>
-        /// <param name="name">配置组的名称。</param>
-        /// <param name="value">配置组的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out ConfigSectionGroup value)
-        {
-            return _groups.TryGetValue(name, out value);
+            return false;
         }
     }
 }

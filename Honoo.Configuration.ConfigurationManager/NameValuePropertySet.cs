@@ -10,143 +10,28 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性集合。
     /// </summary>
-    public class NameValuePropertySet : IEnumerable<KeyValuePair<string, string[]>>
+    public sealed class NameValuePropertySet : IEnumerable<ConfigurationProperty>
     {
-        #region Class
-
-        /// <summary>
-        /// 代表此配置属性集合的键的集合。
-        /// </summary>
-        public sealed class KeyCollection : IEnumerable<string>
-        {
-            #region Properties
-
-            private readonly Dictionary<string, IList<string>> _properties;
-
-            /// <summary>
-            /// 获取配置属性集合的键的元素数。
-            /// </summary>
-            public int Count => _properties.Count;
-
-            #endregion Properties
-
-            internal KeyCollection(Dictionary<string, IList<string>> properties)
-            {
-                _properties = properties;
-            }
-
-            /// <summary>
-            /// 从指定数组索引开始将键元素复制到到指定数组。
-            /// </summary>
-            /// <param name="array">要复制到的目标数组。</param>
-            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
-            public void CopyTo(string[] array, int arrayIndex)
-            {
-                _properties.Keys.CopyTo(array, arrayIndex);
-            }
-
-            /// <summary>
-            /// 返回循环访问集合的枚举数。
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerator<string> GetEnumerator()
-            {
-                return _properties.Keys.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _properties.Keys.GetEnumerator();
-            }
-        }
-
-        /// <summary>
-        /// 代表此配置属性集合的值的集合。
-        /// </summary>
-        public sealed class ValueCollection : IEnumerable<string[]>
-        {
-            #region Properties
-
-            private readonly Dictionary<string, IList<string>> _properties;
-
-            /// <summary>
-            /// 获取配置属性集合的值的元素数。
-            /// </summary>
-            public int Count => _properties.Count;
-
-            #endregion Properties
-
-            internal ValueCollection(Dictionary<string, IList<string>> properties)
-            {
-                _properties = properties;
-            }
-
-            /// <summary>
-            /// 从指定数组索引开始将值元素复制到到指定数组。
-            /// </summary>
-            /// <param name="array">要复制到的目标数组。</param>
-            /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
-            public void CopyTo(string[][] array, int arrayIndex)
-            {
-                _properties.Values.CopyTo(array, arrayIndex);
-            }
-
-            /// <summary>
-            /// 返回循环访问集合的枚举数。
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerator<string[]> GetEnumerator()
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (var item in _properties.Values)
-                {
-                    result.Add(item.ToArray());
-                }
-                return result.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _properties.Values.GetEnumerator();
-            }
-        }
-
-        #endregion Class
-
         #region Properties
 
-        private readonly Dictionary<string, IList<XComment>> _comments = new Dictionary<string, IList<XComment>>();
-        private readonly Dictionary<string, IList<XElement>> _contents = new Dictionary<string, IList<XElement>>();
-        private readonly KeyCollection _keyExhibits;
-        private readonly Dictionary<string, IList<string>> _properties = new Dictionary<string, IList<string>>();
-        private readonly XElement _superior;
-        private readonly ValueCollection _valueExhibits;
+        private readonly XElement _container;
+        private readonly List<ConfigurationProperty> _properties = new List<ConfigurationProperty>();
 
         /// <summary>
         /// 获取配置属性集合中包含的元素数。
         /// </summary>
         public int Count => _properties.Count;
 
-        /// <summary>
-        /// 获取配置属性集合的键的集合。
-        /// </summary>
-        public KeyCollection Keys => _keyExhibits;
-
-        /// <summary>
-        /// 获取配置属性集合的值的集合。
-        /// </summary>
-        public ValueCollection Values => _valueExhibits;
-
         #endregion Properties
 
         #region Construction
 
-        internal NameValuePropertySet(XElement superior)
+        internal NameValuePropertySet(XElement container)
         {
-            _superior = superior;
-            if (superior.HasElements)
+            _container = container;
+            if (_container.HasElements)
             {
-                IEnumerator<XNode> enumerator = superior.Nodes().GetEnumerator();
+                IEnumerator<XNode> enumerator = _container.Nodes().GetEnumerator();
                 XComment comment = null;
                 while (enumerator.MoveNext())
                 {
@@ -161,935 +46,740 @@ namespace Honoo.Configuration
                             XElement content = (XElement)enumerator.Current;
                             if (content.Name == "add")
                             {
-                                string key = content.Attribute("key").Value;
-                                string value = content.Attribute("value").Value;
-                                if (_properties.TryGetValue(key, out IList<string> values))
-                                {
-                                    _contents.TryGetValue(key, out IList<XElement> contents);
-                                    _comments.TryGetValue(key, out IList<XComment> comments);
-                                    values.Add(value);
-                                    contents.Add(content);
-                                    comments.Add(comment);
-                                }
-                                else
-                                {
-                                    _properties.Add(key, new List<string>() { value });
-                                    _contents.Add(key, new List<XElement>() { content });
-                                    _comments.Add(key, new List<XComment>() { comment });
-                                }
+                                AddProperty property = new AddProperty(content, comment);
+                                _properties.Add(property);
                             }
                             else if (content.Name == "remove")
                             {
-                                string key = content.Attribute("key").Value;
-                                Remove(key);
+                                RemoveProperty property = new RemoveProperty(content, comment);
+                                _properties.Add(property);
                             }
                             else if (content.Name == "clear")
                             {
-                                foreach (var key in _properties.Keys)
-                                {
-                                    Remove(key);
-                                }
+                                ClearProperty property = new ClearProperty(content, comment);
+                                _properties.Add(property);
                             }
                         }
                         comment = null;
                     }
                 }
             }
-            _keyExhibits = new KeyCollection(_properties);
-            _valueExhibits = new ValueCollection(_properties);
         }
 
         #endregion Construction
 
-        #region AddOrUpdate
+        #region Add
 
         /// <summary>
         /// 添加或更新一个配置属性。
         /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
+        /// <param name="property">配置属性的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<string> values)
+        public ConfigurationProperty Add(ConfigurationProperty property)
+        {
+            if (property == null)
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
+            }
+            if (property.Comment != null)
+            {
+                _container.Add(property.Comment);
+            }
+            _container.Add(property.Content);
+            _properties.Add(property);
+            return property;
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="property">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(AddProperty property)
+        {
+            if (string.IsNullOrWhiteSpace(property.Key))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
+            }
+            if (property.Comment != null)
+            {
+                _container.Add(property.Comment);
+            }
+            _container.Add(property.Content);
+            _properties.Add(property);
+            return property;
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="property">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public RemoveProperty Add(RemoveProperty property)
+        {
+            if (string.IsNullOrWhiteSpace(property.Key))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
+            }
+            if (property.Comment != null)
+            {
+                _container.Add(property.Comment);
+            }
+            _container.Add(property.Content);
+            _properties.Add(property);
+            return property;
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="property">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ClearProperty Add(ClearProperty property)
+        {
+            if (property.Comment != null)
+            {
+                _container.Add(property.Comment);
+            }
+            _container.Add(property.Content);
+            _properties.Add(property);
+            return property;
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty Add(string key, string value)
         {
             if (string.IsNullOrWhiteSpace(key))
             {
                 throw new ArgumentException($"The invalid argument - {nameof(key)}.");
             }
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                if (_properties.ContainsKey(key))
-                {
-                    Remove(key);
-                }
-                List<XElement> contents = new List<XElement>();
-                List<XComment> comments = new List<XComment>();
-                foreach (var value in values)
-                {
-                    XElement content = new XElement("add");
-                    content.SetAttributeValue("key", key);
-                    content.SetAttributeValue("value", value);
-                    contents.Add(content);
-                    comments.Add(null);
-                }
-                _properties.Add(key, values);
-                _contents.Add(key, contents);
-                _comments.Add(key, comments);
-                _superior.Add(contents);
-            }
+            return Add(new AddProperty(key, value));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<bool> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<sbyte> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<byte> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<short> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<ushort> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<int> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<uint> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<long> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<ulong> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<float> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<double> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<decimal> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<char> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, IList<byte[]> values)
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(BitConverter.ToString(value).Replace("-", string.Empty));
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public void AddOrUpdate<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
-        {
-            if (values == null || values.Count == 0)
-            {
-                Remove(key);
-            }
-            else
-            {
-                List<string> stringValues = new List<string>();
-                foreach (var value in values)
-                {
-                    stringValues.Add(value.ToString());
-                }
-                AddOrUpdate(key, stringValues);
-            }
-        }
-
-        #endregion AddOrUpdate
-
-        #region GetValue
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string[] GetValues(string key, IList<string> defaultValues)
+        public AddProperty Add(string key, bool value)
         {
-            return _properties.TryGetValue(key, out IList<string> values) ? values.ToArray() : defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool[] GetValues(string key, IList<bool> defaultValues)
+        public AddProperty Add(string key, sbyte value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<bool> values = new List<bool>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (bool.TryParse(stringValue, out bool value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public sbyte[] GetValues(string key, IList<sbyte> defaultValues)
+        public AddProperty Add(string key, byte value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<sbyte> values = new List<sbyte>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (sbyte.TryParse(stringValue, out sbyte value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte[] GetValues(string key, IList<byte> defaultValues)
+        public AddProperty Add(string key, short value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<byte> values = new List<byte>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (byte.TryParse(stringValue, out byte value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public short[] GetValues(string key, IList<short> defaultValues)
+        public AddProperty Add(string key, ushort value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<short> values = new List<short>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (short.TryParse(stringValue, out short value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ushort[] GetValues(string key, IList<ushort> defaultValues)
+        public AddProperty Add(string key, int value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<ushort> values = new List<ushort>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (ushort.TryParse(stringValue, out ushort value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public int[] GetValues(string key, IList<int> defaultValues)
+        public AddProperty Add(string key, uint value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<int> values = new List<int>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (int.TryParse(stringValue, out int value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public uint[] GetValues(string key, IList<uint> defaultValues)
+        public AddProperty Add(string key, long value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<uint> values = new List<uint>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (uint.TryParse(stringValue, out uint value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public long[] GetValues(string key, IList<long> defaultValues)
+        public AddProperty Add(string key, ulong value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<long> values = new List<long>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (long.TryParse(stringValue, out long value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ulong[] GetValues(string key, IList<ulong> defaultValues)
+        public AddProperty Add(string key, float value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<ulong> values = new List<ulong>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (ulong.TryParse(stringValue, out ulong value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public float[] GetValues(string key, IList<float> defaultValues)
+        public AddProperty Add(string key, double value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<float> values = new List<float>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (float.TryParse(stringValue, out float value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public double[] GetValues(string key, IList<double> defaultValues)
+        public AddProperty Add(string key, decimal value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<double> values = new List<double>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (double.TryParse(stringValue, out double value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public decimal[] GetValues(string key, IList<decimal> defaultValues)
+        public AddProperty Add(string key, char value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<decimal> values = new List<decimal>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (decimal.TryParse(stringValue, out decimal value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public char[] GetValues(string key, IList<char> defaultValues)
+        public AddProperty Add(string key, byte[] value)
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<char> values = new List<char>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (char.TryParse(stringValue, out char value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, BitConverter.ToString(value).Replace("-", string.Empty));
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
+        /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte[][] GetValues(string key, IList<byte[]> defaultValues)
+        public AddProperty Add<TEnum>(string key, TEnum value) where TEnum : Enum
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<byte[]> values = new List<byte[]>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (XValueHelper.TryParse(stringValue, out byte[] value))
-                    {
-                        values.Add(value);
-                    }
-                    else
-                    {
-                        return defaultValues.ToArray();
-                    }
-                }
-                if (values.Count > 0)
-                {
-                    return values.ToArray();
-                }
-            }
-            return defaultValues.ToArray();
+            return Add(key, value.ToString());
         }
 
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValues"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValues"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public TEnum[] GetValues<TEnum>(string key, IList<TEnum> defaultValues) where TEnum : struct
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                if (typeof(TEnum).BaseType.FullName == "System.Enum")
-                {
-                    List<TEnum> values = new List<TEnum>();
-                    foreach (var stringValue in stringValues)
-                    {
-                        if (Enum.TryParse(stringValue, false, out TEnum value))
-                        {
-                            values.Add(value);
-                        }
-                        else
-                        {
-                            return defaultValues.ToArray();
-                        }
-                    }
-                    if (values.Count > 0)
-                    {
-                        return values.ToArray();
-                    }
-                }
-            }
-            return defaultValues.ToArray();
-        }
-
-        #endregion GetValue
+        #endregion Add
 
         #region TryGetValue
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="properties">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out AddProperty[] properties)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(key)}.");
+            }
+            List<AddProperty> result = new List<AddProperty>();
+            for (int i = 0; i < _properties.Count; i++)
+            {
+                if (_properties[i] is AddProperty property)
+                {
+                    if (property.Key == key)
+                    {
+                        result.Add(property);
+                    }
+                }
+            }
+            properties = result.ToArray();
+            return properties.Length > 0;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out string[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] val))
+            {
+                List<string> result = new List<string>();
+                foreach (AddProperty property in val)
+                {
+                    result.Add(property.Value);
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out bool[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<bool> result = new List<bool>();
+                foreach (AddProperty property in value)
+                {
+                    if (bool.TryParse(property.Value, out bool val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out sbyte[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<sbyte> result = new List<sbyte>();
+                foreach (AddProperty property in value)
+                {
+                    if (sbyte.TryParse(property.Value, out sbyte val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out byte[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<byte> result = new List<byte>();
+                foreach (AddProperty property in value)
+                {
+                    if (byte.TryParse(property.Value, out byte val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out short[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<short> result = new List<short>();
+                foreach (AddProperty property in value)
+                {
+                    if (short.TryParse(property.Value, out short val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out ushort[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<ushort> result = new List<ushort>();
+                foreach (AddProperty property in value)
+                {
+                    if (ushort.TryParse(property.Value, out ushort val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out int[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<int> result = new List<int>();
+                foreach (AddProperty property in value)
+                {
+                    if (int.TryParse(property.Value, out int val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out uint[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<uint> result = new List<uint>();
+                foreach (AddProperty property in value)
+                {
+                    if (uint.TryParse(property.Value, out uint val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out long[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<long> result = new List<long>();
+                foreach (AddProperty property in value)
+                {
+                    if (long.TryParse(property.Value, out long val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out ulong[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<ulong> result = new List<ulong>();
+                foreach (AddProperty property in value)
+                {
+                    if (ulong.TryParse(property.Value, out ulong val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out float[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<float> result = new List<float>();
+                foreach (AddProperty property in value)
+                {
+                    if (float.TryParse(property.Value, out float val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out double[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<double> result = new List<double>();
+                foreach (AddProperty property in value)
+                {
+                    if (double.TryParse(property.Value, out double val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out decimal[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<decimal> result = new List<decimal>();
+                foreach (AddProperty property in value)
+                {
+                    if (decimal.TryParse(property.Value, out decimal val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out char[] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<char> result = new List<char>();
+                foreach (AddProperty property in value)
+                {
+                    if (char.TryParse(property.Value, out char val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out byte[][] values)
+        {
+            if (TryGetValue(key, out AddProperty[] value))
+            {
+                List<byte[]> result = new List<byte[]>();
+                foreach (AddProperty property in value)
+                {
+                    if (XValueHelper.TryParse(property.Value, out byte[] val))
+                    {
+                        result.Add(val);
+                    }
+                }
+                values = result.ToArray();
+                return true;
+            }
+            values = default;
+            return false;
+        }
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。
@@ -1101,535 +791,18 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue<TEnum>(string key, out TEnum[] values) where TEnum : struct
         {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
+            if (typeof(TEnum).BaseType.FullName == "System.Enum")
             {
-                if (typeof(TEnum).BaseType.FullName == "System.Enum")
+                if (TryGetValue(key, out AddProperty[] value))
                 {
                     List<TEnum> result = new List<TEnum>();
-                    foreach (var stringValue in stringValues)
+                    foreach (AddProperty property in value)
                     {
-                        if (Enum.TryParse(stringValue, false, out TEnum value))
+                        if (Enum.TryParse(property.Value, false, out TEnum val))
                         {
-                            result.Add(value);
-                        }
-                        else
-                        {
-                            values = default;
-                            return false;
+                            result.Add(val);
                         }
                     }
-                    if (result.Count > 0)
-                    {
-                        values = result.ToArray();
-                        return true;
-                    }
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out IList<string> values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                values = stringValues.ToArray();
-                return true;
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out bool[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<bool> result = new List<bool>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (bool.TryParse(stringValue, out bool value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out sbyte[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<sbyte> result = new List<sbyte>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (sbyte.TryParse(stringValue, out sbyte value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out byte[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<byte> result = new List<byte>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (byte.TryParse(stringValue, out byte value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out short[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<short> result = new List<short>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (short.TryParse(stringValue, out short value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out ushort[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<ushort> result = new List<ushort>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (ushort.TryParse(stringValue, out ushort value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out int[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<int> result = new List<int>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (int.TryParse(stringValue, out int value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out uint[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<uint> result = new List<uint>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (uint.TryParse(stringValue, out uint value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out long[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<long> result = new List<long>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (long.TryParse(stringValue, out long value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out ulong[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<ulong> result = new List<ulong>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (ulong.TryParse(stringValue, out ulong value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out float[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<float> result = new List<float>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (float.TryParse(stringValue, out float value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out double[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<double> result = new List<double>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (double.TryParse(stringValue, out double value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out decimal[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<decimal> result = new List<decimal>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (decimal.TryParse(stringValue, out decimal value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out char[] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<char> result = new List<char>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (char.TryParse(stringValue, out char value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    values = result.ToArray();
-                    return true;
-                }
-            }
-            values = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但无法转换指定的类型，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValues(string key, out byte[][] values)
-        {
-            if (_properties.TryGetValue(key, out IList<string> stringValues))
-            {
-                List<byte[]> result = new List<byte[]>();
-                foreach (var stringValue in stringValues)
-                {
-                    if (XValueHelper.TryParse(stringValue, out byte[] value))
-                    {
-                        result.Add(value);
-                    }
-                    else
-                    {
-                        values = default;
-                        return false;
-                    }
-                }
-                if (result.Count > 0)
-                {
                     values = result.ToArray();
                     return true;
                 }
@@ -1640,108 +813,236 @@ namespace Honoo.Configuration
 
         #endregion TryGetValue
 
-        #region Comment
+        #region GetValue
 
         /// <summary>
-        /// 删除一个与指定键关联的配置属性的注释。
-        /// <br/>如果注释成功删除，返回 <see langword="true"/>。如果找到了指定键但没有注释节点，则仍返回 <see langword="false"/>。
+        /// 获取与指定键关联的配置属性的值。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="index">和键相关的配置属性值列表的索引。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool RemoveComment(string key, int index)
+        public AddProperty[] GetValue(string key)
         {
-            if (_comments.TryGetValue(key, out IList<XComment> comments))
-            {
-                if (index < comments.Count)
-                {
-                    if (comments[index] != null)
-                    {
-                        comments[index].Remove();
-                        comments[index] = null;
-                    }
-                    return true;
-                }
-            }
-            return false;
+            return TryGetValue(key, out AddProperty[] properties) ? properties : null;
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的注释。
-        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但没有注释节点，则仍返回 <see langword="false"/>。
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="index">和键相关的配置属性值列表的索引。</param>
-        /// <param name="comment">配置属性的注释。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetComment(string key, int index, out string comment)
+        public string[] GetValue(string key, string[] defaultValue)
         {
-            if (_comments.TryGetValue(key, out IList<XComment> comments))
-            {
-                if (index < comments.Count)
-                {
-                    if (comments[index] != null)
-                    {
-                        comment = comments[index].Value;
-                        return true;
-                    }
-                }
-            }
-            comment = null;
-            return false;
+            return TryGetValue(key, out string[] values) ? values : defaultValue;
         }
 
         /// <summary>
-        /// 添加或更新或删除一个与指定键关联的配置属性的注释。
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="index">和键相关的配置属性值列表的索引。</param>
-        /// <param name="comment">配置属性的注释。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TrySetComment(string key, int index, string comment)
+        public bool[] GetValue(string key, bool[] defaultValue)
         {
-            if (comment == null)
-            {
-                RemoveComment(key, index);
-                return true;
-            }
-            else
-            {
-                if (_comments.TryGetValue(key, out IList<XComment> comments))
-                {
-                    if (index < comments.Count)
-                    {
-                        if (comments[index] == null)
-                        {
-                            XComment comment_ = new XComment(comment);
-                            _contents[key][index].AddBeforeSelf(comment_);
-                            comments[index] = comment_;
-                        }
-                        else
-                        {
-                            comments[index].Value = comment;
-                        }
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return TryGetValue(key, out bool[] values) ? values : defaultValue;
         }
 
-        #endregion Comment
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public sbyte[] GetValue(string key, sbyte[] defaultValue)
+        {
+            return TryGetValue(key, out sbyte[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public byte[] GetValue(string key, byte[] defaultValue)
+        {
+            return TryGetValue(key, out byte[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public short[] GetValue(string key, short[] defaultValue)
+        {
+            return TryGetValue(key, out short[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ushort[] GetValue(string key, ushort[] defaultValue)
+        {
+            return TryGetValue(key, out ushort[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public int[] GetValue(string key, int[] defaultValue)
+        {
+            return TryGetValue(key, out int[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public uint[] GetValue(string key, uint[] defaultValue)
+        {
+            return TryGetValue(key, out uint[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public long[] GetValue(string key, long[] defaultValue)
+        {
+            return TryGetValue(key, out long[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ulong[] GetValue(string key, ulong[] defaultValue)
+        {
+            return TryGetValue(key, out ulong[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public float[] GetValue(string key, float[] defaultValue)
+        {
+            return TryGetValue(key, out float[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public double[] GetValue(string key, double[] defaultValue)
+        {
+            return TryGetValue(key, out double[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public decimal[] GetValue(string key, decimal[] defaultValue)
+        {
+            return TryGetValue(key, out decimal[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public char[] GetValue(string key, char[] defaultValue)
+        {
+            return TryGetValue(key, out char[] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public byte[][] GetValue(string key, byte[][] defaultValue)
+        {
+            return TryGetValue(key, out byte[][] values) ? values : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <paramref name="defaultValue"/>。如果找到了指定键但无法转换为指定的类型，则仍返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public TEnum[] GetValue<TEnum>(string key, TEnum[] defaultValue) where TEnum : struct
+        {
+            return TryGetValue(key, out TEnum[] values) ? values : defaultValue;
+        }
+
+        #endregion GetValue
 
         /// <summary>
         /// 从配置属性集合中移除所有配置属性。
         /// </summary>
         public void Clear()
         {
+            _container.RemoveNodes();
             _properties.Clear();
-            _contents.Clear();
-            _comments.Clear();
-            _superior.RemoveNodes();
         }
 
         /// <summary>
@@ -1750,23 +1051,28 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool ContainsKey(string key)
+        public bool Contains(string key)
         {
-            return _properties.ContainsKey(key);
+            for (int i = 0; i < _properties.Count; i++)
+            {
+                if (_properties[i] is AddProperty property)
+                {
+                    if (property.Key == key)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, string[]>> GetEnumerator()
+        public IEnumerator<ConfigurationProperty> GetEnumerator()
         {
-            List<KeyValuePair<string, string[]>> result = new List<KeyValuePair<string, string[]>>();
-            foreach (var item in _properties)
-            {
-                result.Add(new KeyValuePair<string, string[]>(item.Key, item.Value.ToArray()));
-            }
-            return result.GetEnumerator();
+            return _properties.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -1775,26 +1081,44 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
+        /// 从配置属性集合中移除配置属性。配置属性的注释一并移除。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="property">配置属性。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool Remove(ConfigurationProperty property)
+        {
+            bool removed = _properties.Remove(property);
+            property.Comment?.Remove();
+            property.Content.Remove();
+            return removed;
+        }
+
+        /// <summary>
         /// 从配置属性集合中移除带有指定键的配置属性。和指定键关联的配置属性的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定键，则返回 <see langword="false"/>。
+        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
         public bool Remove(string key)
         {
-            if (_properties.Remove(key))
+            bool removed = false;
+            for (int i = _properties.Count - 1; i >= 0; i--)
             {
-                _contents[key].Remove();
-                _contents.Remove(key);
-                _comments[key]?.Remove();
-                _comments.Remove(key);
-                return true;
+                if (_properties[i] is AddProperty property)
+                {
+                    if (property.Key == key)
+                    {
+                        property.Comment?.Remove();
+                        property.Content.Remove();
+                        _properties.RemoveAt(i);
+                        removed = true;
+                    }
+                }
             }
-            else
-            {
-                return false;
-            }
+            return removed;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConnectionStrings
     {
-        private readonly XElement _content;
+        private readonly XElement _container;
         private readonly ConnectionStringsPropertySet _properties;
 
         /// <summary>
@@ -20,17 +20,17 @@ namespace Honoo.Configuration
 
         internal ConnectionStrings(XElement root)
         {
-            _content = root.Element("connectionStrings");
-            if (_content == null)
+            _container = root.Element("connectionStrings");
+            if (_container == null)
             {
-                _content = new XElement("connectionStrings");
-                root.Add(_content);
+                _container = new XElement("connectionStrings");
+                root.Add(_container);
             }
-            else if (_content.Attribute("configProtectionProvider") != null)
+            else if (_container.Attribute("configProtectionProvider") != null)
             {
                 throw new CryptographicException("Encryped configuration sections are not supported.");
             }
-            _properties = new ConnectionStringsPropertySet(_content);
+            _properties = new ConnectionStringsPropertySet(_container);
         }
 
         #endregion Construction
@@ -41,7 +41,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public override string ToString()
         {
-            return _content.ToString();
+            return _container.ToString();
         }
     }
 }
