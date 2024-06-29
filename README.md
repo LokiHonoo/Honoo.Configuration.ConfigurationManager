@@ -56,8 +56,6 @@
 
 **Changed* 移除了 IConfigSection 接口方式，更改为 ConfigSection 基类。
 
-**Deprecated*  取消了 &lt;remove /&gt; &lt;clear /&gt; 标签行为。
-
 ### 1.3.2
 
 **Features* 提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
