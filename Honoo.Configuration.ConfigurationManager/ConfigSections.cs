@@ -3,7 +3,7 @@
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 映射到标准格式的 "configSections" 节点。
+    /// 映射到标准格式的 &lt;configSections /&gt; 节点。
     /// </summary>
     public sealed class ConfigSections
     {

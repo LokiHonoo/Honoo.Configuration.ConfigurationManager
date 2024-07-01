@@ -7,7 +7,7 @@ namespace Test
     {
         private static void Main()
         {
-            string filePath = "test.config.xml";
+            string filePath1 = "config.main.xml";
             //
             // 清除内容。
             //
@@ -22,28 +22,27 @@ namespace Test
             //
             //
             //
-            TestAppSettings.Create(filePath);
-            TestAppSettings.Load(filePath);
-            TestAssemblyBinding.Create(filePath);
-            TestAssemblyBinding.Load(filePath);
-            TestConnectionStrings.Create(filePath);
-            TestConnectionStrings.Load(filePath);
-            TestSection.Create(filePath);
-            TestSection.Load(filePath);
-            TestStream.Write(filePath);
-            TestStream.Load(filePath);
+            TestAppSettingsExtra.Create();
+            TestAppSettings.Create(filePath1);
+            TestAppSettings.Load(filePath1);
+            TestAssemblyBinding.Create(filePath1);
+            TestAssemblyBinding.Load(filePath1);
+            TestConnectionStrings.Create(filePath1);
+            TestConnectionStrings.Load(filePath1);
+            TestSection.Create(filePath1);
+            TestSection.Load(filePath1);
+            TestStream.Write(filePath1);
+            TestStream.Load(filePath1);
             Console.WriteLine();
             Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine(File.ReadAllText(filePath));
+            Console.WriteLine(File.ReadAllText(filePath1));
             Console.ReadKey(true);
             //
-            string filePath2 = "protection.config.xml";
-            TestProtection.Create(filePath2);
+            string filePath4 = "config.protection.xml";
+            TestProtection.Create(filePath4);
             Console.WriteLine();
             Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine(File.ReadAllText(filePath2));
+            Console.WriteLine(File.ReadAllText(filePath4));
             Console.ReadKey(true);
         }
     }

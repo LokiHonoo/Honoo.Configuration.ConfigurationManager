@@ -23,5 +23,14 @@ namespace Honoo.Configuration
         }
 
         #endregion Construction
+
+        /// <summary>
+        /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+        /// </summary>
+        /// <returns></returns>
+        public DictionaryPropertySetControlled GetPropertySetControlled()
+        {
+            return new DictionaryPropertySetControlled(_content);
+        }
     }
 }

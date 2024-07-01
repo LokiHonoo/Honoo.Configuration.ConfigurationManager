@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 配置属性集合。
+    /// 应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
     /// </summary>
-    public sealed class DictionaryPropertySet : IEnumerable<ConfigurationProperty>
+    public sealed class DictionaryPropertySetControlled : IEnumerable<AddProperty>
     {
         #region Properties
 
-        private readonly XElement _container;
-        private readonly HashSet<string> _keys = new HashSet<string>();
-        private readonly List<ConfigurationProperty> _properties = new List<ConfigurationProperty>();
+        private readonly Dictionary<string, AddProperty> _properties = new Dictionary<string, AddProperty>();
 
         /// <summary>
         /// 获取配置属性集合中包含的元素数。
@@ -26,12 +25,29 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal DictionaryPropertySet(XElement container)
+        internal DictionaryPropertySetControlled(XElement container)
         {
-            _container = container;
-            if (_container.HasElements)
+            LoadProperties(container);
+        }
+
+        private void LoadProperties(XElement container)
+        {
+            if (container.Attribute("file") is XAttribute attribute)
             {
-                IEnumerator<XNode> enumerator = _container.Nodes().GetEnumerator();
+                string file = attribute.Value;
+                if (!string.IsNullOrEmpty(file) && File.Exists(file))
+                {
+                    XElement extra = XElement.Load(file);
+                    if (extra.Name.LocalName == "appSettings")
+                    {
+                        LoadProperties(extra);
+                    }
+                }
+            }
+            //
+            if (container.HasElements)
+            {
+                IEnumerator<XNode> enumerator = container.Nodes().GetEnumerator();
                 XComment comment = null;
                 while (enumerator.MoveNext())
                 {
@@ -47,32 +63,19 @@ namespace Honoo.Configuration
                             if (content.Name == "add")
                             {
                                 AddProperty property = new AddProperty(content, comment);
-                                if (_keys.Contains(property.Key))
+                                if (_properties.ContainsKey(property.Key))
                                 {
-                                    for (int i = _properties.Count - 1; i >= 0; i--)
-                                    {
-                                        if (_properties[i] is AddProperty prop)
-                                        {
-                                            if (prop.Key == property.Key)
-                                            {
-                                                _keys.Remove(property.Key);
-                                                _properties.RemoveAt(i);
-                                            }
-                                        }
-                                    }
+                                    _properties.Remove(property.Key);
                                 }
-                                _keys.Add(property.Key);
-                                _properties.Add(property);
+                                _properties.Add(property.Key, property);
                             }
                             else if (content.Name == "remove")
                             {
-                                RemoveProperty property = new RemoveProperty(content, comment);
-                                _properties.Add(property);
+                                _properties.Remove(content.Attribute("key").Value);
                             }
                             else if (content.Name == "clear")
                             {
-                                ClearProperty property = new ClearProperty(content, comment);
-                                _properties.Add(property);
+                                _properties.Clear();
                             }
                         }
                         comment = null;
@@ -82,503 +85,6 @@ namespace Honoo.Configuration
         }
 
         #endregion Construction
-
-        #region Add
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="property">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public ConfigurationProperty Add(ConfigurationProperty property)
-        {
-            if (property == null)
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
-            }
-            switch (property.Kind)
-            {
-                case ConfigurationPropertyKind.AddProperty: return Add((AddProperty)property);
-                case ConfigurationPropertyKind.RemoveProperty: return Add((RemoveProperty)property);
-                case ConfigurationPropertyKind.ClearProperty: return Add((ClearProperty)property);
-                default: throw new ArgumentException($"The invalid property kind - {nameof(property)}.");
-            }
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="property">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(AddProperty property)
-        {
-            if (string.IsNullOrWhiteSpace(property.Key))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
-            }
-            if (property.Comment != null)
-            {
-                _container.Add(property.Comment);
-            }
-            _container.Add(property.Content);
-            _keys.Add(property.Key);
-            _properties.Add(property);
-            return property;
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="property">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public RemoveProperty Add(RemoveProperty property)
-        {
-            if (string.IsNullOrWhiteSpace(property.Key))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
-            }
-            if (property.Comment != null)
-            {
-                _container.Add(property.Comment);
-            }
-            _container.Add(property.Content);
-            _properties.Add(property);
-            return property;
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="property">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public ClearProperty Add(ClearProperty property)
-        {
-            if (property.Comment != null)
-            {
-                _container.Add(property.Comment);
-            }
-            _container.Add(property.Content);
-            _properties.Add(property);
-            return property;
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, string value)
-        {
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(key)}.");
-            }
-            return Add(new AddProperty(key, value));
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, bool value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, sbyte value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, byte value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, short value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, ushort value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, int value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, uint value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, long value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, ulong value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, float value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, double value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, decimal value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, char value)
-        {
-            return Add(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, byte[] value)
-        {
-            return Add(key, BitConverter.ToString(value).Replace("-", string.Empty));
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add<TEnum>(string key, TEnum value) where TEnum : Enum
-        {
-            return Add(key, value.ToString());
-        }
-
-        #endregion Add
-
-        #region AddOrUpdate
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="property">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(AddProperty property)
-        {
-            if (string.IsNullOrWhiteSpace(property.Key))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
-            }
-            Remove(property.Key);
-            return Add(property);
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, string value)
-        {
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(key)}.");
-            }
-            return AddOrUpdate(new AddProperty(key, value));
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, bool value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, sbyte value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, byte value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, short value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, ushort value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, int value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, uint value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, long value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, ulong value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, float value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, double value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, decimal value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, char value)
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, byte[] value)
-        {
-            return AddOrUpdate(key, BitConverter.ToString(value).Replace("-", string.Empty));
-        }
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate<TEnum>(string key, TEnum value) where TEnum : Enum
-        {
-            return AddOrUpdate(key, value.ToString());
-        }
-
-        #endregion AddOrUpdate
 
         #region TryGetValue
 
@@ -596,19 +102,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException($"The invalid argument - {nameof(key)}.");
             }
-            for (int i = _properties.Count - 1; i >= 0; i--)
-            {
-                if (_properties[i] is AddProperty prop)
-                {
-                    if (prop.Key == key)
-                    {
-                        property = prop;
-                        return true;
-                    }
-                }
-            }
-            property = null;
-            return false;
+            return _properties.TryGetValue(key, out property);
         }
 
         /// <summary>
@@ -1129,16 +623,6 @@ namespace Honoo.Configuration
         #endregion GetValue
 
         /// <summary>
-        /// 从配置属性集合中移除所有配置属性。
-        /// </summary>
-        public void Clear()
-        {
-            _container.RemoveNodes();
-            _keys.Clear();
-            _properties.Clear();
-        }
-
-        /// <summary>
         /// 确定配置属性集合是否包含带有指定键的配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
@@ -1146,66 +630,21 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Contains(string key)
         {
-            return _keys.Contains(key);
+            return _properties.ContainsKey(key);
         }
 
         /// <summary>
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<ConfigurationProperty> GetEnumerator()
+        public IEnumerator<AddProperty> GetEnumerator()
         {
-            return _properties.GetEnumerator();
+            return _properties.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _properties.GetEnumerator();
-        }
-
-        /// <summary>
-        /// 从配置属性集合中移除配置属性。配置属性的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="property">配置属性。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool Remove(ConfigurationProperty property)
-        {
-            bool removed = _properties.Remove(property);
-            property.Comment?.Remove();
-            property.Content.Remove();
-            if (property is AddProperty prop)
-            {
-                _keys.Remove(prop.Key);
-            }
-            return removed;
-        }
-
-        /// <summary>
-        /// 从配置属性集合中移除带有指定键的配置属性。和指定键关联的配置属性的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool Remove(string key)
-        {
-            for (int i = _properties.Count - 1; i >= 0; i--)
-            {
-                if (_properties[i] is AddProperty property)
-                {
-                    if (property.Key == key)
-                    {
-                        property.Comment?.Remove();
-                        property.Content.Remove();
-                        _keys.Remove(key);
-                        _properties.RemoveAt(i);
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return _properties.Values.GetEnumerator();
         }
     }
 }

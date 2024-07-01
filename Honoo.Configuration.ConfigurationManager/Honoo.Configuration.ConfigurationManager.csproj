@@ -19,7 +19,7 @@ Provides an method to encrypt the configuration file. This is different from the
     <PackageTags>Honoo;Configuration;ConfigurationManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-	<VersionPrefix>1.4.0</VersionPrefix>
+	<VersionPrefix>1.4.1</VersionPrefix>
     <PackageReadmeFile>README-Nuget.md</PackageReadmeFile>
   </PropertyGroup>
 
@@ -33,7 +33,7 @@ Provides an method to encrypt the configuration file. This is different from the
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="README-Nuget.md">
+    <None Include="..\README-Nuget.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

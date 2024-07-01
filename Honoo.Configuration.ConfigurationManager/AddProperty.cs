@@ -27,7 +27,7 @@ namespace Honoo.Configuration
         /// 创建 AddProperty 的新实例。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="connection">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         public AddProperty(string key, string value) : base(ConfigurationPropertyKind.AddProperty, GetElement(key, value), null)
         {
             _key = key ?? throw new ArgumentNullException(nameof(key));

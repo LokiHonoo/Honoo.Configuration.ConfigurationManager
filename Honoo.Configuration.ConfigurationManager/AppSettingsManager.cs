@@ -8,117 +8,59 @@ using System.Xml.Linq;
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 配置管理器。提供对标准节点的有限读写支持。
+    /// AppSettings 附加配置管理器。提供对 appSettings 的 "file" 属性指定的附加文件的有限读写支持。
     /// </summary>
-    public sealed class ConfigurationManager : IDisposable
+    public sealed class AppSettingsManager : IDisposable
     {
         #region Properties
 
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
-        private AppSettings _appSettings;
-        private AssemblyBinding _assemblyBinding;
-        private ConfigSections _configSections;
-        private ConnectionStrings _connectionStrings;
+        private readonly DictionaryPropertySet _properties;
         private bool _disposed;
         private XElement _root;
 
         /// <summary>
-        /// 映射到标准格式的 &lt;appSettings /&gt; 节点。
+        /// 获取配置属性集合。
         /// </summary>
-        public AppSettings AppSettings
-        {
-            get
-            {
-                if (_appSettings == null)
-                {
-                    _appSettings = new AppSettings(_root);
-                }
-                return _appSettings;
-            }
-        }
-
-        /// <summary>
-        /// 映射到标准格式的 &lt;assemblyBinding /&gt; 节点。这是配置级的程序集绑定策略节点。
-        /// </summary>
-        public AssemblyBinding AssemblyBinding
-        {
-            get
-            {
-                if (_assemblyBinding == null)
-                {
-                    _assemblyBinding = new AssemblyBinding(_root);
-                }
-                return _assemblyBinding;
-            }
-        }
-
-        /// <summary>
-        /// 映射到标准格式的 &lt;configSections /&gt; 节点。
-        /// </summary>
-        public ConfigSections ConfigSections
-        {
-            get
-            {
-                if (_configSections == null)
-                {
-                    _configSections = new ConfigSections(_root);
-                }
-                return _configSections;
-            }
-        }
-
-        /// <summary>
-        /// 映射到标准格式的 &lt;connectionStrings /&gt; 节点。
-        /// </summary>
-        public ConnectionStrings ConnectionStrings
-        {
-            get
-            {
-                if (_connectionStrings == null)
-                {
-                    _connectionStrings = new ConnectionStrings(_root);
-                }
-                return _connectionStrings;
-            }
-        }
+        public DictionaryPropertySet Properties => _properties;
 
         #endregion Properties
 
         #region Delegate
 
         /// <summary>
-        /// 在 ConfigurationManager 实例内容改变时执行。
+        /// 在 AppSettingsManager 实例内容改变时执行。
         /// </summary>
-        /// <param name="manager">ConfigurationManager 实例。</param>
-        public delegate void OnChangedEventHandler(ConfigurationManager manager);
+        /// <param name="manager">AppSettingsManager 实例。</param>
+        public delegate void OnChangedEventHandler(AppSettingsManager manager);
 
         /// <summary>
-        /// 在 ConfigurationManager 实例释放后执行。
+        /// 在 AppSettingsManager 实例释放后执行。
         /// </summary>
         public delegate void OnDisposedEventHandler();
 
         /// <summary>
-        /// 在 ConfigurationManager 实例正在释放时执行。
+        /// 在 AppSettingsManager 实例正在释放时执行。
         /// </summary>
-        /// <param name="manager">ConfigurationManager 实例。</param>
-        public delegate void OnDisposingEventHandler(ConfigurationManager manager);
+        /// <param name="manager">AppSettingsManager 实例。</param>
+        public delegate void OnDisposingEventHandler(AppSettingsManager manager);
 
         #endregion Delegate
 
         #region Event
 
         /// <summary>
-        /// 在 ConfigurationManager 实例内容改变时执行。
+        /// 在 AppSettingsManager 实例内容改变时执行。
         /// </summary>
         public event OnChangedEventHandler OnChanged;
 
         /// <summary>
-        /// 在 ConfigurationManager 实例释放后执行。
+        /// 在 AppSettingsManager 实例释放后执行。
         /// </summary>
         public event OnDisposedEventHandler OnDisposed;
 
         /// <summary>
-        /// 在 ConfigurationManager 实例准备释放时执行。
+        /// 在 AppSettingsManager 实例准备释放时执行。
         /// </summary>
         public event OnDisposingEventHandler OnDisposing;
 
@@ -127,16 +69,17 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 创建 ConfigurationManager 的新实例。
+        /// 创建 AppSettingsManager 的新实例。
         /// </summary>
-        public ConfigurationManager()
+        public AppSettingsManager()
         {
-            _root = new XElement("configuration");
+            _root = new XElement("appSettings");
             _root.Changed += OnContentChanged;
+            _properties = GetPropertySet();
         }
 
         /// <summary>
-        /// 创建 ConfigurationManager 的新实例。
+        /// 创建 AppSettingsManager 的新实例。
         /// </summary>
         /// <param name="filePath">指定配置文件的路径。</param>
         /// <param name="protectionAlgorithm">
@@ -145,7 +88,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public ConfigurationManager(string filePath, RSACryptoServiceProvider protectionAlgorithm = null)
+        public AppSettingsManager(string filePath, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -154,10 +97,11 @@ namespace Honoo.Configuration
             _root = XElement.Load(filePath);
             _root = Coerce(_root, protectionAlgorithm);
             _root.Changed += OnContentChanged;
+            _properties = GetPropertySet();
         }
 
         /// <summary>
-        /// 创建 ConfigurationManager 的新实例。
+        /// 创建 AppSettingsManager 的新实例。
         /// </summary>
         /// <param name="stream">指定配置文件的流。</param>
         /// <param name="closeStream">读取完成后关闭流。</param>
@@ -167,7 +111,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public ConfigurationManager(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public AppSettingsManager(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (stream == null)
             {
@@ -180,10 +124,11 @@ namespace Honoo.Configuration
             }
             _root = Coerce(_root, protectionAlgorithm);
             _root.Changed += OnContentChanged;
+            _properties = GetPropertySet();
         }
 
         /// <summary>
-        /// 创建 ConfigurationManager 的新实例。
+        /// 创建 AppSettingsManager 的新实例。
         /// </summary>
         /// <param name="reader">指定配置文件的读取器。</param>
         /// <param name="closeReader">读取完成后关闭读取器。</param>
@@ -193,7 +138,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public ConfigurationManager(XmlReader reader, bool closeReader = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public AppSettingsManager(XmlReader reader, bool closeReader = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (reader == null)
             {
@@ -209,15 +154,15 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 释放由 <see cref="ConfigurationManager"/> 使用的所有资源。
+        /// 释放由 <see cref="AppSettingsManager"/> 使用的所有资源。
         /// </summary>
-        ~ConfigurationManager()
+        ~AppSettingsManager()
         {
             Dispose(false);
         }
 
         /// <summary>
-        /// 释放由 <see cref="ConfigurationManager"/> 使用的所有资源。
+        /// 释放由 <see cref="AppSettingsManager"/> 使用的所有资源。
         /// </summary>
         public void Dispose()
         {
@@ -232,9 +177,6 @@ namespace Honoo.Configuration
                 OnDisposing?.Invoke(this);
                 if (disposing)
                 {
-                    _appSettings = null;
-                    _configSections = null;
-                    _connectionStrings = null;
                     _root = null;
                 }
                 _disposed = true;
@@ -262,7 +204,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
             }
-            XElement root = Clean(_root);
+            XElement root = _root;
             if (protectionAlgorithm != null)
             {
                 root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
@@ -289,7 +231,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            XElement root = Clean(_root);
+            XElement root = _root;
             if (protectionAlgorithm != null)
             {
                 root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
@@ -316,7 +258,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(writer));
             }
-            XElement root = Clean(_root);
+            XElement root = _root;
             if (protectionAlgorithm != null)
             {
                 root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
@@ -325,6 +267,55 @@ namespace Honoo.Configuration
         }
 
         #endregion Save
+
+        #region File
+
+        /// <summary>
+        /// 获取 "file" 属性的值。
+        /// </summary>
+        /// <returns></returns>
+        public string GetFileAttribute()
+        {
+            return TryGetFileAttribute(out string file) ? file : null;
+        }
+
+        /// <summary>
+        /// 设置 "file" 属性的值、添加或删除 "file" 属性。
+        /// </summary>
+        /// <param name="value">"file" 属性的值。"file" 特性指向一个根节点为 &lt;appSettings&gt; 的配置文件。</param>
+        /// <returns></returns>
+        public void SetFileAttribute(string value)
+        {
+            _root.SetAttributeValue("file", value);
+        }
+
+        /// <summary>
+        /// 获取 "file" 属性的值。
+        /// <br/>如果没有找到指定属性，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="value">"file" 属性的值。</param>
+        /// <returns></returns>
+        public bool TryGetFileAttribute(out string value)
+        {
+            if (_root.Attribute("file") is XAttribute attribute)
+            {
+                value = attribute.Value;
+                return true;
+            }
+            value = null;
+            return false;
+        }
+
+        #endregion File
+
+        /// <summary>
+        /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+        /// </summary>
+        /// <returns></returns>
+        public DictionaryPropertySetControlled GetPropertySetControlled()
+        {
+            return new DictionaryPropertySetControlled(_root);
+        }
 
         /// <summary>
         /// 返回配置文件的缩进 XML 文档文本。
@@ -337,7 +328,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public string GetXmlString(RSACryptoServiceProvider protectionAlgorithm = null)
         {
-            XElement root = Clean(_root);
+            XElement root = _root;
             if (protectionAlgorithm != null)
             {
                 root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
@@ -359,38 +350,11 @@ namespace Honoo.Configuration
             return _root.ToString();
         }
 
-        private XElement Clean(XElement root)
-        {
-            XNamespace ns = "urn:schemas-microsoft-com:asm.v1";
-            XElement result = XElement.Parse(root.ToString());
-            if (_appSettings != null && _appSettings.Properties.Count == 0)
-            {
-                XElement element = result.Element("appSettings");
-                if (!element.HasElements)
-                {
-                    element.Remove();
-                }
-            }
-            if (_assemblyBinding != null && _assemblyBinding.Properties.Count == 0)
-            {
-                result.Element(ns + "assemblyBinding").Remove();
-            }
-            if (_connectionStrings != null && _connectionStrings.Properties.Count == 0)
-            {
-                result.Element("connectionStrings").Remove();
-            }
-            if (_configSections != null && _configSections.Sections.Count == 0 && _configSections.Groups.Count == 0)
-            {
-                result.Element("configSections").Remove();
-            }
-            return result;
-        }
-
         private XElement Coerce(XElement root, RSACryptoServiceProvider protectionAlgorithm)
         {
-            if (root.Name != "configuration")
+            if (root.Name != "appSettings")
             {
-                throw new ArgumentException($"Not a configuration file.");
+                throw new ArgumentException($"Not a appSettings file.");
             }
             if (protectionAlgorithm != null)
             {
@@ -410,6 +374,19 @@ namespace Honoo.Configuration
                 }
             }
             return root;
+        }
+
+        private DictionaryPropertySet GetPropertySet()
+        {
+            if (_root.Name.LocalName != "appSettings")
+            {
+                throw new Exception("File is not a appSettings extra file.");
+            }
+            if (_root.Attribute("configProtectionProvider") != null)
+            {
+                throw new CryptographicException("Encryped configuration sections are not supported.");
+            }
+            return new DictionaryPropertySet(_root);
         }
 
         private void OnContentChanged(object sender, XObjectChangeEventArgs e)

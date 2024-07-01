@@ -10,7 +10,7 @@
     - [Github](#github)
     - [NuGet](#nuget)
   - [CHANGELOG](#changelog)
-    - [1.4.0](#140)
+    - [1.4.1](#141)
     - [1.3.4](#134)
     - [1.3.2](#132)
     - [1.3.1](#131)
@@ -51,9 +51,17 @@
 
 ## CHANGELOG
 
-### 1.4.0
+### 1.4.1
 
-**Refactored* 完全重构。现在能以文本方式处理混乱的 &lt;remove /&gt; &lt;clear /&gt; 标签。
+**Refactored* 完全重构。现在能以标签方式处理混乱的 &lt;remove /&gt; &lt;clear /&gt; 标签。所有属性封装为类型并将注释（comment）的设置移动到属性封装中。
+
+**Features* 提供 AppSettings.GetPropertySetControlled() 方法用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+
+**Features* 提供 DictionarySection.GetPropertySetControlled() 方法用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+
+**Features* 提供 NameValueSection.GetPropertySetControlled() 方法用于获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+
+**Features* 提供 AppSettingsManager 用于读写 appSettings 节点的 file 属性指定的附加配置文件。
 
 ### 1.3.4
 
@@ -118,8 +126,9 @@ internal static void Create(string filePath)
     //
     // 使用 .NET 程序的默认配置文件或自定义配置文件。
     //
-    using (ConfigurationManager manager = new ConfigurationManager(filePath))
+    using (ConfigurationManager manager = File.Exists(filePath) ? new ConfigurationManager(filePath) : new ConfigurationManager())
     {
+        manager.AppSettings.SetFileAttribute("config.exrea1.xml");
         //
         // 赋值并设置注释。
         //
@@ -161,6 +170,12 @@ internal static void Load(string filePath)
         if (manager.AppSettings.Properties.TryGetValue("prop4", out LoaderOptimization value4))
         {
             Console.WriteLine(value4);
+        }
+        // 取出应用控制标签后的属性。
+        DictionaryPropertySetControlled propertySetControlled = manager.AppSettings.GetPropertySetControlled();
+        foreach (AddProperty property in propertySetControlled)
+        {
+            Console.WriteLine(property.Value);
         }
     }
 }
@@ -385,7 +400,7 @@ private static void Manager_OnDisposing(ConfigurationManager manager)
 
 ```c#
 
-internal static void Create(string filePath)
+internal static void Create()
 {
     RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
     rsa.FromXmlString(keyStored);

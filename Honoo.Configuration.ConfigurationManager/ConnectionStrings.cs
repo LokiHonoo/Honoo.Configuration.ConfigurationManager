@@ -4,7 +4,7 @@ using System.Xml.Linq;
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 映射到标准格式的 "connectionStrings" 节点。
+    /// 映射到标准格式的 &lt;connectionStrings /&gt; 节点。
     /// </summary>
     public sealed class ConnectionStrings
     {

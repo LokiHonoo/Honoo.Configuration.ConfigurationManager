@@ -1,5 +1,6 @@
 ﻿using Honoo.Configuration;
 using System;
+using System.IO;
 
 namespace Test
 {
@@ -13,8 +14,9 @@ namespace Test
             //
             // 使用 .NET 程序的默认配置文件或自定义配置文件。
             //
-            using (ConfigurationManager manager = new ConfigurationManager(filePath))
+            using (ConfigurationManager manager = File.Exists(filePath) ? new ConfigurationManager(filePath) : new ConfigurationManager())
             {
+                manager.AppSettings.SetFileAttribute("config.exrea1.xml");
                 //
                 // 赋值并设置注释。
                 //
@@ -56,6 +58,12 @@ namespace Test
                 if (manager.AppSettings.Properties.TryGetValue("prop4", out LoaderOptimization value4))
                 {
                     Console.WriteLine(value4);
+                }
+                // 取出应用控制标签后的属性。
+                DictionaryPropertySetControlled propertySetControlled = manager.AppSettings.GetPropertySetControlled();
+                foreach (AddProperty property in propertySetControlled)
+                {
+                    Console.WriteLine(property.Value);
                 }
             }
         }

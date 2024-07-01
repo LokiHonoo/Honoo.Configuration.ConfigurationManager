@@ -19,10 +19,8 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的属性的值。
-        /// <br/>如果没有找到指定属性，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置容器的属性的名称。</param>
-        /// <param name="value">配置容器的属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
         public string GetAttribute(string name)

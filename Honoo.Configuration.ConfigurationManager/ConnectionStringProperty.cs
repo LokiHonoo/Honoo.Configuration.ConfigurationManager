@@ -56,6 +56,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 创建 ConnectionStringProperty 的新实例。
         /// </summary>
+        /// <param name="name">连接属性的名称。</param>
         /// <param name="connectionString">连接字符串。</param>
         /// <param name="providerName">数据库引擎的文本名称。</param>
         public ConnectionStringProperty(string name, string connectionString, string providerName)

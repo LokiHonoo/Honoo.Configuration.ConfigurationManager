@@ -174,7 +174,6 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定索引处的配置属性的值。
-        /// <br/>如果没有找到指定索引，返回 <paramref name="defaultHref"/>。
         /// </summary>
         /// <param name="index">配置属性的索引。</param>
         /// <returns></returns>
