@@ -59,6 +59,8 @@
 
 **Fixed* 修复了 AssemblyBinding 节点缺少命名空间的问题。
 
+**Fixed* 修复了 Section 标签类型错误的问题。
+
 **Changed* 移除了 IConfigSection 接口方式，更改为 ConfigSection 基类。
 
 ### 1.3.2

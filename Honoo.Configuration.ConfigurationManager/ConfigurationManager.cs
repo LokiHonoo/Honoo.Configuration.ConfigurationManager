@@ -15,7 +15,7 @@ namespace Honoo.Configuration
     {
         #region Properties
 
-        private readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
+        private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
         private AppSettings _appSettings;
         private AssemblyBinding _assemblyBinding;
         private ConfigSections _configSections;

@@ -36,9 +36,11 @@ namespace Test
                 //
                 section1.Properties.AddOrUpdate("prop1", 0.6789d);
                 section1.SetComment("This is \"SingleTagSection\" comment.");
+                section1.Properties.AddOrUpdate("prop2", "abc");
                 //
                 // NameValueSection 允许同名键值。
                 //
+                section2.Properties.Clear();
                 section2.Properties.Add("prop1", 155.66d).SetComment("This is \"NameValueSection\" prop1 comment.");
                 section2.Properties.Add("prop1", 7.9992d).SetComment("This is \"NameValueSection\" prop1 comment.");
                 section2.SetComment("This is \"NameValueSection\" comment.");
