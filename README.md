@@ -6,9 +6,16 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
-  - [Project](#project)
-    - [Github](#github)
+  - [USAGE](#usage)
     - [NuGet](#nuget)
+  - [DEMO](#demo)
+    - [Namespace](#namespace)
+    - [appSettings](#appsettings)
+    - [connectionStrings](#connectionstrings)
+    - [sectionGroup/section](#sectiongroupsection)
+    - [Auto save](#auto-save)
+    - [Protection](#protection)
+    - [UWP](#uwp)
   - [CHANGELOG](#changelog)
     - [1.4.1](#141)
     - [1.3.4](#134)
@@ -17,14 +24,6 @@
     - [1.2.5](#125)
     - [1.2.3](#123)
     - [1.2.0](#120)
-  - [USAGE](#usage)
-    - [Namespace](#namespace)
-    - [appSettings](#appsettings)
-    - [connectionStrings](#connectionstrings)
-    - [sectionGroup/section](#sectiongroupsection)
-    - [Auto save](#auto-save)
-    - [Protection](#protection)
-    - [UWP](#uwp)
   - [LICENSE](#license)
 
 <!-- /code_chunk_output -->
@@ -39,75 +38,13 @@
 
 提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
 
-## Project
-
-### Github
-
-<https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager>
+## USAGE
 
 ### NuGet
 
 <https://www.nuget.org/packages/Honoo.Configuration.ConfigurationManager/>
 
-## CHANGELOG
-
-### 1.4.1
-
-**Refactored* 完全重构。现在能以标签方式处理混乱的 &lt;remove /&gt; &lt;clear /&gt; 标签。所有属性封装为类型并将注释（comment）的设置移动到属性封装中。
-
-**Features* 提供 AppSettings.GetPropertySetControlled() 方法用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-
-**Features* 提供 DictionarySection.GetPropertySetControlled() 方法用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-
-**Features* 提供 NameValueSection.GetPropertySetControlled() 方法用于获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-
-**Features* 提供 AppSettingsManager 用于读写 appSettings 节点的 file 属性指定的附加配置文件。
-
-### 1.3.4
-
-**Fixed* 修复了 AssemblyBinding 节点缺少命名空间的问题。
-
-**Fixed* 修复了 Section 标签类型错误的问题。
-
-**Changed* 移除了 IConfigSection 接口方式，更改为 ConfigSection 基类。
-
-### 1.3.2
-
-**Features* 提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-
-**Features* 新增 &lt;assemblyBinding /&gt; 节点支持。
-
-**Features* 读取 &lt;remove /&gt; &lt;clear /&gt; 标签时采用标签的默认行为。标签产生的删除行为会体现在配置文件中。例如 &lt;clear /&gt; 标签之前的 所有标签都会被移除。
-
-### 1.3.1
-
-**Changed* SectionGroup 和 Section 的注释（comment）设置从父级方法更改为自身方法。
-
-**Changed* 移除了 ConfigSection 基类，更改为 IConfigSection 接口方式。
-
-**Features* AppSettings、DictionarySection 读取同名键值不再抛出异常，使用最后读取的值。
-
-**Features* NameValueSection 支持数组模式。
-
-**Features* 属性值支持枚举类型。
-
-**Features* 新增 GetValue(string, string) 方法，在取值时设置没有找到指定键时的默认值。
-
-### 1.2.5
-
-**Features* TextSection 以 xml 方式处理。现在 TextSection 支持解析 CDATA 区段。
-
-### 1.2.3
-
-**Changed* 移除了访问 ConnectionStrings 直接创建和访问实例的代码。提供 CreateInstance() 方法主动创建实例。如果没有引用相关的数据库程序集，在主动创建实例前不会抛出异常。
-
-### 1.2.0
-
-**Changed* 移除了原有的自动保存的代码，增加了事件，可在 OnChanged，OnDisposing 事件中实现自动保存。
-
-**Features* 现在支持读写注释（comment）节点。
-
-## USAGE
+## DEMO
 
 ### Namespace
 
@@ -193,29 +130,21 @@ internal static void Create(string filePath)
     //
     using (ConfigurationManager manager = new ConfigurationManager(filePath))
     {
-        SqlConnectionStringBuilder builder1 = new SqlConnectionStringBuilder()
+        SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder()
         {
             DataSource = "127.0.0.1",
             InitialCatalog = "DemoCatalog",
             UserID = "sa",
             Password = "12345"
         };
-        SqlConnection conn1 = new SqlConnection(builder1.ConnectionString);
-        MySqlConnectionStringBuilder builder2 = new MySqlConnectionStringBuilder()
-        {
-            Server = "127.0.0.1",
-            Database = "DemoDB",
-            UserID = "root",
-            Password = "12345"
-        };
-        MySqlConnection conn2 = new MySqlConnection(builder2.ConnectionString);
+        SqlConnection connection = new SqlConnection(builder.ConnectionString);
         //
         // 赋值并设置注释。如果不设置引擎参数，读取时不能访问连接实例。
         //
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop1", conn1).SetComment("This is \"connectionStrings\" prop1 comment.");
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop2", conn1.ConnectionString, conn2.GetType().Namespace);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop3", conn2.ConnectionString, typeof(MySqlConnection).AssemblyQualifiedName);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop4", conn2).SetComment("It's will remove this.");
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop1", connection).SetComment("This is \"connectionStrings\" prop1 comment.");
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop2", connection.ConnectionString, connection.GetType().Namespace);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop3", connection.ConnectionString, typeof(SqlConnection).AssemblyQualifiedName);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).SetComment("It's will remove this.");
         //
         // 移除属性的方法。
         //
@@ -250,7 +179,7 @@ internal static void Load(string filePath)
             //
             // 访问实例。
             //
-            DbConnection connection = value2.CreateInstance();
+            SqlConnection connection = (SqlConnection)value2.CreateInstance();
             Console.WriteLine(connection.ConnectionString);
         }
     }
@@ -438,6 +367,64 @@ public static async void Test()
 
 ```
 
+## CHANGELOG
+
+### 1.4.1
+
+**Refactored* 完全重构。现在能以标签方式处理混乱的 &lt;remove /&gt; &lt;clear /&gt; 标签。所有属性封装为类型并将注释（comment）的设置移动到属性封装中。
+
+**Features* 提供 AppSettings.GetPropertySetControlled() 方法用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+
+**Features* 提供 DictionarySection.GetPropertySetControlled() 方法用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+
+**Features* 提供 NameValueSection.GetPropertySetControlled() 方法用于获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+
+**Features* 提供 AppSettingsManager 用于读写 appSettings 节点的 file 属性指定的附加配置文件。
+
+### 1.3.4
+
+**Fixed* 修复了 AssemblyBinding 节点缺少命名空间的问题。
+
+**Fixed* 修复了 Section 标签类型错误的问题。
+
+**Changed* 移除了 IConfigSection 接口方式，更改为 ConfigSection 基类。
+
+### 1.3.2
+
+**Features* 提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
+
+**Features* 新增 &lt;assemblyBinding /&gt; 节点支持。
+
+**Features* 读取 &lt;remove /&gt; &lt;clear /&gt; 标签时采用标签的默认行为。标签产生的删除行为会体现在配置文件中。例如 &lt;clear /&gt; 标签之前的 所有标签都会被移除。
+
+### 1.3.1
+
+**Changed* SectionGroup 和 Section 的注释（comment）设置从父级方法更改为自身方法。
+
+**Changed* 移除了 ConfigSection 基类，更改为 IConfigSection 接口方式。
+
+**Features* AppSettings、DictionarySection 读取同名键值不再抛出异常，使用最后读取的值。
+
+**Features* NameValueSection 支持数组模式。
+
+**Features* 属性值支持枚举类型。
+
+**Features* 新增 GetValue(string, string) 方法，在取值时设置没有找到指定键时的默认值。
+
+### 1.2.5
+
+**Features* TextSection 以 xml 方式处理。现在 TextSection 支持解析 CDATA 区段。
+
+### 1.2.3
+
+**Changed* 移除了访问 ConnectionStrings 直接创建和访问实例的代码。提供 CreateInstance() 方法主动创建实例。如果没有引用相关的数据库程序集，在主动创建实例前不会抛出异常。
+
+### 1.2.0
+
+**Changed* 移除了原有的自动保存的代码，增加了事件，可在 OnChanged，OnDisposing 事件中实现自动保存。
+
+**Features* 现在支持读写注释（comment）节点。
+
 ## LICENSE
 
-This project based on [MIT](LICENSE) license.
+[MIT](LICENSE) license.

@@ -6,6 +6,8 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
+  - [USAGE](#usage)
+    - [Github](#github)
   - [LICENSE](#license)
 
 <!-- /code_chunk_output -->
@@ -21,6 +23,12 @@ Provides an method to encrypt the configuration file.
 
 Waring: The encryption method is different from ASP.NET, and the generated encryption file can only using by this project tool.
 
+## USAGE
+
+### Github
+
+<https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager>
+
 ## LICENSE
 
-This project based on [MIT](LICENSE) license.
+[MIT](LICENSE) license.

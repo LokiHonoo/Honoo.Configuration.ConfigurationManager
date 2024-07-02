@@ -18,29 +18,21 @@ namespace Test
             //
             using (ConfigurationManager manager = new ConfigurationManager(filePath))
             {
-                SqlConnectionStringBuilder builder1 = new SqlConnectionStringBuilder()
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder()
                 {
                     DataSource = "127.0.0.1",
                     InitialCatalog = "DemoCatalog",
                     UserID = "sa",
                     Password = "12345"
                 };
-                SqlConnection conn1 = new SqlConnection(builder1.ConnectionString);
-                MySqlConnectionStringBuilder builder2 = new MySqlConnectionStringBuilder()
-                {
-                    Server = "127.0.0.1",
-                    Database = "DemoDB",
-                    UserID = "root",
-                    Password = "12345"
-                };
-                MySqlConnection conn2 = new MySqlConnection(builder2.ConnectionString);
+                SqlConnection connection = new SqlConnection(builder.ConnectionString);
                 //
                 // 赋值并设置注释。如果不设置引擎参数，读取时不能访问连接实例。
                 //
-                manager.ConnectionStrings.Properties.AddOrUpdate("prop1", conn1).SetComment("This is \"connectionStrings\" prop1 comment.");
-                manager.ConnectionStrings.Properties.AddOrUpdate("prop2", conn1.ConnectionString, conn2.GetType().Namespace);
-                manager.ConnectionStrings.Properties.AddOrUpdate("prop3", conn2.ConnectionString, typeof(MySqlConnection).AssemblyQualifiedName);
-                manager.ConnectionStrings.Properties.AddOrUpdate("prop4", conn2).SetComment("It's will remove this.");
+                manager.ConnectionStrings.Properties.AddOrUpdate("prop1", connection).SetComment("This is \"connectionStrings\" prop1 comment.");
+                manager.ConnectionStrings.Properties.AddOrUpdate("prop2", connection.ConnectionString, connection.GetType().Namespace);
+                manager.ConnectionStrings.Properties.AddOrUpdate("prop3", connection.ConnectionString, typeof(SqlConnection).AssemblyQualifiedName);
+                manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).SetComment("It's will remove this.");
                 //
                 // 移除属性的方法。
                 //
@@ -75,7 +67,7 @@ namespace Test
                     //
                     // 访问实例。
                     //
-                    DbConnection connection = value2.CreateInstance();
+                    SqlConnection connection = (SqlConnection)value2.CreateInstance();
                     Console.WriteLine(connection.ConnectionString);
                 }
             }
