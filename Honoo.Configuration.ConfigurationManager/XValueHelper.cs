@@ -1,24 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Honoo.Configuration
 {
     internal static class XValueHelper
     {
-        internal static IList<byte[]> Copy(IList<byte[]> values)
-        {
-            if (values != null)
-            {
-                List<byte[]> result = new List<byte[]>();
-                foreach (var value in values)
-                {
-                    result.Add((byte[])value.Clone());
-                }
-                return result;
-            }
-            return null;
-        }
-
         internal static bool TryParse(string hex, out byte[] value)
         {
             if (!string.IsNullOrWhiteSpace(hex))
@@ -37,7 +22,7 @@ namespace Honoo.Configuration
                 {
                 }
             }
-            value = null;
+            value = default;
             return false;
         }
     }

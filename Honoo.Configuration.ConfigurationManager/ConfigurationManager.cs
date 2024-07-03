@@ -29,7 +29,7 @@ namespace Honoo.Configuration
         {
             get
             {
-                if (_appSettings == null)
+                if (!_disposed && _appSettings == null)
                 {
                     _appSettings = new AppSettings(_root);
                 }
@@ -44,7 +44,7 @@ namespace Honoo.Configuration
         {
             get
             {
-                if (_assemblyBinding == null)
+                if (!_disposed && _assemblyBinding == null)
                 {
                     _assemblyBinding = new AssemblyBinding(_root);
                 }
@@ -59,7 +59,7 @@ namespace Honoo.Configuration
         {
             get
             {
-                if (_configSections == null)
+                if (!_disposed && _configSections == null)
                 {
                     _configSections = new ConfigSections(_root);
                 }
@@ -74,7 +74,7 @@ namespace Honoo.Configuration
         {
             get
             {
-                if (_connectionStrings == null)
+                if (!_disposed && _connectionStrings == null)
                 {
                     _connectionStrings = new ConnectionStrings(_root);
                 }
@@ -169,10 +169,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigurationManager(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
-            if (stream == null)
-            {
-                throw new ArgumentNullException(nameof(stream));
-            }
             _root = XElement.Load(stream);
             if (closeStream)
             {
@@ -195,10 +191,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigurationManager(XmlReader reader, bool closeReader = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
-            if (reader == null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
             _root = XElement.Load(reader);
             if (closeReader)
             {
@@ -285,10 +277,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void Save(Stream stream, RSACryptoServiceProvider protectionAlgorithm = null)
         {
-            if (stream == null)
-            {
-                throw new ArgumentNullException(nameof(stream));
-            }
             XElement root = Clean(_root);
             if (protectionAlgorithm != null)
             {
@@ -312,10 +300,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void Save(XmlWriter writer, RSACryptoServiceProvider protectionAlgorithm = null)
         {
-            if (writer == null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
             XElement root = Clean(_root);
             if (protectionAlgorithm != null)
             {
@@ -359,6 +343,32 @@ namespace Honoo.Configuration
             return _root.ToString();
         }
 
+        private static XElement Coerce(XElement root, RSACryptoServiceProvider protectionAlgorithm)
+        {
+            if (root.Name != "configuration")
+            {
+                throw new Exception("File is not a configuration file.");
+            }
+            if (protectionAlgorithm != null)
+            {
+                if (root.Attribute("protected") is XAttribute attribute)
+                {
+                    if (bool.TryParse(attribute.Value, out bool isProtected))
+                    {
+                        if (isProtected)
+                        {
+                            root = ProtectionHelper.Decrypt(root, protectionAlgorithm);
+                        }
+                    }
+                    else
+                    {
+                        throw new CryptographicException($"Attribute \"protected\" is not a boolean value.");
+                    }
+                }
+            }
+            return root;
+        }
+
         private XElement Clean(XElement root)
         {
             XNamespace ns = "urn:schemas-microsoft-com:asm.v1";
@@ -384,32 +394,6 @@ namespace Honoo.Configuration
                 result.Element("configSections").Remove();
             }
             return result;
-        }
-
-        private XElement Coerce(XElement root, RSACryptoServiceProvider protectionAlgorithm)
-        {
-            if (root.Name != "configuration")
-            {
-                throw new ArgumentException($"Not a configuration file.");
-            }
-            if (protectionAlgorithm != null)
-            {
-                if (root.Attribute("protected") is XAttribute attribute)
-                {
-                    if (bool.TryParse(attribute.Value, out bool isProtected))
-                    {
-                        if (isProtected)
-                        {
-                            root = ProtectionHelper.Decrypt(root, protectionAlgorithm);
-                        }
-                    }
-                    else
-                    {
-                        throw new CryptographicException($"Attribute \"protected\" is not a boolean value.");
-                    }
-                }
-            }
-            return root;
         }
 
         private void OnContentChanged(object sender, XObjectChangeEventArgs e)

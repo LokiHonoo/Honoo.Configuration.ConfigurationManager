@@ -46,8 +46,10 @@ namespace Honoo.Configuration
 
         #endregion Construction
 
+        #region Comment
+
         /// <summary>
-        /// 获取注释。
+        /// 获取注释。如果没有找到注释，返回 <see langword="null"/>。
         /// </summary>
         /// <returns></returns>
         public string GetComment()
@@ -56,8 +58,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 删除注释。
-        /// <br/>如果注释成功删除，返回 <see langword="true"/>。如果没有找到注释节点，则返回 <see langword="false"/>。
+        /// 删除注释。如果注释成功删除，返回 <see langword="true"/>。如果没有找到注释节点，则返回 <see langword="false"/>。
         /// </summary>
         /// <returns></returns>
         public bool RemoveComment()
@@ -78,11 +79,15 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void SetComment(string comment)
         {
-            if (string.IsNullOrEmpty(comment))
+            if (comment == null)
             {
-                throw new ArgumentException($"The invalid argument - {nameof(comment)}.");
+                if (_comment != null)
+                {
+                    _comment.Remove();
+                    _comment = null;
+                }
             }
-            if (_comment == null)
+            else if (_comment == null)
             {
                 _comment = new XComment(comment);
                 _content.AddBeforeSelf(_comment);
@@ -94,17 +99,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 方法已重写。返回节点的缩进 XML 文本。
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return _content.ToString();
-        }
-
-        /// <summary>
-        /// 获取注释。
-        /// <br/>如果没有找到注释，返回 <see langword="false"/>。
+        /// 获取注释。如果没有找到注释，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="comment">注释文本。</param>
         /// <returns></returns>
@@ -117,6 +112,17 @@ namespace Honoo.Configuration
             }
             comment = null;
             return false;
+        }
+
+        #endregion Comment
+
+        /// <summary>
+        /// 方法已重写。返回节点的缩进 XML 文本。
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return _content.ToString();
         }
     }
 }

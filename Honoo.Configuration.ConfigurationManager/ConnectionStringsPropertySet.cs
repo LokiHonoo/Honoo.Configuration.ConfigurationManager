@@ -47,6 +47,7 @@ namespace Honoo.Configuration
                             if (content.Name == "add")
                             {
                                 ConnectionStringProperty property = new ConnectionStringProperty(content, comment);
+                                _properties.Remove(property.Name);
                                 _properties.Add(property.Name, property);
                             }
                         }
@@ -68,16 +69,12 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty Add(ConnectionStringProperty property)
         {
-            if (property == null)
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
-            }
+            _properties.Add(property.Name, property);
             if (property.Comment != null)
             {
                 _container.Add(property.Comment);
             }
             _container.Add(property.Content);
-            _properties.Add(property.Name, property);
             return property;
         }
 
@@ -90,10 +87,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty Add(string name, DbConnection connection)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             return Add(new ConnectionStringProperty(name, connection));
         }
 
@@ -107,10 +100,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty Add(string name, string connectionString, string providerName)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             return Add(new ConnectionStringProperty(name, connectionString, providerName));
         }
 
@@ -126,10 +115,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty AddOrUpdate(ConnectionStringProperty property)
         {
-            if (string.IsNullOrWhiteSpace(property.Name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
-            }
             Remove(property.Name);
             return Add(property);
         }
@@ -143,10 +128,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty AddOrUpdate(string name, DbConnection connection)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             return AddOrUpdate(new ConnectionStringProperty(name, connection));
         }
 
@@ -160,10 +141,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty AddOrUpdate(string name, string connectionString, string providerName)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             return AddOrUpdate(new ConnectionStringProperty(name, connectionString, providerName));
         }
 
@@ -180,10 +157,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out ConnectionStringProperty property)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             return _properties.TryGetValue(name, out property);
         }
 
@@ -224,8 +197,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定名称关联的连接属性的值。
-        /// <br/>如果没有找到指定名称，返回 <paramref name="defaultValue"/>。
+        /// 获取与指定名称关联的连接属性的值。如果没有找到指定名称，返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
         /// <param name="defaultValue">没有找到指定名称时的连接属性的默认值。</param>

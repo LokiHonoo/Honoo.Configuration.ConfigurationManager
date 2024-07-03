@@ -62,10 +62,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigSectionGroup GetOrAdd(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             if (_groups.TryGetValue(name, out ConfigSectionGroup value))
             {
                 return value;
@@ -76,9 +72,9 @@ namespace Honoo.Configuration
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
                 ConfigSectionGroup group = new ConfigSectionGroup(declaration, content, null);
+                _groups.Add(name, value);
                 _declarationContainer.Add(declaration);
                 _contentContainer.Add(content);
-                _groups.Add(name, value);
                 return group;
             }
         }
@@ -96,10 +92,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out ConfigSectionGroup group)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             return _groups.TryGetValue(name, out group);
         }
 

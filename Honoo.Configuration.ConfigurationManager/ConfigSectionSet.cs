@@ -96,10 +96,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigSection GetOrAdd(string name, ConfigSectionKind kind)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             if (_sections.TryGetValue(name, out ConfigSection value))
             {
                 return value;
@@ -134,9 +130,9 @@ namespace Honoo.Configuration
 
                     default: throw new ArgumentException($"The invalid argument - {nameof(kind)}.");
                 }
+                _sections.Add(name, section);
                 _declarationContainer.Add(declaration);
                 _contentContainer.Add(content);
-                _sections.Add(name, section);
                 return section;
             }
         }
@@ -242,10 +238,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out ConfigSection section)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             return _sections.TryGetValue(name, out section);
         }
 

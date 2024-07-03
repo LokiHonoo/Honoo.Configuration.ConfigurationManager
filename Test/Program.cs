@@ -44,6 +44,14 @@ namespace Test
             Console.WriteLine();
             Console.WriteLine(File.ReadAllText(filePath4));
             Console.ReadKey(true);
+            //
+            string filePath5 = "honoo-settings.xml";
+            TestHoonooSettings.Create(filePath5);
+            TestHoonooSettings.Load(filePath5);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine(File.ReadAllText(filePath5));
+            Console.ReadKey(true);
         }
     }
 }

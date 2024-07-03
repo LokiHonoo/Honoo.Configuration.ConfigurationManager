@@ -25,10 +25,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public string GetAttribute(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             if (_content.Attribute(name) is XAttribute attribute)
             {
                 return attribute.Value;
@@ -63,10 +59,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void SetAttribute(string name, string value)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             _content.SetAttributeValue(name, value);
         }
 
@@ -95,8 +87,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定名称关联的配置容器的属性的值。
-        /// <br/>如果没有找到指定属性，返回 <see langword="false"/>。
+        /// 获取与指定名称关联的配置容器的属性的值。如果没有找到指定属性，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="name">配置容器的属性的名称。</param>
         /// <param name="value">配置容器的属性的值。</param>
@@ -104,10 +95,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetAttribute(string name, out string value)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(name)}.");
-            }
             if (_content.Attribute(name) is XAttribute attribute)
             {
                 value = attribute.Value;

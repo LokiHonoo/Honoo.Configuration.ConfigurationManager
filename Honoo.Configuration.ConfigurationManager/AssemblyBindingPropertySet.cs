@@ -68,16 +68,12 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public LinkedConfigurationProperty Add(LinkedConfigurationProperty property)
         {
-            if (property == null)
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(property)}.");
-            }
+            _properties.Add(property);
             if (property.Comment != null)
             {
                 _container.Add(property.Comment);
             }
             _container.Add(property.Content);
-            _properties.Add(property);
             return property;
         }
 
@@ -89,10 +85,6 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public LinkedConfigurationProperty Add(string href)
         {
-            if (href == null)
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(href)}.");
-            }
             return Add(new LinkedConfigurationProperty(href));
         }
 
@@ -104,10 +96,6 @@ namespace Honoo.Configuration
         ///// <exception cref="Exception"/>
         //public void Insert(int index, string href)
         //{
-        //    if (href == null)
-        //    {
-        //        throw new ArgumentException($"The invalid argument - {nameof(href)}.");
-        //    }
         //    XElement content = new XElement(_namespace + "linkedConfiguration");
         //    content.SetAttributeValue("href", href);
         //    if (_comments[index] == null)

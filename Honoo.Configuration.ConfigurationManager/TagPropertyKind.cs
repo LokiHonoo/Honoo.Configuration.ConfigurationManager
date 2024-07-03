@@ -1,9 +1,9 @@
 ﻿namespace Honoo.Configuration
 {
     /// <summary>
-    /// 配置属性的类型。
+    /// 标签配置属性的类型。
     /// </summary>
-    public enum ConfigurationPropertyKind
+    public enum TagPropertyKind
     {
         /// <summary>
         /// 配置属性的标签是 <see langword="&lt;add /&gt;"/>，并具有 <see langword="key"/>，<see langword="value"/> 属性字段。

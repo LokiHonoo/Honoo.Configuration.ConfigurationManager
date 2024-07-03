@@ -6,10 +6,11 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性。
     /// </summary>
-    public sealed class AddProperty : TagProperty
+    public sealed class SingleTagProperty
     {
         private readonly string _key;
         private readonly string _value;
+        private XAttribute _content;
 
         /// <summary>
         /// 获取配置属性的键。
@@ -19,25 +20,29 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置属性的值。
         /// </summary>
-        public string Value => _value;
+        public object Value => _value;
+
+        internal XAttribute Content => _content;
 
         #region Construction
 
         /// <summary>
-        /// 创建 AddProperty 的新实例。
+        /// 创建 HonooProperty 的新实例。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
-        public AddProperty(string key, string value) : base(TagPropertyKind.AddProperty, GetElement(key, value), null)
+        public SingleTagProperty(string key, string value)
         {
+            _content = new XAttribute(key, value);
             _key = key ?? throw new ArgumentNullException(nameof(key));
             _value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        internal AddProperty(XElement content, XComment comment) : base(TagPropertyKind.AddProperty, content, comment)
+        internal SingleTagProperty(XAttribute content)
         {
-            _key = content.Attribute("key").Value;
-            _value = content.Attribute("value").Value;
+            _content = content;
+            _key = content.Name.LocalName;
+            _value = content.Value;
         }
 
         #endregion Construction
@@ -392,12 +397,18 @@ namespace Honoo.Configuration
 
         #endregion GetValue
 
-        private static XElement GetElement(string key, string value)
+        /// <summary>
+        /// 方法已重写。返回节点的缩进 XML 文本。
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
         {
-            XElement element = new XElement("add");
-            element.SetAttributeValue("key", key);
-            element.SetAttributeValue("value", value);
-            return element;
+            return _content.ToString();
+        }
+
+        internal void ResetContent(XAttribute content)
+        {
+            _content = content;
         }
     }
 }

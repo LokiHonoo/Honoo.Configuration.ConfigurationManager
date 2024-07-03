@@ -6,7 +6,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性。
     /// </summary>
-    public sealed class RemoveProperty : ConfigurationProperty
+    public sealed class RemoveProperty : TagProperty
     {
         private readonly string _key;
 
@@ -21,12 +21,12 @@ namespace Honoo.Configuration
         /// 创建 RemoveProperty 的新实例。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        public RemoveProperty(string key) : base(ConfigurationPropertyKind.RemoveProperty, GetElement(key), null)
+        public RemoveProperty(string key) : base(TagPropertyKind.RemoveProperty, GetElement(key), null)
         {
             _key = key ?? throw new ArgumentNullException(nameof(key));
         }
 
-        internal RemoveProperty(XElement content, XComment comment) : base(ConfigurationPropertyKind.RemoveProperty, content, comment)
+        internal RemoveProperty(XElement content, XComment comment) : base(TagPropertyKind.RemoveProperty, content, comment)
         {
             _key = content.Attribute("key").Value;
         }

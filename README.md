@@ -17,7 +17,7 @@
     - [Protection](#protection)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.4.1](#141)
+    - [1.4.2](#142)
     - [1.3.4](#134)
     - [1.3.2](#132)
     - [1.3.1](#131)
@@ -34,9 +34,11 @@
 
 用于 .NET Framework 4.0+/.NET Standard 2.0+ 中读写默认配置文件或自定义配置文件。
 
-提供对标准节点 appSettings、connectionStrings、configSections 节点的有限读写支持。
+提供对标准节点 appSettings、connectionStrings、configSections assemblyBinding/linkedConfiguration 节点的有限读写支持。
 
 提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
+
+提供一个额外的精简的配置属性文件，以字典类型保存，支持加密，支持单一属性值和数组属性值。使用 HonooSettingsManager 类读写此文件。
 
 ## USAGE
 
@@ -69,14 +71,16 @@ internal static void Create(string filePath)
         //
         // 赋值并设置注释。
         //
-        manager.AppSettings.Properties.AddOrUpdate("prop1", "It's will remove this.").SetComment("It's will remove this.");
-        manager.AppSettings.Properties.AddOrUpdate("prop2", "This is \"appSettings\" prop2 value.").SetComment("This is \"appSettings\" prop2 comment.");
-        manager.AppSettings.Properties.AddOrUpdate("prop3", 1234567);
+        manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
+        manager.AppSettings.Properties.AddOrUpdate("prop2", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+        manager.AppSettings.Properties.AddOrUpdate("prop3", 123456789);
         manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
+        manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
+
         //
         // 移除属性的方法。移除属性时相关注释一并移除。
         //
-        manager.AppSettings.Properties.Remove("prop1");
+        manager.AppSettings.Properties.Remove("prop5");
         //
         // 保存到指定的文件。
         //
@@ -94,7 +98,7 @@ internal static void Load(string filePath)
         //
         // 取出属性和注释。
         //
-        AddProperty value2 = manager.AppSettings.Properties.GetValue("prop2");
+        AddProperty value2 = manager.AppSettings.Properties.GetValue("prop1");
         if (value2.TryGetComment(out string comment2))
         {
             Console.WriteLine(comment2);
@@ -219,6 +223,7 @@ internal static void Create(string filePath)
         //
         section1.Properties.AddOrUpdate("prop1", 0.6789d);
         section1.SetComment("This is \"SingleTagSection\" comment.");
+        section1.Properties.AddOrUpdate("prop2", "abc");
         //
         // NameValueSection 允许同名键值。
         //
@@ -369,7 +374,7 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.4.1
+### 1.4.2
 
 **Refactored* 完全重构。现在能以标签方式处理混乱的 &lt;remove /&gt; &lt;clear /&gt; 标签。所有属性封装为类型并将注释（comment）的设置移动到属性封装中。
 
@@ -380,6 +385,8 @@ public static async void Test()
 **Features* 提供 NameValueSection.GetPropertySetControlled() 方法用于获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
 
 **Features* 提供 AppSettingsManager 用于读写 appSettings 节点的 file 属性指定的附加配置文件。
+
+**Features* 提供一个额外的精简的配置属性文件，以字典类型保存，支持加密，支持单一属性值和数组属性值。使用 HonooSettingsManager 类读写此文件。
 
 ### 1.3.4
 

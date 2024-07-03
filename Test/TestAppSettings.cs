@@ -20,14 +20,16 @@ namespace Test
                 //
                 // 赋值并设置注释。
                 //
-                manager.AppSettings.Properties.AddOrUpdate("prop1", "It's will remove this.").SetComment("It's will remove this.");
-                manager.AppSettings.Properties.AddOrUpdate("prop2", "This is \"appSettings\" prop2 value.").SetComment("This is \"appSettings\" prop2 comment.");
-                manager.AppSettings.Properties.AddOrUpdate("prop3", 1234567);
+                manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
+                manager.AppSettings.Properties.AddOrUpdate("prop2", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+                manager.AppSettings.Properties.AddOrUpdate("prop3", 123456789);
                 manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
+                manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
+
                 //
                 // 移除属性的方法。移除属性时相关注释一并移除。
                 //
-                manager.AppSettings.Properties.Remove("prop1");
+                manager.AppSettings.Properties.Remove("prop5");
                 //
                 // 保存到指定的文件。
                 //
@@ -45,7 +47,7 @@ namespace Test
                 //
                 // 取出属性和注释。
                 //
-                AddProperty value2 = manager.AppSettings.Properties.GetValue("prop2");
+                AddProperty value2 = manager.AppSettings.Properties.GetValue("prop1");
                 if (value2.TryGetComment(out string comment2))
                 {
                     Console.WriteLine(comment2);

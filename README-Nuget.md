@@ -14,14 +14,18 @@
 
 ## INTRODUCTION
 
-The project is a replacement for System.Configuration.ConfigurationManager.
+The project is a replacement for "System.Configuration.ConfigurationManager".
 Used to read/write default profiles or custom profiles in the .NET Framework 4.0+/.NET Standard 2.0+.
 
-Limited read/write support for appSettings, connectionStrings, configSections nodes.
+Read/write support for appSettings, connectionStrings, configSections, assemblyBinding/linkedConfiguration nodes.
 
 Provides an method to encrypt the configuration file. 
 
 Waring: The encryption method is different from ASP.NET, and the generated encryption file can only using by this project tool.
+
+Provides an condensed configuration property file, used by dictionary type, supports encryption, supports single/array property. 
+
+Use the "HonooSettingsManager" class to read and write this file.
 
 ## USAGE
 

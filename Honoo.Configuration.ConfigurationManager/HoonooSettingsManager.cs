@@ -8,59 +8,60 @@ using System.Xml.Linq;
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// AppSettings 附加配置管理器。提供对 appSettings 的 "file" 属性指定的附加文件的有限读写支持。
+    /// 简单配置属性管理器。提供一个精简的配置属性文件，以字典类型保存，支持加密，支持单一属性值和数组属性值。
     /// </summary>
-    public sealed class AppSettingsManager : IDisposable
+    public sealed class HonooSettingsManager : IDisposable
     {
         #region Properties
 
+        private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
         private bool _disposed;
-        private DictionaryPropertySet _properties;
+        private HonooPropertySet _properties;
         private XElement _root;
 
         /// <summary>
         /// 获取配置属性集合。
         /// </summary>
-        public DictionaryPropertySet Properties => _properties;
+        public HonooPropertySet Properties => _properties;
 
         #endregion Properties
 
         #region Delegate
 
         /// <summary>
-        /// 在 AppSettingsManager 实例内容改变时执行。
+        /// 在 HonooSettingsManager 实例内容改变时执行。
         /// </summary>
-        /// <param name="manager">AppSettingsManager 实例。</param>
-        public delegate void OnChangedEventHandler(AppSettingsManager manager);
+        /// <param name="manager">HonooSettingsManager 实例。</param>
+        public delegate void OnChangedEventHandler(HonooSettingsManager manager);
 
         /// <summary>
-        /// 在 AppSettingsManager 实例释放后执行。
+        /// 在 HonooSettingsManager 实例释放后执行。
         /// </summary>
         public delegate void OnDisposedEventHandler();
 
         /// <summary>
-        /// 在 AppSettingsManager 实例正在释放时执行。
+        /// 在 HonooSettingsManager 实例正在释放时执行。
         /// </summary>
-        /// <param name="manager">AppSettingsManager 实例。</param>
-        public delegate void OnDisposingEventHandler(AppSettingsManager manager);
+        /// <param name="manager">HonooSettingsManager 实例。</param>
+        public delegate void OnDisposingEventHandler(HonooSettingsManager manager);
 
         #endregion Delegate
 
         #region Event
 
         /// <summary>
-        /// 在 AppSettingsManager 实例内容改变时执行。
+        /// 在 HonooSettingsManager 实例内容改变时执行。
         /// </summary>
         public event OnChangedEventHandler OnChanged;
 
         /// <summary>
-        /// 在 AppSettingsManager 实例释放后执行。
+        /// 在 HonooSettingsManager 实例释放后执行。
         /// </summary>
         public event OnDisposedEventHandler OnDisposed;
 
         /// <summary>
-        /// 在 AppSettingsManager 实例准备释放时执行。
+        /// 在 HonooSettingsManager 实例准备释放时执行。
         /// </summary>
         public event OnDisposingEventHandler OnDisposing;
 
@@ -69,17 +70,17 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 创建 AppSettingsManager 的新实例。
+        /// 创建 HonooSettingsManager 的新实例。
         /// </summary>
-        public AppSettingsManager()
+        public HonooSettingsManager()
         {
-            _root = new XElement("appSettings");
+            _root = new XElement(_namespace + "settings");
             _root.Changed += OnContentChanged;
             _properties = GetPropertySet(_root);
         }
 
         /// <summary>
-        /// 创建 AppSettingsManager 的新实例。
+        /// 创建 HonooSettingsManager 的新实例。
         /// </summary>
         /// <param name="filePath">指定配置文件的路径。</param>
         /// <param name="protectionAlgorithm">
@@ -88,7 +89,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public AppSettingsManager(string filePath, RSACryptoServiceProvider protectionAlgorithm = null)
+        public HonooSettingsManager(string filePath, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -101,7 +102,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 创建 AppSettingsManager 的新实例。
+        /// 创建 HonooSettingsManager 的新实例。
         /// </summary>
         /// <param name="stream">指定配置文件的流。</param>
         /// <param name="closeStream">读取完成后关闭流。</param>
@@ -111,7 +112,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public AppSettingsManager(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public HonooSettingsManager(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             _root = XElement.Load(stream);
             if (closeStream)
@@ -124,7 +125,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 创建 AppSettingsManager 的新实例。
+        /// 创建 HonooSettingsManager 的新实例。
         /// </summary>
         /// <param name="reader">指定配置文件的读取器。</param>
         /// <param name="closeReader">读取完成后关闭读取器。</param>
@@ -134,7 +135,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public AppSettingsManager(XmlReader reader, bool closeReader = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public HonooSettingsManager(XmlReader reader, bool closeReader = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             _root = XElement.Load(reader);
             if (closeReader)
@@ -146,15 +147,15 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 释放由 <see cref="AppSettingsManager"/> 使用的所有资源。
+        /// 释放由 <see cref="HonooSettingsManager"/> 使用的所有资源。
         /// </summary>
-        ~AppSettingsManager()
+        ~HonooSettingsManager()
         {
             Dispose(false);
         }
 
         /// <summary>
-        /// 释放由 <see cref="AppSettingsManager"/> 使用的所有资源。
+        /// 释放由 <see cref="HonooSettingsManager"/> 使用的所有资源。
         /// </summary>
         public void Dispose()
         {
@@ -253,55 +254,6 @@ namespace Honoo.Configuration
 
         #endregion Save
 
-        #region File
-
-        /// <summary>
-        /// 获取 "file" 属性的值。
-        /// </summary>
-        /// <returns></returns>
-        public string GetFileAttribute()
-        {
-            return TryGetFileAttribute(out string file) ? file : null;
-        }
-
-        /// <summary>
-        /// 设置 "file" 属性的值、添加或删除 "file" 属性。
-        /// </summary>
-        /// <param name="value">"file" 属性的值。"file" 特性指向一个根节点为 &lt;appSettings&gt; 的配置文件。</param>
-        /// <returns></returns>
-        public void SetFileAttribute(string value)
-        {
-            _root.SetAttributeValue("file", value);
-        }
-
-        /// <summary>
-        /// 获取 "file" 属性的值。
-        /// <br/>如果没有找到指定属性，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">"file" 属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetFileAttribute(out string value)
-        {
-            if (_root.Attribute("file") is XAttribute attribute)
-            {
-                value = attribute.Value;
-                return true;
-            }
-            value = null;
-            return false;
-        }
-
-        #endregion File
-
-        /// <summary>
-        /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-        /// </summary>
-        /// <returns></returns>
-        public DictionaryPropertySetControlled GetPropertySetControlled()
-        {
-            return new DictionaryPropertySetControlled(_root);
-        }
-
         /// <summary>
         /// 返回配置文件的缩进 XML 文档文本。
         /// </summary>
@@ -337,9 +289,9 @@ namespace Honoo.Configuration
 
         private static XElement Coerce(XElement root, RSACryptoServiceProvider protectionAlgorithm)
         {
-            if (root.Name != "appSettings")
+            if (root.Name != _namespace + "settings")
             {
-                throw new Exception("File is not a appSettings extra file.");
+                throw new Exception("File is not a settings(https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/) file.");
             }
             if (protectionAlgorithm != null)
             {
@@ -361,17 +313,13 @@ namespace Honoo.Configuration
             return root;
         }
 
-        private static DictionaryPropertySet GetPropertySet(XElement root)
+        private static HonooPropertySet GetPropertySet(XElement root)
         {
-            if (root.Name.LocalName != "appSettings")
+            if (root.Name != _namespace + "settings")
             {
-                throw new Exception("File is not a appSettings extra file.");
+                throw new Exception("File is not a settings(https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/) file.");
             }
-            if (root.Attribute("configProtectionProvider") != null)
-            {
-                throw new CryptographicException("Encryped configuration sections are not supported.");
-            }
-            return new DictionaryPropertySet(root);
+            return new HonooPropertySet(root);
         }
 
         private void OnContentChanged(object sender, XObjectChangeEventArgs e)

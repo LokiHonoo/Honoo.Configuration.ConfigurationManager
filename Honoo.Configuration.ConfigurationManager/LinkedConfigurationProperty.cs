@@ -8,10 +8,10 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class LinkedConfigurationProperty
     {
+        private static readonly XNamespace _namespace = "urn:schemas-microsoft-com:asm.v1";
         private readonly XElement _content;
         private readonly string _href;
         private XComment _comment;
-        private static readonly XNamespace _namespace = "urn:schemas-microsoft-com:asm.v1";
 
         /// <summary>
         /// 获取配置文件的 URL。 href 属性支持的唯一格式是 file://。 支持本地文件和 UNC 文件。
@@ -46,7 +46,7 @@ namespace Honoo.Configuration
         #region Comment
 
         /// <summary>
-        /// 获取注释。
+        /// 获取注释。如果没有找到注释，返回 <see langword="null"/>。
         /// </summary>
         /// <returns></returns>
         public string GetComment()
@@ -55,8 +55,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 删除注释。
-        /// <br/>如果注释成功删除，返回 <see langword="true"/>。如果没有找到注释节点，则返回 <see langword="false"/>。
+        /// 删除注释。如果注释成功删除，返回 <see langword="true"/>。如果没有找到注释节点，则返回 <see langword="false"/>。
         /// </summary>
         /// <returns></returns>
         public bool RemoveComment()
@@ -77,11 +76,15 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void SetComment(string comment)
         {
-            if (string.IsNullOrEmpty(comment))
+            if (comment == null)
             {
-                throw new ArgumentException($"The invalid argument - {nameof(comment)}.");
+                if (_comment != null)
+                {
+                    _comment.Remove();
+                    _comment = null;
+                }
             }
-            if (_comment == null)
+            else if (_comment == null)
             {
                 _comment = new XComment(comment);
                 _content.AddBeforeSelf(_comment);
@@ -93,8 +96,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取注释。
-        /// <br/>如果没有找到注释，返回 <see langword="false"/>。
+        /// 获取注释。如果没有找到注释，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="comment">注释文本。</param>
         /// <returns></returns>

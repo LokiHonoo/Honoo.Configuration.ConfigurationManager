@@ -26,6 +26,7 @@ namespace Test
             //
             using (ConfigurationManager manager = new ConfigurationManager(filePath, rsa))
             {
+                manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
                 //
                 // 加密方式保存到指定的文件。
                 //
