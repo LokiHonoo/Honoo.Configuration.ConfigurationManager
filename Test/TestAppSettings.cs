@@ -25,7 +25,6 @@ namespace Test
                 manager.AppSettings.Properties.AddOrUpdate("prop3", 123456789);
                 manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
                 manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
-
                 //
                 // 移除属性的方法。移除属性时相关注释一并移除。
                 //

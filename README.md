@@ -17,7 +17,7 @@
     - [Protection](#protection)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.4.3](#143)
+    - [1.4.4](#144)
     - [1.4.2](#142)
     - [1.3.4](#134)
     - [1.3.2](#132)
@@ -375,9 +375,11 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.4.3
+### 1.4.4
 
 **Fixed* 修复名称错误。
+
+**Features* HonooPropertySet.AddArray() 和 HonooPropertySet.AddOrUpdateArray() 支持泛型。
 
 ### 1.4.2
 

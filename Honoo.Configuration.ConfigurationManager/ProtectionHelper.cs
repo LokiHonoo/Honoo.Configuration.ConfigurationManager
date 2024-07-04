@@ -104,7 +104,7 @@ namespace Honoo.Configuration
             }
         }
 
-        private static byte[] Encrypt(SymmetricAlgorithm algorithm, byte[] key, byte[] iv, byte[] data)
+        private static byte[] Encrypt(AesCryptoServiceProvider algorithm, byte[] key, byte[] iv, byte[] data)
         {
             using (var encryptor = algorithm.CreateEncryptor(key, iv))
             {

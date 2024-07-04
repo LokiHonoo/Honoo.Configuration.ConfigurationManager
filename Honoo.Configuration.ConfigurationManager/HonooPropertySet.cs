@@ -281,7 +281,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, string[] values)
+        public HonooProperty AddArray(string key, IList<string> values)
         {
             return Add(new HonooProperty(key, values));
         }
@@ -293,7 +293,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, bool[] values)
+        public HonooProperty AddArray(string key, IList<bool> values)
         {
             List<string> result = new List<string>();
             foreach (bool value in values)
@@ -310,7 +310,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, sbyte[] values)
+        public HonooProperty AddArray(string key, IList<sbyte> values)
         {
             List<string> result = new List<string>();
             foreach (sbyte value in values)
@@ -327,7 +327,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, byte[] values)
+        public HonooProperty AddArray(string key, IList<byte> values)
         {
             List<string> result = new List<string>();
             foreach (byte value in values)
@@ -344,7 +344,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, short[] values)
+        public HonooProperty AddArray(string key, IList<short> values)
         {
             List<string> result = new List<string>();
             foreach (short value in values)
@@ -361,7 +361,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, ushort[] values)
+        public HonooProperty AddArray(string key, IList<ushort> values)
         {
             List<string> result = new List<string>();
             foreach (ushort value in values)
@@ -378,7 +378,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, int[] values)
+        public HonooProperty AddArray(string key, IList<int> values)
         {
             List<string> result = new List<string>();
             foreach (int value in values)
@@ -395,7 +395,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, uint[] values)
+        public HonooProperty AddArray(string key, IList<uint> values)
         {
             List<string> result = new List<string>();
             foreach (uint value in values)
@@ -412,7 +412,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, long[] values)
+        public HonooProperty AddArray(string key, IList<long> values)
         {
             List<string> result = new List<string>();
             foreach (long value in values)
@@ -429,7 +429,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, ulong[] values)
+        public HonooProperty AddArray(string key, IList<ulong> values)
         {
             List<string> result = new List<string>();
             foreach (ulong value in values)
@@ -446,7 +446,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, float[] values)
+        public HonooProperty AddArray(string key, IList<float> values)
         {
             List<string> result = new List<string>();
             foreach (float value in values)
@@ -463,7 +463,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, double[] values)
+        public HonooProperty AddArray(string key, IList<double> values)
         {
             List<string> result = new List<string>();
             foreach (double value in values)
@@ -480,7 +480,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, decimal[] values)
+        public HonooProperty AddArray(string key, IList<decimal> values)
         {
             List<string> result = new List<string>();
             foreach (decimal value in values)
@@ -497,7 +497,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, char[] values)
+        public HonooProperty AddArray(string key, IList<char> values)
         {
             List<string> result = new List<string>();
             foreach (char value in values)
@@ -514,7 +514,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, byte[][] values)
+        public HonooProperty AddArray(string key, IList<byte[]> values)
         {
             List<string> result = new List<string>();
             foreach (byte[] value in values)
@@ -531,7 +531,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray<TEnum>(string key, TEnum[] values) where TEnum : Enum
+        public HonooProperty AddArray<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
         {
             List<string> result = new List<string>();
             foreach (TEnum value in values)
@@ -760,7 +760,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, string[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<string> values)
         {
             return AddOrUpdate(new HonooProperty(key, values));
         }
@@ -772,7 +772,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, bool[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<bool> values)
         {
             List<string> result = new List<string>();
             foreach (bool value in values)
@@ -789,7 +789,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, sbyte[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<sbyte> values)
         {
             List<string> result = new List<string>();
             foreach (sbyte value in values)
@@ -806,7 +806,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, byte[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<byte> values)
         {
             List<string> result = new List<string>();
             foreach (byte value in values)
@@ -823,7 +823,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, short[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<short> values)
         {
             List<string> result = new List<string>();
             foreach (short value in values)
@@ -840,7 +840,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, ushort[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<ushort> values)
         {
             List<string> result = new List<string>();
             foreach (ushort value in values)
@@ -857,7 +857,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, int[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<int> values)
         {
             List<string> result = new List<string>();
             foreach (int value in values)
@@ -874,7 +874,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, uint[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<uint> values)
         {
             List<string> result = new List<string>();
             foreach (uint value in values)
@@ -891,7 +891,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, long[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<long> values)
         {
             List<string> result = new List<string>();
             foreach (long value in values)
@@ -908,7 +908,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, ulong[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<ulong> values)
         {
             List<string> result = new List<string>();
             foreach (ulong value in values)
@@ -925,7 +925,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, float[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<float> values)
         {
             List<string> result = new List<string>();
             foreach (float value in values)
@@ -942,7 +942,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, double[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<double> values)
         {
             List<string> result = new List<string>();
             foreach (double value in values)
@@ -959,7 +959,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, decimal[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<decimal> values)
         {
             List<string> result = new List<string>();
             foreach (decimal value in values)
@@ -976,7 +976,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, char[] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<char> values)
         {
             List<string> result = new List<string>();
             foreach (char value in values)
@@ -993,7 +993,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, byte[][] values)
+        public HonooProperty AddOrUpdateArray(string key, IList<byte[]> values)
         {
             List<string> result = new List<string>();
             foreach (byte[] value in values)
@@ -1010,7 +1010,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray<TEnum>(string key, TEnum[] values) where TEnum : Enum
+        public HonooProperty AddOrUpdateArray<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
         {
             List<string> result = new List<string>();
             foreach (TEnum value in values)
@@ -1796,7 +1796,7 @@ namespace Honoo.Configuration
         #region GetArrayValue
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1808,7 +1808,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1820,7 +1820,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1832,7 +1832,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1844,7 +1844,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1856,7 +1856,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1868,7 +1868,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1880,7 +1880,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1892,7 +1892,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1904,7 +1904,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1916,7 +1916,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1928,7 +1928,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1940,7 +1940,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1952,7 +1952,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1964,7 +1964,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
@@ -1976,7 +1976,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>

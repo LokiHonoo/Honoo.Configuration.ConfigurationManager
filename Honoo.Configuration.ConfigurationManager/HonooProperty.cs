@@ -55,7 +55,7 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
-        public HonooProperty(string key, string[] values)
+        public HonooProperty(string key, IList<string> values)
         {
             _content = GetElement(key, values);
             _comment = null;
@@ -1251,7 +1251,7 @@ namespace Honoo.Configuration
             return element;
         }
 
-        private static XElement GetElement(string key, string[] values)
+        private static XElement GetElement(string key, IList<string> values)
         {
             XElement element = new XElement(_namespace + "property");
             element.SetAttributeValue("key", key);
