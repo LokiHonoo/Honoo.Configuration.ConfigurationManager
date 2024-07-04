@@ -7,7 +7,7 @@ namespace Test
     /// <summary>
     /// HoonooSettings。
     /// </summary>
-    internal static class TestHoonooSettings
+    internal static class TestHonooSettings
     {
         internal static void Create(string filePath)
         {

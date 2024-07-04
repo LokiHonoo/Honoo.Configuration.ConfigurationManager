@@ -27,7 +27,7 @@ namespace Honoo.Configuration
         public string Key => _key;
 
         /// <summary>
-        /// 获取配置属性的值。
+        /// 获取配置属性的值。值可能是 <see cref="string"/> 或 <see cref="string"/> 数组。
         /// </summary>
         public object Value => _value;
 

@@ -17,6 +17,7 @@
     - [Protection](#protection)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
+    - [1.4.3](#143)
     - [1.4.2](#142)
     - [1.3.4](#134)
     - [1.3.2](#132)
@@ -373,6 +374,10 @@ public static async void Test()
 ```
 
 ## CHANGELOG
+
+### 1.4.3
+
+**Fixed* 修复名称错误。
 
 ### 1.4.2
 
