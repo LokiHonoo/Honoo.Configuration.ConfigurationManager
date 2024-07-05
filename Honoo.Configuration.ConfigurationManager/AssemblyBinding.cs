@@ -8,7 +8,6 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class AssemblyBinding
     {
-        private static readonly XNamespace _namespace = "urn:schemas-microsoft-com:asm.v1";
         private readonly XElement _content;
         private readonly AssemblyBindingPropertySet _properties;
 
@@ -21,10 +20,12 @@ namespace Honoo.Configuration
 
         internal AssemblyBinding(XElement root)
         {
-            _content = root.Element(_namespace + "assemblyBinding");
+            XNamespace ns = "urn:schemas-microsoft-com:asm.v1";
+            XName name = ns + "assemblyBinding";
+            _content = root.Element(name);
             if (_content == null)
             {
-                _content = new XElement(_namespace + "assemblyBinding");
+                _content = new XElement(name);
                 root.AddFirst(_content);
             }
             else if (_content.Attribute("configProtectionProvider") != null)

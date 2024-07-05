@@ -9,12 +9,14 @@ namespace Honoo.Configuration
     {
         internal static XElement Decrypt(XElement root, RSACryptoServiceProvider rsa)
         {
-            XElement keyElement = root.Element("EncryptedKey");
+            XName name = root.Name;
+            XNamespace ns = name.Namespace;
+            XElement keyElement = root.Element(ns + "EncryptedKey");
             string keyAlgorithm = keyElement.Attribute("Algorithm").Value;
-            byte[] keyEncrypted = Convert.FromBase64String(keyElement.Element("CipherData").Value.Trim());
-            XElement dataElement = root.Element("EncryptedData");
+            byte[] keyEncrypted = Convert.FromBase64String(keyElement.Element(ns + "CipherData").Value.Trim());
+            XElement dataElement = root.Element(ns + "EncryptedData");
             string dataAlgorithm = dataElement.Attribute("Algorithm").Value;
-            byte[] dataEncrypted = Convert.FromBase64String(dataElement.Element("CipherData").Value.Trim());
+            byte[] dataEncrypted = Convert.FromBase64String(dataElement.Element(ns + "CipherData").Value.Trim());
             byte[] key = null;
             byte[] data = null;
             switch (keyAlgorithm)
@@ -67,6 +69,8 @@ namespace Honoo.Configuration
 
         internal static XElement Encrypt(XElement root, RSACryptoServiceProvider rsa)
         {
+            XName name = root.Name;
+            XNamespace ns = name.Namespace;
             byte[] data = Encoding.UTF8.GetBytes(root.ToString());
             byte[] dataEncrypted;
             byte[] key;
@@ -81,15 +85,15 @@ namespace Honoo.Configuration
             }
             keyEncrypted = rsa.Encrypt(key, false);
             //
-            XElement keyElement = new XElement("EncryptedKey");
+            XElement keyElement = new XElement(ns + "EncryptedKey");
             keyElement.Add(new XAttribute("Algorithm", keyAlgorithm));
-            keyElement.Add(new XElement("CipherData", Convert.ToBase64String(keyEncrypted)));
+            keyElement.Add(new XElement(ns + "CipherData", Convert.ToBase64String(keyEncrypted)));
 
-            XElement dataElement = new XElement("EncryptedData");
+            XElement dataElement = new XElement(ns + "EncryptedData");
             dataElement.Add(new XAttribute("Algorithm", dataAlgorithm));
-            dataElement.Add(new XElement("CipherData", Convert.ToBase64String(dataEncrypted)));
+            dataElement.Add(new XElement(ns + "CipherData", Convert.ToBase64String(dataEncrypted)));
 
-            XElement result = new XElement("configuration");
+            XElement result = new XElement(name);
             result.Add(new XAttribute("protected", true));
             result.Add(keyElement);
             result.Add(dataElement);

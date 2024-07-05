@@ -16,14 +16,42 @@ namespace Honoo.Configuration
 
         private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
+        private HonooSection _default;
         private bool _disposed;
-        private HonooPropertySet _properties;
         private XElement _root;
+        private HonooSectionSet _sections;
 
         /// <summary>
-        /// 获取配置属性集合。
+        /// 映射到 &lt;default /&gt; 节点。
         /// </summary>
-        public HonooPropertySet Properties => _properties;
+        public HonooSection Default
+        {
+            get
+            {
+                if (!_disposed && _default == null)
+                {
+                    _default = new HonooSection(_root);
+                }
+                return _default;
+            }
+        }
+
+        /// <summary>
+        /// 获取配置容器集合。不包括 &lt;default /&gt; 节点。
+        /// </summary>
+        public HonooSectionSet Sections
+        {
+            get
+            {
+                if (!_disposed && _sections == null)
+                {
+                    _sections = new HonooSectionSet(_root);
+                }
+                return _sections;
+            }
+        }
+
+        internal static XNamespace Namespace => _namespace;
 
         #endregion Properties
 
@@ -76,7 +104,6 @@ namespace Honoo.Configuration
         {
             _root = new XElement(_namespace + "settings");
             _root.Changed += OnContentChanged;
-            _properties = GetPropertySet(_root);
         }
 
         /// <summary>
@@ -98,7 +125,6 @@ namespace Honoo.Configuration
             _root = XElement.Load(filePath);
             _root = Coerce(_root, protectionAlgorithm);
             _root.Changed += OnContentChanged;
-            _properties = GetPropertySet(_root);
         }
 
         /// <summary>
@@ -121,7 +147,6 @@ namespace Honoo.Configuration
             }
             _root = Coerce(_root, protectionAlgorithm);
             _root.Changed += OnContentChanged;
-            _properties = GetPropertySet(_root);
         }
 
         /// <summary>
@@ -170,7 +195,8 @@ namespace Honoo.Configuration
                 OnDisposing?.Invoke(this);
                 if (disposing)
                 {
-                    _properties = null;
+                    _default = null;
+                    _sections = null;
                     _root = null;
                 }
                 _disposed = true;
@@ -198,7 +224,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
             }
-            XElement root = _root;
+            XElement root = Clean(_root);
             if (protectionAlgorithm != null)
             {
                 root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
@@ -221,7 +247,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void Save(Stream stream, RSACryptoServiceProvider protectionAlgorithm = null)
         {
-            XElement root = _root;
+            XElement root = Clean(_root);
             if (protectionAlgorithm != null)
             {
                 root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
@@ -244,7 +270,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void Save(XmlWriter writer, RSACryptoServiceProvider protectionAlgorithm = null)
         {
-            XElement root = _root;
+            XElement root = Clean(_root);
             if (protectionAlgorithm != null)
             {
                 root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
@@ -257,25 +283,16 @@ namespace Honoo.Configuration
         /// <summary>
         /// 返回配置文件的缩进 XML 文档文本。
         /// </summary>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于保存加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法可以是公钥或私钥。
-        /// </param>
         /// <exception cref="Exception"/>
-        public string GetXmlString(RSACryptoServiceProvider protectionAlgorithm = null)
+        public string GetXmlString()
         {
-            XElement root = _root;
-            if (protectionAlgorithm != null)
-            {
-                root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
-            }
+            XElement root = Clean(_root);
             StringBuilder builder = new StringBuilder();
             using (XmlWriter writer = XmlWriter.Create(builder, _writerSettings))
             {
                 root.WriteTo(writer);
-                return builder.ToString();
             }
+            return builder.ToString();
         }
 
         /// <summary>
@@ -313,13 +330,30 @@ namespace Honoo.Configuration
             return root;
         }
 
-        private static HonooPropertySet GetPropertySet(XElement root)
+        private XElement Clean(XElement root)
         {
-            if (root.Name != _namespace + "settings")
+            XElement result = XElement.Parse(root.ToString());
+            if (_default != null && _default.Properties.Count == 0 && _default.Comment == null)
             {
-                throw new Exception("File is not a settings(https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/) file.");
+                result.Element("default").Remove();
             }
-            return new HonooPropertySet(root);
+            if (_sections != null && _sections.Count > 0)
+            {
+                foreach (XElement section in result.Elements("section"))
+                {
+                    XComment comment = null;
+                    XNode pre = section.PreviousNode;
+                    if (pre != null && pre.NodeType == XmlNodeType.Comment)
+                    {
+                        comment = (XComment)pre;
+                    }
+                    if (!section.HasElements && comment == null)
+                    {
+                        section.Remove();
+                    }
+                }
+            }
+            return result;
         }
 
         private void OnContentChanged(object sender, XObjectChangeEventArgs e)

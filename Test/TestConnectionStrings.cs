@@ -1,7 +1,5 @@
 ﻿using Honoo.Configuration;
-using MySql.Data.MySqlClient;
 using System;
-using System.Data.Common;
 using System.Data.SqlClient;
 
 namespace Test

@@ -13,7 +13,6 @@ namespace Honoo.Configuration
     {
         #region Properties
 
-        private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
         private readonly XElement _container;
         private readonly Dictionary<string, HonooProperty> _properties = new Dictionary<string, HonooProperty>();
 
@@ -44,7 +43,7 @@ namespace Honoo.Configuration
                         if (enumerator.Current.NodeType == XmlNodeType.Element)
                         {
                             XElement content = (XElement)enumerator.Current;
-                            if (content.Name == _namespace + "property")
+                            if (content.Name == HonooSettingsManager.Namespace + "property")
                             {
                                 HonooProperty property = new HonooProperty(content, comment);
                                 _properties.Remove(property.Key);

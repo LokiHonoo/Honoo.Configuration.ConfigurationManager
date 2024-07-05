@@ -13,7 +13,6 @@ namespace Honoo.Configuration
     {
         #region Properties
 
-        private static readonly XNamespace _namespace = "urn:schemas-microsoft-com:asm.v1";
         private readonly XElement _container;
         private readonly List<LinkedConfigurationProperty> _properties = new List<LinkedConfigurationProperty>();
 
@@ -44,7 +43,7 @@ namespace Honoo.Configuration
                         if (enumerator.Current.NodeType == XmlNodeType.Element)
                         {
                             XElement content = (XElement)enumerator.Current;
-                            if (content.Name == _namespace + "linkedConfiguration")
+                            if (content.Name == ((XNamespace)"urn:schemas-microsoft-com:asm.v1") + "linkedConfiguration")
                             {
                                 LinkedConfigurationProperty property = new LinkedConfigurationProperty(content, comment);
                                 _properties.Add(property);
@@ -87,32 +86,6 @@ namespace Honoo.Configuration
         {
             return Add(new LinkedConfigurationProperty(href));
         }
-
-        ///// <summary>
-        ///// 插入一个配置文件链接属性。
-        ///// </summary>
-        ///// <param name="index">在此索引处插入配置属性。</param>
-        ///// <param name="href">要包含的配置文件的 URL。 href 属性支持的唯一格式是 file://。 支持本地文件和 UNC 文件。</param>
-        ///// <exception cref="Exception"/>
-        //public void Insert(int index, string href)
-        //{
-        //    XElement content = new XElement(_namespace + "linkedConfiguration");
-        //    content.SetAttributeValue("href", href);
-        //    if (_comments[index] == null)
-        //    {
-        //        _properties.Insert(index, href);
-        //        _contents.Insert(index, content);
-        //        _comments.Insert(index, null);
-        //        _contents[index].AddBeforeSelf(content);
-        //    }
-        //    else
-        //    {
-        //        _properties.Insert(index, href);
-        //        _contents.Insert(index, content);
-        //        _comments.Insert(index, null);
-        //        _comments[index].AddBeforeSelf(content);
-        //    }
-        //}
 
         #endregion Add
 

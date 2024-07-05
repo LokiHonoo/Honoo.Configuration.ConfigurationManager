@@ -18,7 +18,6 @@
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
     - [1.4.4](#144)
-    - [1.4.2](#142)
     - [1.3.4](#134)
     - [1.3.2](#132)
     - [1.3.1](#131)
@@ -377,12 +376,6 @@ public static async void Test()
 
 ### 1.4.4
 
-**Fixed* 修复名称错误。
-
-**Features* HonooPropertySet.AddArray() 和 HonooPropertySet.AddOrUpdateArray() 支持泛型。
-
-### 1.4.2
-
 **Refactored* 完全重构。现在能以标签方式处理混乱的 &lt;remove /&gt; &lt;clear /&gt; 标签。所有属性封装为类型并将注释（comment）的设置移动到属性封装中。
 
 **Features* 提供 AppSettings.GetPropertySetControlled() 方法用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
@@ -391,9 +384,11 @@ public static async void Test()
 
 **Features* 提供 NameValueSection.GetPropertySetControlled() 方法用于获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
 
+**Features* AddArray() 和 AddOrUpdateArray() 方法支持泛型。
+
 **Features* 提供 AppSettingsManager 用于读写 appSettings 节点的 file 属性指定的附加配置文件。
 
-**Features* 提供一个额外的精简的配置属性文件，以字典类型保存，支持加密，支持单一属性值和数组属性值。使用 HonooSettingsManager 类读写此文件。
+**Features* 提供一个额外的精简的配置属性文件，以字典类型保存，支持分组，支持加密，支持单一属性值和数组属性值。使用 HonooSettingsManager 类读写此文件。
 
 ### 1.3.4
 

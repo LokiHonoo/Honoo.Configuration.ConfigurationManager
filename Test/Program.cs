@@ -37,13 +37,9 @@ namespace Test
             Console.WriteLine();
             Console.WriteLine(File.ReadAllText(filePath1));
             Console.ReadKey(true);
-            //
-            string filePath4 = "config.protection.xml";
-            TestProtection.Create(filePath4);
             Console.WriteLine();
             Console.WriteLine();
-            Console.WriteLine(File.ReadAllText(filePath4));
-            Console.ReadKey(true);
+            Console.WriteLine();
             //
             string filePath5 = "honoo-settings.xml";
             TestHonooSettings.Create(filePath5);
@@ -51,6 +47,9 @@ namespace Test
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine(File.ReadAllText(filePath5));
+            Console.ReadKey(true);
+            //
+            TestProtection.Create();
             Console.ReadKey(true);
         }
     }

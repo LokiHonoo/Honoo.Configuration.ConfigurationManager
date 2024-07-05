@@ -1,5 +1,9 @@
 ﻿using Honoo.Configuration;
+using System;
+using System.IO;
 using System.Security.Cryptography;
+using System.Text;
+using System.Xml;
 
 namespace Test
 {
@@ -8,8 +12,12 @@ namespace Test
     /// </summary>
     internal static class TestProtection
     {
-        internal static void Create(string filePath)
+        internal static void Create()
         {
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            XmlWriterSettings writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
             rsa.FromXmlString("<RSAKeyValue>" +
                 "<Modulus>01KVE1o0XhPBx1RWTKtg2upDlX9BWemOr3smbevwwJP30vu9W7HRTiGnMG5mzn5/c8UxJnxLvHOajgga6qjR5gLKuGTezW2J4vz6Yd62gUp4CHfyUAGlP7Yz03jykeeImlpMe9DcCRNLu6SvxZZtr5y/zfAQS4m59vdb7EQtyNE=</Modulus>" +
@@ -21,16 +29,53 @@ namespace Test
                 "<InverseQ>7urJ29tbe0EqRTjI6NkHQvTE3Sw66incJ4jtnfDHds5+vyBZADRnmnicPyuyG02+ujdcsuojxDg6JpBlog3PAg==</InverseQ>" +
                 "<D>T/HI9dZFQ2XkBB2SvFSFQqwnPzIyLeqekSJcqm782E3iDk4wF7VQgmdW0Yqil/HhE5IBAxc4q6VsTdkhHa8aIGLLpMsks5rvCZrTIy+5x4zG/XkVIgxjQ2xOx3KR/xuGisxOzI+jgc6I8DGBw7tSaCVfynNqVe4jgGov7szGMBU=</D>" +
                 "</RSAKeyValue>");
+            StringBuilder sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, writerSettings);
             //
             // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
             //
-            using (ConfigurationManager manager = new ConfigurationManager(filePath, rsa))
+            using (ConfigurationManager manager = new ConfigurationManager())
             {
-                manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
+                manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"protection\" test.").SetComment("This is \"protection\" test.");
                 //
                 // 加密方式保存到指定的文件。
                 //
-                manager.Save(filePath, rsa);
+                manager.Save(writer, rsa);
+                writer.Close();
+            }
+            Console.WriteLine(sb.ToString());
+            Console.WriteLine();
+            XmlReader reader = XmlReader.Create(new StringReader(sb.ToString()));
+            using (ConfigurationManager manager = new ConfigurationManager(reader, true, rsa))
+            {
+                Console.WriteLine(manager.GetXmlString());
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            //
+            //
+            //
+            sb = new StringBuilder();
+            writer = XmlWriter.Create(sb, writerSettings);
+            //
+            // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
+            //
+            using (HonooSettingsManager manager = new HonooSettingsManager())
+            {
+                manager.Default.Properties.AddOrUpdate("prop1", "This is \"protection\" test.").SetComment("This is \"protection\" test.");
+                //
+                // 加密方式保存到指定的文件。
+                //
+                manager.Save(writer, rsa);
+                writer.Close();
+            }
+            Console.WriteLine(sb.ToString());
+            Console.WriteLine();
+            reader = XmlReader.Create(new StringReader(sb.ToString()));
+            using (HonooSettingsManager manager = new HonooSettingsManager(reader, true, rsa))
+            {
+                Console.WriteLine(manager.GetXmlString());
             }
         }
     }

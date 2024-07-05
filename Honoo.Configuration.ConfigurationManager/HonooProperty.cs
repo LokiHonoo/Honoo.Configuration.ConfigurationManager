@@ -9,7 +9,6 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class HonooProperty
     {
-        private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
         private readonly XElement _content;
         private readonly bool _isArray;
         private readonly string _key;
@@ -1245,7 +1244,7 @@ namespace Honoo.Configuration
 
         private static XElement GetElement(string key, string value)
         {
-            XElement element = new XElement(_namespace + "property");
+            XElement element = new XElement(HonooSettingsManager.Namespace + "property");
             element.SetAttributeValue("key", key);
             element.SetAttributeValue("value", value);
             return element;
@@ -1253,11 +1252,11 @@ namespace Honoo.Configuration
 
         private static XElement GetElement(string key, IList<string> values)
         {
-            XElement element = new XElement(_namespace + "property");
+            XElement element = new XElement(HonooSettingsManager.Namespace + "property");
             element.SetAttributeValue("key", key);
             foreach (string value in values)
             {
-                element.Add(new XElement(_namespace + "value", value));
+                element.Add(new XElement(HonooSettingsManager.Namespace + "value", value));
             }
             return element;
         }

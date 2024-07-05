@@ -313,25 +313,16 @@ namespace Honoo.Configuration
         /// <summary>
         /// 返回配置文件的缩进 XML 文档文本。
         /// </summary>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于保存加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法可以是公钥或私钥。
-        /// </param>
         /// <exception cref="Exception"/>
-        public string GetXmlString(RSACryptoServiceProvider protectionAlgorithm = null)
+        public string GetXmlString()
         {
             XElement root = Clean(_root);
-            if (protectionAlgorithm != null)
-            {
-                root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
-            }
             StringBuilder builder = new StringBuilder();
             using (XmlWriter writer = XmlWriter.Create(builder, _writerSettings))
             {
                 root.WriteTo(writer);
-                return builder.ToString();
             }
+            return builder.ToString();
         }
 
         /// <summary>
@@ -375,11 +366,7 @@ namespace Honoo.Configuration
             XElement result = XElement.Parse(root.ToString());
             if (_appSettings != null && _appSettings.Properties.Count == 0)
             {
-                XElement element = result.Element("appSettings");
-                if (!element.HasElements)
-                {
-                    element.Remove();
-                }
+                result.Element("appSettings").Remove();
             }
             if (_assemblyBinding != null && _assemblyBinding.Properties.Count == 0)
             {
