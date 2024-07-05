@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Xml;
 using System.Xml.Linq;
@@ -69,6 +70,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty Add(ConnectionStringProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             _properties.Add(property.Name, property);
             if (property.Comment != null)
             {
@@ -115,6 +120,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty AddOrUpdate(ConnectionStringProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             Remove(property.Name);
             return Add(property);
         }
@@ -253,6 +262,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(ConnectionStringProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             bool removed = _properties.Remove(property.Name);
             property.Comment?.Remove();
             property.Content.Remove();

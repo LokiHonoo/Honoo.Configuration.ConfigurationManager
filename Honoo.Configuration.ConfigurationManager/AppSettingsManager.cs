@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -24,6 +25,12 @@ namespace Honoo.Configuration
         /// </summary>
         public DictionaryPropertySet Properties => _properties;
 
+        /// <summary>
+        /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+        /// </summary>
+        /// <returns></returns>
+        public DictionaryPropertySetControlled PropertySetControlled => new DictionaryPropertySetControlled(_root);
+
         #endregion Properties
 
         #region Delegate
@@ -32,17 +39,20 @@ namespace Honoo.Configuration
         /// 在 AppSettingsManager 实例内容改变时执行。
         /// </summary>
         /// <param name="manager">AppSettingsManager 实例。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
         public delegate void OnChangedEventHandler(AppSettingsManager manager);
 
         /// <summary>
         /// 在 AppSettingsManager 实例释放后执行。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
         public delegate void OnDisposedEventHandler();
 
         /// <summary>
         /// 在 AppSettingsManager 实例正在释放时执行。
         /// </summary>
         /// <param name="manager">AppSettingsManager 实例。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
         public delegate void OnDisposingEventHandler(AppSettingsManager manager);
 
         #endregion Delegate
@@ -52,16 +62,19 @@ namespace Honoo.Configuration
         /// <summary>
         /// 在 AppSettingsManager 实例内容改变时执行。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event OnChangedEventHandler OnChanged;
 
         /// <summary>
         /// 在 AppSettingsManager 实例释放后执行。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event OnDisposedEventHandler OnDisposed;
 
         /// <summary>
         /// 在 AppSettingsManager 实例准备释放时执行。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event OnDisposingEventHandler OnDisposing;
 
         #endregion Event
@@ -113,6 +126,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AppSettingsManager(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
             _root = XElement.Load(stream);
             if (closeStream)
             {
@@ -136,6 +153,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AppSettingsManager(XmlReader reader, bool closeReader = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
             _root = XElement.Load(reader);
             if (closeReader)
             {
@@ -294,15 +315,6 @@ namespace Honoo.Configuration
         #endregion File
 
         /// <summary>
-        /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-        /// </summary>
-        /// <returns></returns>
-        public DictionaryPropertySetControlled GetPropertySetControlled()
-        {
-            return new DictionaryPropertySetControlled(_root);
-        }
-
-        /// <summary>
         /// 返回配置文件的缩进 XML 文档文本。
         /// </summary>
         /// <param name="protectionAlgorithm">
@@ -339,7 +351,7 @@ namespace Honoo.Configuration
         {
             if (root.Name != "appSettings")
             {
-                throw new Exception("File is not a appSettings extra file.");
+                throw new FileLoadException("File is not a appSettings extra file.");
             }
             if (protectionAlgorithm != null)
             {
@@ -365,7 +377,7 @@ namespace Honoo.Configuration
         {
             if (root.Name.LocalName != "appSettings")
             {
-                throw new Exception("File is not a appSettings extra file.");
+                throw new FileLoadException("File is not a appSettings extra file.");
             }
             if (root.Attribute("configProtectionProvider") != null)
             {

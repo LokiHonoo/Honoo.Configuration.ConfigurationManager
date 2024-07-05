@@ -8,25 +8,10 @@ namespace Honoo.Configuration
     /// </summary>
     public abstract class ConfigSection
     {
-        /// <summary>
-        /// 获取此配置容器的内容节点。
-        /// </summary>
-        protected readonly XElement _content;
-
-        /// <summary>
-        /// 获取此配置容器的描述节点。
-        /// </summary>
-        protected readonly XElement _declaration;
-
-        /// <summary>
-        /// 获取此配置容器的类型。
-        /// </summary>
-        protected readonly ConfigSectionKind _kind;
-
-        /// <summary>
-        /// 获取此配置容器的注释节点。
-        /// </summary>
-        protected XComment _comment;
+        private readonly XElement _content;
+        private readonly XElement _declaration;
+        private readonly ConfigSectionKind _kind;
+        private XComment _comment;
 
         /// <summary>
         /// 获取此配置容器的类型。

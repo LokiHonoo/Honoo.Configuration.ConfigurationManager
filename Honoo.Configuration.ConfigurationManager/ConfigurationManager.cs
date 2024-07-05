@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -90,17 +91,20 @@ namespace Honoo.Configuration
         /// 在 ConfigurationManager 实例内容改变时执行。
         /// </summary>
         /// <param name="manager">ConfigurationManager 实例。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
         public delegate void OnChangedEventHandler(ConfigurationManager manager);
 
         /// <summary>
         /// 在 ConfigurationManager 实例释放后执行。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
         public delegate void OnDisposedEventHandler();
 
         /// <summary>
         /// 在 ConfigurationManager 实例正在释放时执行。
         /// </summary>
         /// <param name="manager">ConfigurationManager 实例。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
         public delegate void OnDisposingEventHandler(ConfigurationManager manager);
 
         #endregion Delegate
@@ -110,16 +114,19 @@ namespace Honoo.Configuration
         /// <summary>
         /// 在 ConfigurationManager 实例内容改变时执行。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event OnChangedEventHandler OnChanged;
 
         /// <summary>
         /// 在 ConfigurationManager 实例释放后执行。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event OnDisposedEventHandler OnDisposed;
 
         /// <summary>
         /// 在 ConfigurationManager 实例准备释放时执行。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event OnDisposingEventHandler OnDisposing;
 
         #endregion Event
@@ -169,6 +176,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigurationManager(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
             _root = XElement.Load(stream);
             if (closeStream)
             {
@@ -191,6 +202,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigurationManager(XmlReader reader, bool closeReader = true, RSACryptoServiceProvider protectionAlgorithm = null)
         {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
             _root = XElement.Load(reader);
             if (closeReader)
             {
@@ -338,7 +353,7 @@ namespace Honoo.Configuration
         {
             if (root.Name != "configuration")
             {
-                throw new Exception("File is not a configuration file.");
+                throw new FileLoadException("File is not a configuration file.");
             }
             if (protectionAlgorithm != null)
             {

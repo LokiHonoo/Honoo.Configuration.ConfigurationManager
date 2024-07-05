@@ -53,15 +53,6 @@ namespace Honoo.Configuration
                     }
                     break;
 
-                case "http://www.w3.org/2001/04/xmlenc#tripledes-cbc":
-                    using (TripleDESCryptoServiceProvider algorithm = new TripleDESCryptoServiceProvider())
-                    {
-                        byte[] iv = new byte[8];
-                        Buffer.BlockCopy(key, 0, iv, 0, 8);
-                        data = Decrypt(algorithm, key, iv, dataEncrypted);
-                    }
-                    break;
-
                 default: break;
             }
             return XElement.Parse(Encoding.UTF8.GetString(data));
@@ -73,17 +64,14 @@ namespace Honoo.Configuration
             XNamespace ns = name.Namespace;
             byte[] data = Encoding.UTF8.GetBytes(root.ToString());
             byte[] dataEncrypted;
-            byte[] key;
             byte[] keyEncrypted;
             string dataAlgorithm = "http://www.w3.org/2001/04/xmlenc#aes128-cbc";
             string keyAlgorithm = "http://www.w3.org/2001/04/xmlenc#rsa-1_5";
             using (AesCryptoServiceProvider algorithm = new AesCryptoServiceProvider() { KeySize = 128 })
             {
-                key = algorithm.Key;
-                byte[] iv = key;
-                dataEncrypted = Encrypt(algorithm, key, iv, data);
+                dataEncrypted = Encrypt(algorithm, data);
+                keyEncrypted = rsa.Encrypt(algorithm.Key, false);
             }
-            keyEncrypted = rsa.Encrypt(key, false);
             //
             XElement keyElement = new XElement(ns + "EncryptedKey");
             keyElement.Add(new XAttribute("Algorithm", keyAlgorithm));
@@ -100,7 +88,7 @@ namespace Honoo.Configuration
             return result;
         }
 
-        private static byte[] Decrypt(SymmetricAlgorithm algorithm, byte[] key, byte[] iv, byte[] data)
+        private static byte[] Decrypt(AesCryptoServiceProvider algorithm, byte[] key, byte[] iv, byte[] data)
         {
             using (var decryptor = algorithm.CreateDecryptor(key, iv))
             {
@@ -108,9 +96,9 @@ namespace Honoo.Configuration
             }
         }
 
-        private static byte[] Encrypt(AesCryptoServiceProvider algorithm, byte[] key, byte[] iv, byte[] data)
+        private static byte[] Encrypt(AesCryptoServiceProvider algorithm, byte[] data)
         {
-            using (var encryptor = algorithm.CreateEncryptor(key, iv))
+            using (var encryptor = algorithm.CreateEncryptor())
             {
                 return encryptor.TransformFinalBlock(data, 0, data.Length);
             }

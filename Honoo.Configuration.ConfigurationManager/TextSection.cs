@@ -25,7 +25,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public string GetAttribute(string name)
         {
-            if (_content.Attribute(name) is XAttribute attribute)
+            if (base.Content.Attribute(name) is XAttribute attribute)
             {
                 return attribute.Value;
             }
@@ -39,7 +39,7 @@ namespace Honoo.Configuration
         public string GetValue()
         {
             StringBuilder result = new StringBuilder();
-            foreach (XNode node in _content.Nodes())
+            foreach (XNode node in base.Content.Nodes())
             {
                 result.Append(node.ToString());
                 if (node.NextNode != null)
@@ -59,7 +59,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void SetAttribute(string name, string value)
         {
-            _content.SetAttributeValue(name, value);
+            base.Content.SetAttributeValue(name, value);
         }
 
         /// <summary>
@@ -72,16 +72,16 @@ namespace Honoo.Configuration
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                _content.SetValue(string.Empty);
+                base.Content.SetValue(string.Empty);
             }
             else
             {
-                _content.RemoveNodes();
+                base.Content.RemoveNodes();
                 string tmp = $"<encirclement>{value}</encirclement>";
                 XElement element = XElement.Parse(tmp);
                 foreach (XNode node in element.Nodes())
                 {
-                    _content.Add(node);
+                    base.Content.Add(node);
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetAttribute(string name, out string value)
         {
-            if (_content.Attribute(name) is XAttribute attribute)
+            if (base.Content.Attribute(name) is XAttribute attribute)
             {
                 value = attribute.Value;
                 return true;

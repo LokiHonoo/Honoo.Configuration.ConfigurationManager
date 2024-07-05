@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -68,6 +69,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(HonooProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             _properties.Add(property.Key, property);
             if (property.Comment != null)
             {
@@ -86,6 +91,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, string value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             return Add(new HonooProperty(key, value.ToString()));
         }
 
@@ -110,7 +119,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, sbyte value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -122,7 +131,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, byte value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -134,7 +143,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, short value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -146,7 +155,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, ushort value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -158,7 +167,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, int value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -170,7 +179,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, uint value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -182,7 +191,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, long value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -194,7 +203,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, ulong value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -206,7 +215,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, float value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -218,7 +227,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, double value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -230,7 +239,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, decimal value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -242,7 +251,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, char value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -294,6 +303,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<bool> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (bool value in values)
             {
@@ -311,10 +324,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<sbyte> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (sbyte value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -328,10 +345,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<byte> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (byte value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -345,10 +366,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<short> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (short value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -362,10 +387,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<ushort> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (ushort value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -379,10 +408,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<int> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (int value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -396,10 +429,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<uint> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (uint value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -413,10 +450,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<long> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (long value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -430,10 +471,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<ulong> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (ulong value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -447,10 +492,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<float> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (float value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -464,10 +513,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<double> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (double value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -481,10 +534,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<decimal> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (decimal value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddArray(key, result.ToArray());
         }
@@ -498,6 +555,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<char> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (char value in values)
             {
@@ -515,6 +576,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<byte[]> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (byte[] value in values)
             {
@@ -532,6 +597,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddArray<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (TEnum value in values)
             {
@@ -552,6 +621,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(HonooProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             Remove(property.Key);
             return Add(property);
         }
@@ -589,7 +662,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, sbyte value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -601,7 +674,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, byte value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -613,7 +686,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, short value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -625,7 +698,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ushort value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -637,7 +710,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, int value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -649,7 +722,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, uint value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -661,7 +734,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, long value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -673,7 +746,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ulong value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -685,7 +758,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, float value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -697,7 +770,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, double value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -709,7 +782,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, decimal value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -773,6 +846,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<bool> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (bool value in values)
             {
@@ -790,10 +867,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<sbyte> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (sbyte value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -807,10 +888,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<byte> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (byte value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -824,10 +909,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<short> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (short value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -841,10 +930,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<ushort> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (ushort value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -858,10 +951,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<int> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (int value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -875,10 +972,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<uint> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (uint value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -892,10 +993,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<long> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (long value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -909,10 +1014,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<ulong> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (ulong value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -926,10 +1035,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<float> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (float value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -943,10 +1056,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<double> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (double value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -960,10 +1077,14 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<decimal> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (decimal value in values)
             {
-                result.Add(value.ToString());
+                result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
             return AddOrUpdateArray(key, result.ToArray());
         }
@@ -977,6 +1098,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<char> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (char value in values)
             {
@@ -994,6 +1119,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray(string key, IList<byte[]> values)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (byte[] value in values)
             {
@@ -1011,6 +1140,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdateArray<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
             List<string> result = new List<string>();
             foreach (TEnum value in values)
             {

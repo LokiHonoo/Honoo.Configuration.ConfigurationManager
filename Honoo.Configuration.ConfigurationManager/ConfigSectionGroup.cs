@@ -9,12 +9,7 @@ namespace Honoo.Configuration
     public sealed class ConfigSectionGroup
     {
         private readonly XElement _content;
-
-        /// <summary>
-        /// 获取此配置组集合的描述节点。
-        /// </summary>
         private readonly XElement _declaration;
-
         private readonly ConfigSectionGroupSet _groups;
         private readonly ConfigSectionSet _sections;
         private XComment _comment;

@@ -16,6 +16,12 @@ namespace Honoo.Configuration
         /// </summary>
         public DictionaryPropertySet Properties => _properties;
 
+        /// <summary>
+        /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+        /// </summary>
+        /// <returns></returns>
+        public DictionaryPropertySetControlled PropertySetControlled => new DictionaryPropertySetControlled(_content);
+
         #region Construction
 
         internal AppSettings(XElement root)
@@ -74,15 +80,6 @@ namespace Honoo.Configuration
         }
 
         #endregion File
-
-        /// <summary>
-        /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-        /// </summary>
-        /// <returns></returns>
-        public DictionaryPropertySetControlled GetPropertySetControlled()
-        {
-            return new DictionaryPropertySetControlled(_content);
-        }
 
         /// <summary>
         /// 方法已重写。返回节点的缩进 XML 文本。

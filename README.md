@@ -17,7 +17,7 @@
     - [Protection](#protection)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.4.5](#145)
+    - [1.4.6](#146)
     - [1.3.4](#134)
     - [1.3.2](#132)
     - [1.3.1](#131)
@@ -113,8 +113,7 @@ internal static void Load(string filePath)
             Console.WriteLine(value4);
         }
         // 取出应用控制标签后的属性。
-        DictionaryPropertySetControlled propertySetControlled = manager.AppSettings.GetPropertySetControlled();
-        foreach (AddProperty property in propertySetControlled)
+        foreach (AddProperty property in manager.AppSettings.PropertySetControlled)
         {
             Console.WriteLine(property.Value);
         }
@@ -374,15 +373,15 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.4.5
+### 1.4.6
 
 **Refactored* 完全重构。现在能以标签方式处理混乱的 &lt;remove /&gt; &lt;clear /&gt; 标签。所有属性封装为类型并将注释（comment）的设置移动到属性封装中。
 
-**Features* 提供 AppSettings.GetPropertySetControlled() 方法用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+**Features* 提供 AppSettings.PropertySetControlled 用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
 
-**Features* 提供 DictionarySection.GetPropertySetControlled() 方法用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+**Features* 提供 DictionarySection.PropertySetControlled 用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
 
-**Features* 提供 NameValueSection.GetPropertySetControlled() 方法用于获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+**Features* 提供 NameValueSection.PropertySetControlled 用于获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
 
 **Features* AddArray() 和 AddOrUpdateArray() 方法支持泛型。
 

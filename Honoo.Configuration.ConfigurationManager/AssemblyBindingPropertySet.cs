@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -67,6 +68,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public LinkedConfigurationProperty Add(LinkedConfigurationProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             _properties.Add(property);
             if (property.Comment != null)
             {
@@ -191,6 +196,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(LinkedConfigurationProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             bool removed = _properties.Remove(property);
             property.Comment?.Remove();
             property.Content.Remove();

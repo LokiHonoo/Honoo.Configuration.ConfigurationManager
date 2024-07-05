@@ -29,6 +29,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置属性的值。值可能是 <see cref="string"/> 或 <see cref="string"/> 数组。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1721:属性名不应与 get 方法匹配", Justification = "<挂起>")]
         public object Value => _value;
 
         internal XComment Comment => _comment;
@@ -57,13 +58,13 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         public HonooProperty(string key, IList<string> values)
         {
-            _content = GetElement(key, values);
-            _comment = null;
-            _key = key ?? throw new ArgumentNullException(nameof(key));
             if (values == null)
             {
                 throw new ArgumentNullException(nameof(values));
             }
+            _content = GetElement(key, values);
+            _comment = null;
+            _key = key ?? throw new ArgumentNullException(nameof(key));
             _value = values.ToArray();
             _isArray = true;
         }

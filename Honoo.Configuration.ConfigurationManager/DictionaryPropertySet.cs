@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -93,6 +94,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public TagProperty Add(TagProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             switch (property.Kind)
             {
                 case TagPropertyKind.AddProperty: return Add((AddProperty)property);
@@ -110,6 +115,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(AddProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             _keys.Add(property.Key);
             _properties.Add(property);
             if (property.Comment != null)
@@ -128,6 +137,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public RemoveProperty Add(RemoveProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             _properties.Add(property);
             if (property.Comment != null)
             {
@@ -145,6 +158,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ClearProperty Add(ClearProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             _properties.Add(property);
             if (property.Comment != null)
             {
@@ -163,6 +180,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, string value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             return Add(new AddProperty(key, value.ToString()));
         }
 
@@ -187,7 +208,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, sbyte value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -199,7 +220,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, byte value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -211,7 +232,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, short value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -223,7 +244,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, ushort value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -235,7 +256,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, int value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -247,7 +268,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, uint value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -259,7 +280,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, long value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -271,7 +292,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, ulong value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -283,7 +304,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, float value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -295,7 +316,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, double value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -307,7 +328,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty Add(string key, decimal value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -358,6 +379,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(AddProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             Remove(property.Key);
             return Add(property);
         }
@@ -371,6 +396,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, string value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             return AddOrUpdate(new AddProperty(key, value.ToString()));
         }
 
@@ -395,7 +424,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, sbyte value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -407,7 +436,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, byte value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -419,7 +448,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, short value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -431,7 +460,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, ushort value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -443,7 +472,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, int value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -455,7 +484,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, uint value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -467,7 +496,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, long value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -479,7 +508,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, ulong value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -491,7 +520,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, float value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -503,7 +532,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, double value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -515,7 +544,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty AddOrUpdate(string key, decimal value)
         {
-            return AddOrUpdate(key, value.ToString());
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -1107,6 +1136,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(TagProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             bool removed = _properties.Remove(property);
             property.Comment?.Remove();
             property.Content.Remove();

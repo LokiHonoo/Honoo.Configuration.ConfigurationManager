@@ -8,17 +8,9 @@ namespace Honoo.Configuration
     /// </summary>
     public abstract class TagProperty
     {
-        /// <summary>
-        /// 配置属性的节点。
-        /// </summary>
-        protected readonly XElement _content;
-
-        /// <summary>
-        /// 配置属性的注释节点。
-        /// </summary>
-        protected XComment _comment;
-
+        private readonly XElement _content;
         private readonly TagPropertyKind _kind;
+        private XComment _comment;
 
         /// <summary>
         /// 获取配置属性的类型。

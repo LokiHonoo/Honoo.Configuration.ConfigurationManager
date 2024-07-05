@@ -14,6 +14,12 @@ namespace Honoo.Configuration
         /// </summary>
         public NameValuePropertySet Properties => _properties;
 
+        /// <summary>
+        /// 获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
+        /// </summary>
+        /// <returns></returns>
+        public NameValuePropertySetControlled PropertySetControlled => new NameValuePropertySetControlled(base.Content);
+
         #region Construction
 
         internal NameValueSection(XElement declaration, XElement content, XComment comment)
@@ -23,14 +29,5 @@ namespace Honoo.Configuration
         }
 
         #endregion Construction
-
-        /// <summary>
-        /// 获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-        /// </summary>
-        /// <returns></returns>
-        public NameValuePropertySetControlled GetPropertySetControlled()
-        {
-            return new NameValuePropertySetControlled(_content);
-        }
     }
 }

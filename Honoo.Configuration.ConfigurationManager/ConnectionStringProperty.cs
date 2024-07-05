@@ -43,6 +43,10 @@ namespace Honoo.Configuration
         public ConnectionStringProperty(string name, DbConnection connection)
         {
             _name = name ?? throw new ArgumentNullException(nameof(name));
+            if (connection == null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             _connectionString = connection.ConnectionString;
             _providerName = connection.GetType().Namespace;
             _content = GetElement(name, connection.ConnectionString, connection.GetType().Namespace);

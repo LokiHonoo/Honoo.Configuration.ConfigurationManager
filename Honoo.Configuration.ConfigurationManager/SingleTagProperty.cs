@@ -20,6 +20,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置属性的值。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1721:属性名不应与 get 方法匹配", Justification = "<挂起>")]
         public object Value => _value;
 
         internal XAttribute Content => _content;

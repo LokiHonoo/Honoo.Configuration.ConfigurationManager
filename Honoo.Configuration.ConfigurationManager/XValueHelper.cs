@@ -18,7 +18,7 @@ namespace Honoo.Configuration
                     value = result;
                     return true;
                 }
-                catch
+                catch (FormatException)
                 {
                 }
             }

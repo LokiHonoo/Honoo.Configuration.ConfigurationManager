@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml.Linq;
 
 namespace Honoo.Configuration
@@ -48,6 +49,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(SingleTagProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             _properties.Add(property.Key, property);
             _container.SetAttributeValue(property.Key, property.Value);
             property.ResetContent(_container.Attribute(property.Key));
@@ -62,6 +67,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, string value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             return Add(new SingleTagProperty(key, value.ToString()));
         }
 
@@ -84,7 +93,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, sbyte value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -95,7 +104,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, byte value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -106,7 +115,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, short value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -117,7 +126,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, ushort value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -128,7 +137,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, int value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -139,7 +148,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, uint value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -150,7 +159,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, long value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -161,7 +170,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, ulong value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -172,7 +181,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, float value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -183,7 +192,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, double value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -194,7 +203,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty Add(string key, decimal value)
         {
-            return Add(key, value.ToString());
+            return Add(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -242,6 +251,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty AddOrUpdate(SingleTagProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             Remove(property.Key);
             return Add(property);
         }
@@ -255,6 +268,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty AddOrUpdate(string key, string value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             return AddOrUpdate(new SingleTagProperty(key, value.ToString()));
         }
 
@@ -277,7 +294,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, sbyte value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -288,7 +305,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, byte value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -299,7 +316,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, short value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -310,7 +327,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, ushort value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -321,7 +338,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, int value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -332,7 +349,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, uint value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -343,7 +360,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, long value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -354,7 +371,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, ulong value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -365,7 +382,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, float value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -376,7 +393,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, double value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -387,7 +404,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void AddOrUpdate(string key, decimal value)
         {
-            AddOrUpdate(key, value.ToString());
+            AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -963,6 +980,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(SingleTagProperty property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             return Remove(property.Key);
         }
 

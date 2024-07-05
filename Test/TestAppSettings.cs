@@ -61,8 +61,7 @@ namespace Test
                     Console.WriteLine(value4);
                 }
                 // 取出应用控制标签后的属性。
-                DictionaryPropertySetControlled propertySetControlled = manager.AppSettings.GetPropertySetControlled();
-                foreach (AddProperty property in propertySetControlled)
+                foreach (AddProperty property in manager.AppSettings.PropertySetControlled)
                 {
                     Console.WriteLine(property.Value);
                 }

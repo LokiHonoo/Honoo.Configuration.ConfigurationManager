@@ -31,7 +31,7 @@ Use the "HonooSettingsManager" class to read and write this file.</Description>
     <PackageReadmeFile>README-NuGet.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisLevel>latest-all</AnalysisLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
