@@ -17,7 +17,7 @@
     - [Protection](#protection)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.4.6](#146)
+    - [1.4.7](#147)
     - [1.3.4](#134)
     - [1.3.2](#132)
     - [1.3.1](#131)
@@ -373,7 +373,7 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.4.6
+### 1.4.7
 
 **Refactored* 完全重构。现在能以标签方式处理混乱的 &lt;remove /&gt; &lt;clear /&gt; 标签。所有属性封装为类型并将注释（comment）的设置移动到属性封装中。
 

@@ -17,12 +17,12 @@ namespace Honoo.Configuration
             XElement dataElement = root.Element(ns + "EncryptedData");
             string dataAlgorithm = dataElement.Attribute("Algorithm").Value;
             byte[] dataEncrypted = Convert.FromBase64String(dataElement.Element(ns + "CipherData").Value.Trim());
-            byte[] key = null;
+            byte[] pms = null;
             byte[] data = null;
             switch (keyAlgorithm)
             {
-                case "http://www.w3.org/2001/04/xmlenc#rsa-1_5": key = rsa.Decrypt(keyEncrypted, false); break;
-                case "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p": key = rsa.Decrypt(keyEncrypted, true); break;
+                case "http://www.w3.org/2001/04/xmlenc#rsa-1_5": pms = rsa.Decrypt(keyEncrypted, false); break;
+                case "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p": pms = rsa.Decrypt(keyEncrypted, true); break;
                 default: break;
             }
             switch (dataAlgorithm)
@@ -30,7 +30,10 @@ namespace Honoo.Configuration
                 case "http://www.w3.org/2001/04/xmlenc#aes128-cbc":
                     using (AesCryptoServiceProvider algorithm = new AesCryptoServiceProvider() { KeySize = 128 })
                     {
-                        byte[] iv = key;
+                        byte[] key = new byte[16];
+                        Buffer.BlockCopy(pms, 0, key, 0, 16);
+                        byte[] iv = new byte[16];
+                        Buffer.BlockCopy(pms, 16, iv, 0, 16);
                         data = Decrypt(algorithm, key, iv, dataEncrypted);
                     }
                     break;
@@ -38,8 +41,10 @@ namespace Honoo.Configuration
                 case "http://www.w3.org/2001/04/xmlenc#aes192-cbc":
                     using (AesCryptoServiceProvider algorithm = new AesCryptoServiceProvider() { KeySize = 192 })
                     {
+                        byte[] key = new byte[24];
+                        Buffer.BlockCopy(pms, 0, key, 0, 24);
                         byte[] iv = new byte[16];
-                        Buffer.BlockCopy(key, 0, iv, 0, 16);
+                        Buffer.BlockCopy(pms, 24, iv, 0, 16);
                         data = Decrypt(algorithm, key, iv, dataEncrypted);
                     }
                     break;
@@ -47,8 +52,10 @@ namespace Honoo.Configuration
                 case "http://www.w3.org/2001/04/xmlenc#aes256-cbc":
                     using (AesCryptoServiceProvider algorithm = new AesCryptoServiceProvider() { KeySize = 256 })
                     {
+                        byte[] key = new byte[32];
+                        Buffer.BlockCopy(pms, 0, key, 0, 32);
                         byte[] iv = new byte[16];
-                        Buffer.BlockCopy(key, 0, iv, 0, 16);
+                        Buffer.BlockCopy(pms, 32, iv, 0, 16);
                         data = Decrypt(algorithm, key, iv, dataEncrypted);
                     }
                     break;
@@ -69,8 +76,11 @@ namespace Honoo.Configuration
             string keyAlgorithm = "http://www.w3.org/2001/04/xmlenc#rsa-1_5";
             using (AesCryptoServiceProvider algorithm = new AesCryptoServiceProvider() { KeySize = 128 })
             {
+                byte[] pms = new byte[16 + 16];
+                Buffer.BlockCopy(algorithm.Key, 0, pms, 0, 16);
+                Buffer.BlockCopy(algorithm.IV, 0, pms, 16, 16);
+                keyEncrypted = rsa.Encrypt(pms, false);
                 dataEncrypted = Encrypt(algorithm, data);
-                keyEncrypted = rsa.Encrypt(algorithm.Key, false);
             }
             //
             XElement keyElement = new XElement(ns + "EncryptedKey");
