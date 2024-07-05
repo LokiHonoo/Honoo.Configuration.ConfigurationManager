@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Honoo.Configuration
@@ -59,7 +60,11 @@ namespace Honoo.Configuration
             _content = GetElement(key, values);
             _comment = null;
             _key = key ?? throw new ArgumentNullException(nameof(key));
-            _value = values ?? throw new ArgumentNullException(nameof(values));
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            _value = values.ToArray();
             _isArray = true;
         }
 
@@ -76,7 +81,7 @@ namespace Honoo.Configuration
             else
             {
                 List<string> values = new List<string>();
-                foreach (var value in content.Elements("value"))
+                foreach (var value in content.Elements(HonooSettingsManager.Namespace + "value"))
                 {
                     values.Add(value.Value);
                 }

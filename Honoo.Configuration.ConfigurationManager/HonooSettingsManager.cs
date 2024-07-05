@@ -22,7 +22,7 @@ namespace Honoo.Configuration
         private HonooSectionSet _sections;
 
         /// <summary>
-        /// 映射到 &lt;default /&gt; 节点。
+        /// 映射到 &lt;default /&gt; 配置容器节点。
         /// </summary>
         public HonooSection Default
         {
