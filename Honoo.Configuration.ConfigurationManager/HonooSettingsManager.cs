@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -63,20 +62,20 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="manager">HonooSettingsManager 实例。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
-        public delegate void OnChangedEventHandler(HonooSettingsManager manager);
+        public delegate void ChangedEventHandler(HonooSettingsManager manager);
 
         /// <summary>
         /// 在 HonooSettingsManager 实例释放后执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
-        public delegate void OnDisposedEventHandler();
+        public delegate void DisposedEventHandler();
 
         /// <summary>
         /// 在 HonooSettingsManager 实例正在释放时执行。
         /// </summary>
         /// <param name="manager">HonooSettingsManager 实例。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
-        public delegate void OnDisposingEventHandler(HonooSettingsManager manager);
+        public delegate void DisposingEventHandler(HonooSettingsManager manager);
 
         #endregion Delegate
 
@@ -86,19 +85,34 @@ namespace Honoo.Configuration
         /// 在 HonooSettingsManager 实例内容改变时执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
-        public event OnChangedEventHandler OnChanged;
+        public event ChangedEventHandler Changed;
 
         /// <summary>
         /// 在 HonooSettingsManager 实例释放后执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
-        public event OnDisposedEventHandler OnDisposed;
+        public event DisposedEventHandler Disposed;
 
         /// <summary>
         /// 在 HonooSettingsManager 实例准备释放时执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
-        public event OnDisposingEventHandler OnDisposing;
+        public event DisposingEventHandler Disposing;
+
+        private void OnChanged()
+        {
+            Changed?.Invoke(this);
+        }
+
+        private void OnDisposed()
+        {
+            Disposed?.Invoke();
+        }
+
+        private void OnDisposing()
+        {
+            Disposing?.Invoke(this);
+        }
 
         #endregion Event
 
@@ -110,7 +124,7 @@ namespace Honoo.Configuration
         public HonooSettingsManager()
         {
             _root = new XElement(_namespace + "settings");
-            _root.Changed += OnContentChanged;
+            _root.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
@@ -131,7 +145,7 @@ namespace Honoo.Configuration
             }
             _root = XElement.Load(filePath);
             _root = Coerce(_root, protectionAlgorithm);
-            _root.Changed += OnContentChanged;
+            _root.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
@@ -157,7 +171,7 @@ namespace Honoo.Configuration
                 stream.Close();
             }
             _root = Coerce(_root, protectionAlgorithm);
-            _root.Changed += OnContentChanged;
+            _root.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
@@ -183,7 +197,7 @@ namespace Honoo.Configuration
                 reader.Close();
             }
             _root = Coerce(_root, protectionAlgorithm);
-            _root.Changed += OnContentChanged;
+            _root.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
@@ -207,7 +221,7 @@ namespace Honoo.Configuration
         {
             if (!_disposed)
             {
-                OnDisposing?.Invoke(this);
+                OnDisposing();
                 if (disposing)
                 {
                     _default = null;
@@ -215,7 +229,7 @@ namespace Honoo.Configuration
                     _root = null;
                 }
                 _disposed = true;
-                OnDisposed?.Invoke();
+                OnDisposed();
             }
         }
 
@@ -298,16 +312,25 @@ namespace Honoo.Configuration
         /// <summary>
         /// 返回配置文件的缩进 XML 文档文本。
         /// </summary>
+        /// <param name="protectionAlgorithm">
+        /// 指定一个非对称加密算法，用于保存加密配置文件。
+        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
+        /// <br/>算法可以是公钥或私钥。
+        /// </param>
         /// <exception cref="Exception"/>
-        public string GetXmlString()
+        public string GetXmlString(RSACryptoServiceProvider protectionAlgorithm = null)
         {
             XElement root = Clean(_root);
+            if (protectionAlgorithm != null)
+            {
+                root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
+            }
             StringBuilder builder = new StringBuilder();
             using (XmlWriter writer = XmlWriter.Create(builder, _writerSettings))
             {
                 root.WriteTo(writer);
+                return builder.ToString();
             }
-            return builder.ToString();
         }
 
         /// <summary>
@@ -369,11 +392,6 @@ namespace Honoo.Configuration
                 }
             }
             return result;
-        }
-
-        private void OnContentChanged(object sender, XObjectChangeEventArgs e)
-        {
-            OnChanged?.Invoke(this);
         }
     }
 }

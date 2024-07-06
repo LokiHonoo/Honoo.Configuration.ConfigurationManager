@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -40,20 +39,20 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="manager">AppSettingsManager 实例。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
-        public delegate void OnChangedEventHandler(AppSettingsManager manager);
+        public delegate void ChangedEventHandler(AppSettingsManager manager);
 
         /// <summary>
         /// 在 AppSettingsManager 实例释放后执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
-        public delegate void OnDisposedEventHandler();
+        public delegate void DisposedEventHandler();
 
         /// <summary>
         /// 在 AppSettingsManager 实例正在释放时执行。
         /// </summary>
         /// <param name="manager">AppSettingsManager 实例。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
-        public delegate void OnDisposingEventHandler(AppSettingsManager manager);
+        public delegate void DisposingEventHandler(AppSettingsManager manager);
 
         #endregion Delegate
 
@@ -63,19 +62,34 @@ namespace Honoo.Configuration
         /// 在 AppSettingsManager 实例内容改变时执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
-        public event OnChangedEventHandler OnChanged;
+        public event ChangedEventHandler Changed;
 
         /// <summary>
         /// 在 AppSettingsManager 实例释放后执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
-        public event OnDisposedEventHandler OnDisposed;
+        public event DisposedEventHandler Disposed;
 
         /// <summary>
         /// 在 AppSettingsManager 实例准备释放时执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
-        public event OnDisposingEventHandler OnDisposing;
+        public event DisposingEventHandler Disposing;
+
+        private void OnChanged()
+        {
+            Changed?.Invoke(this);
+        }
+
+        private void OnDisposed()
+        {
+            Disposed?.Invoke();
+        }
+
+        private void OnDisposing()
+        {
+            Disposing?.Invoke(this);
+        }
 
         #endregion Event
 
@@ -87,8 +101,8 @@ namespace Honoo.Configuration
         public AppSettingsManager()
         {
             _root = new XElement("appSettings");
-            _root.Changed += OnContentChanged;
             _properties = GetPropertySet(_root);
+            _root.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
@@ -109,8 +123,8 @@ namespace Honoo.Configuration
             }
             _root = XElement.Load(filePath);
             _root = Coerce(_root, protectionAlgorithm);
-            _root.Changed += OnContentChanged;
             _properties = GetPropertySet(_root);
+            _root.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
@@ -136,8 +150,8 @@ namespace Honoo.Configuration
                 stream.Close();
             }
             _root = Coerce(_root, protectionAlgorithm);
-            _root.Changed += OnContentChanged;
             _properties = GetPropertySet(_root);
+            _root.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
@@ -163,7 +177,8 @@ namespace Honoo.Configuration
                 reader.Close();
             }
             _root = Coerce(_root, protectionAlgorithm);
-            _root.Changed += OnContentChanged;
+            _properties = GetPropertySet(_root);
+            _root.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
@@ -187,14 +202,14 @@ namespace Honoo.Configuration
         {
             if (!_disposed)
             {
-                OnDisposing?.Invoke(this);
+                OnDisposing();
                 if (disposing)
                 {
                     _properties = null;
                     _root = null;
                 }
                 _disposed = true;
-                OnDisposed?.Invoke();
+                OnDisposed();
             }
         }
 
@@ -384,11 +399,6 @@ namespace Honoo.Configuration
                 throw new CryptographicException("Encryped configuration sections are not supported.");
             }
             return new DictionaryPropertySet(root);
-        }
-
-        private void OnContentChanged(object sender, XObjectChangeEventArgs e)
-        {
-            OnChanged?.Invoke(this);
         }
     }
 }
