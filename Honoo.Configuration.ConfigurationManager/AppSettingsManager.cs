@@ -24,12 +24,6 @@ namespace Honoo.Configuration
         /// </summary>
         public DictionaryPropertySet Properties => _properties;
 
-        /// <summary>
-        /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-        /// </summary>
-        /// <returns></returns>
-        public DictionaryPropertySetControlled PropertySetControlled => new DictionaryPropertySetControlled(_root);
-
         #endregion Properties
 
         #region Delegate
@@ -328,6 +322,16 @@ namespace Honoo.Configuration
         }
 
         #endregion File
+
+        /// <summary>
+        /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。当配置文件修改时应重新获取。
+        /// </summary>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
+        public DictionaryPropertySetControlled GetControlledProperties()
+        {
+            return new DictionaryPropertySetControlled(_root);
+        }
 
         /// <summary>
         /// 返回配置文件的缩进 XML 文档文本。

@@ -14,12 +14,6 @@ namespace Honoo.Configuration
         /// </summary>
         public NameValuePropertySet Properties => _properties;
 
-        /// <summary>
-        /// 获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-        /// </summary>
-        /// <returns></returns>
-        public NameValuePropertySetControlled PropertySetControlled => new NameValuePropertySetControlled(base.Content);
-
         #region Construction
 
         internal NameValueSection(XElement declaration, XElement content, XComment comment)
@@ -29,5 +23,15 @@ namespace Honoo.Configuration
         }
 
         #endregion Construction
+
+        /// <summary>
+        /// 获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。当配置文件修改时应重新获取。
+        /// </summary>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
+        public NameValuePropertySetControlled GetControlledProperties()
+        {
+            return new NameValuePropertySetControlled(base.Content);
+        }
     }
 }
