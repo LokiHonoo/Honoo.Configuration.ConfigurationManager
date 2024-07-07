@@ -27,7 +27,7 @@ namespace Honoo.Configuration
         public string Key => _key;
 
         /// <summary>
-        /// 获取配置属性的值。值可能是 <see cref="string"/> 或 <see cref="string"/> 数组。
+        /// 获取配置属性的值。值可能是 <see cref="string"/>、 <see cref="string"/>[]、 <see cref="string"/>[][] ...。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1721:属性名不应与 get 方法匹配", Justification = "<挂起>")]
         public object Value => _value;
@@ -69,6 +69,42 @@ namespace Honoo.Configuration
             _isArray = true;
         }
 
+        /// <summary>
+        /// 创建 HonooProperty 的新实例。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        public HonooProperty(string key, string[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            _content = GetElement(key, values);
+            _comment = null;
+            _key = key ?? throw new ArgumentNullException(nameof(key));
+            _value = values;
+            _isArray = true;
+        }
+
+        /// <summary>
+        /// 创建 HonooProperty 的新实例。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        public HonooProperty(string key, string[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            _content = GetElement(key, values);
+            _comment = null;
+            _key = key ?? throw new ArgumentNullException(nameof(key));
+            _value = values;
+            _isArray = true;
+        }
+
         internal HonooProperty(XElement content, XComment comment)
         {
             _content = content;
@@ -79,14 +115,24 @@ namespace Honoo.Configuration
                 _value = attribute.Value;
                 _isArray = false;
             }
+            else if (content.HasElements)
+            {
+                if (GetValue(content, out string[] values1))
+                {
+                    _value = values1;
+                }
+                else if (GetValue(content, out string[][] values2))
+                {
+                    _value = values2;
+                }
+                else if (GetValue(content, out string[][][] values3))
+                {
+                    _value = values3;
+                }
+                _isArray = true;
+            }
             else
             {
-                List<string> values = new List<string>();
-                foreach (var value in content.Elements(HonooSettingsManager.Namespace + "value"))
-                {
-                    values.Add(value.Value);
-                }
-                _value = values.ToArray();
                 _isArray = true;
             }
         }
@@ -346,11 +392,45 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
+        public bool TryGetArrayValue(out string[][][] values)
+        {
+            if (_isArray && _value is string[][][] valueX)
+            {
+                values = valueX;
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetArrayValue(out string[][] values)
+        {
+            if (_isArray && _value is string[][] valueX)
+            {
+                values = valueX;
+                return true;
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out string[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
-                values = (string[])_value;
+                values = valueX;
                 return true;
             }
             values = default;
@@ -365,10 +445,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out bool[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<bool> result = new List<bool>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (bool.TryParse(value, out bool val))
                     {
@@ -395,10 +475,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out sbyte[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<sbyte> result = new List<sbyte>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (sbyte.TryParse(value, out sbyte val))
                     {
@@ -425,10 +505,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out byte[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<byte> result = new List<byte>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (byte.TryParse(value, out byte val))
                     {
@@ -455,10 +535,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out short[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<short> result = new List<short>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (short.TryParse(value, out short val))
                     {
@@ -485,10 +565,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out ushort[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<ushort> result = new List<ushort>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (ushort.TryParse(value, out ushort val))
                     {
@@ -515,10 +595,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out int[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<int> result = new List<int>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (int.TryParse(value, out int val))
                     {
@@ -545,10 +625,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out uint[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<uint> result = new List<uint>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (uint.TryParse(value, out uint val))
                     {
@@ -575,10 +655,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out long[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<long> result = new List<long>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (long.TryParse(value, out long val))
                     {
@@ -605,10 +685,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out ulong[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<ulong> result = new List<ulong>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (ulong.TryParse(value, out ulong val))
                     {
@@ -635,10 +715,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out float[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<float> result = new List<float>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (float.TryParse(value, out float val))
                     {
@@ -665,10 +745,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out double[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<double> result = new List<double>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (double.TryParse(value, out double val))
                     {
@@ -695,10 +775,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out decimal[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<decimal> result = new List<decimal>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (decimal.TryParse(value, out decimal val))
                     {
@@ -725,10 +805,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out char[] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<char> result = new List<char>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (char.TryParse(value, out char val))
                     {
@@ -755,10 +835,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue(out byte[][] values)
         {
-            if (_isArray)
+            if (_isArray && _value is string[] valueX)
             {
                 List<byte[]> result = new List<byte[]>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (XValueHelper.TryParse(value, out byte[] val))
                     {
@@ -785,10 +865,10 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetArrayValue<TEnum>(out TEnum[] values) where TEnum : struct
         {
-            if (_isArray && typeof(TEnum).BaseType.FullName == "System.Enum")
+            if (_isArray && _value is string[] valueX && typeof(TEnum).BaseType.FullName == "System.Enum")
             {
                 List<TEnum> result = new List<TEnum>();
-                foreach (string value in (string[])_value)
+                foreach (string value in valueX)
                 {
                     if (Enum.TryParse(value, false, out TEnum val))
                     {
@@ -990,6 +1070,28 @@ namespace Honoo.Configuration
         #endregion GetValue
 
         #region GetArrayValue
+
+        /// <summary>
+        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="defaultValues">无法转换为指定的类型时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string[][][] GetArrayValue(string[][][] defaultValues)
+        {
+            return TryGetArrayValue(out string[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="defaultValues">无法转换为指定的类型时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string[][] GetArrayValue(string[][] defaultValues)
+        {
+            return TryGetArrayValue(out string[][] values) ? values : defaultValues;
+        }
 
         /// <summary>
         /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValues"/>。
@@ -1265,6 +1367,106 @@ namespace Honoo.Configuration
                 element.Add(new XElement(HonooSettingsManager.Namespace + "value", value));
             }
             return element;
+        }
+
+        private static XElement GetElement(string key, string[][] values)
+        {
+            XElement element = new XElement(HonooSettingsManager.Namespace + "property");
+            element.SetAttributeValue("key", key);
+            foreach (string[] values1 in values)
+            {
+                XElement ele1 = new XElement(HonooSettingsManager.Namespace + "value");
+                foreach (string value in values1)
+                {
+                    ele1.Add(new XElement(HonooSettingsManager.Namespace + "value", value));
+                }
+                element.Add(ele1);
+            }
+            return element;
+        }
+
+        private static XElement GetElement(string key, string[][][] values)
+        {
+            XElement ele1 = new XElement(HonooSettingsManager.Namespace + "property");
+            ele1.SetAttributeValue("key", key);
+            foreach (string[][] values1 in values)
+            {
+                XElement ele2 = new XElement(HonooSettingsManager.Namespace + "value");
+                foreach (string[] values2 in values1)
+                {
+                    XElement ele3 = new XElement(HonooSettingsManager.Namespace + "value");
+                    foreach (string value in values2)
+                    {
+                        ele3.Add(new XElement(HonooSettingsManager.Namespace + "value", value));
+                    }
+                    ele2.Add(ele3);
+                }
+                ele1.Add(ele2);
+            }
+            return ele1;
+        }
+
+        private static bool GetValue(XElement element, out string[] values)
+        {
+            List<string> values1 = new List<string>();
+            foreach (var ele1 in element.Elements(HonooSettingsManager.Namespace + "value"))
+            {
+                if (ele1.HasElements)
+                {
+                    values = null;
+                    return false;
+                }
+                values1.Add(ele1.Value);
+            }
+            values = values1.ToArray();
+            return true;
+        }
+
+        private static bool GetValue(XElement element, out string[][] values)
+        {
+            List<string[]> values2 = new List<string[]>();
+            foreach (var ele2 in element.Elements(HonooSettingsManager.Namespace + "value"))
+            {
+                List<string> values1 = new List<string>();
+                foreach (var ele1 in ele2.Elements(HonooSettingsManager.Namespace + "value"))
+                {
+                    if (ele1.HasElements)
+                    {
+                        values = null;
+                        return false;
+                    }
+                    values1.Add(ele1.Value);
+                }
+                values2.Add(values1.ToArray());
+            }
+            values = values2.ToArray();
+            return true;
+        }
+
+        private static bool GetValue(XElement element, out string[][][] values)
+        {
+            List<string[][]> values3 = new List<string[][]>();
+            foreach (var ele3 in element.Elements(HonooSettingsManager.Namespace + "value"))
+            {
+                List<string[]> values2 = new List<string[]>();
+                foreach (var ele2 in ele3.Elements(HonooSettingsManager.Namespace + "value"))
+                {
+                    List<string> values1 = new List<string>();
+                    foreach (var ele1 in ele2.Elements(HonooSettingsManager.Namespace + "value"))
+                    {
+                        if (ele1.HasElements)
+                        {
+                            values = null;
+                            return false;
+                        }
+                        values1.Add(ele1.Value);
+                    }
+                    values2.Add(values1.ToArray());
+                }
+                values3.Add(values2.ToArray());
+            }
+            values = values3.ToArray();
+            return true;
         }
     }
 }

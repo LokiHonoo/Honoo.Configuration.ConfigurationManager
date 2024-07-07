@@ -24,6 +24,18 @@ namespace Test
                 manager.Default.Properties.AddOrUpdate("prop3", 123456789);
                 manager.Default.Properties.AddOrUpdateArray("prop4", new int[] { 1, 2, 3, 4, 5 });
                 manager.Default.Properties.AddOrUpdate("prop5", "Remove this.");
+                var md = new string[][][] {
+                    new string[][] {
+                        new string[] { "A1", "A2", "A3" },
+                    },
+                    new string[][] {
+                        new string[] { "B1", "B2" },
+                    },
+                    new string[][] {
+                        new string[] { "C1", "C2", "C3", "C4" },
+                    },
+                };
+                manager.Default.Properties.AddOrUpdateArray("prop6", md);
                 //
                 // 移除属性的方法。移除属性时相关注释一并移除。
                 //
@@ -44,7 +56,7 @@ namespace Test
         internal static void Load(string filePath)
         {
             //
-            // 使用 .NET 程序的默认配置文件或自定义配置文件。
+            // 使用自定义配置文件。
             //
             using (HonooSettingsManager manager = new HonooSettingsManager(filePath))
             {
@@ -69,6 +81,8 @@ namespace Test
                 {
                     Console.WriteLine(val4);
                 }
+                //
+                manager.Default.Properties.TryGetArrayValue("prop6", out string[][][] value6);
                 //
                 HonooSection section = manager.Sections.GetValue("section1");
                 Console.WriteLine(section.GetComment());

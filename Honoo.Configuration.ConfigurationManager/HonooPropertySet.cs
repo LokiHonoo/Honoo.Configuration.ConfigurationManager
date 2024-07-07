@@ -289,6 +289,30 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
+        public HonooProperty AddArray(string key, string[][][] values)
+        {
+            return Add(new HonooProperty(key, values));
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddArray(string key, string[][] values)
+        {
+            return Add(new HonooProperty(key, values));
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
         public HonooProperty AddArray(string key, IList<string> values)
         {
             return Add(new HonooProperty(key, values));
@@ -824,6 +848,30 @@ namespace Honoo.Configuration
         #endregion AddOrUpdate
 
         #region AddOrUpdateArray
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdateArray(string key, string[][][] values)
+        {
+            return AddOrUpdate(new HonooProperty(key, values));
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdateArray(string key, string[][] values)
+        {
+            return AddOrUpdate(new HonooProperty(key, values));
+        }
 
         /// <summary>
         /// 添加或更新一个配置属性。
@@ -1451,6 +1499,40 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
+        public bool TryGetArrayValue(string key, out string[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetArrayValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetArrayValue(string key, out string[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetArrayValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
         public bool TryGetArrayValue(string key, out string[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
@@ -1926,6 +2008,30 @@ namespace Honoo.Configuration
         #endregion GetValue
 
         #region GetArrayValue
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string[][][] GetArrayValue(string key, string[][][] defaultValues)
+        {
+            return TryGetArrayValue(key, out string[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string[][] GetArrayValue(string key, string[][] defaultValues)
+        {
+            return TryGetArrayValue(key, out string[][] values) ? values : defaultValues;
+        }
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。

@@ -15,8 +15,10 @@
     - [sectionGroup/section](#sectiongroupsection)
     - [Auto save](#auto-save)
     - [Protection](#protection)
+    - [HonooSettingsManager](#honoosettingsmanager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
+    - [1.4.11](#1411)
     - [1.4.10](#1410)
     - [1.3.4](#134)
     - [1.3.2](#132)
@@ -38,7 +40,7 @@
 
 提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
 
-提供一个额外的精简的配置属性文件，以字典类型保存，支持加密，支持单一属性值和数组属性值。使用 HonooSettingsManager 类读写此文件。
+提供 HonooSettingsManager 类读写一个精简的配置属性文件，以字典类型保存，支持加密，支持单一属性值和数组属性值。
 
 ## USAGE
 
@@ -351,6 +353,101 @@ internal static void Create()
 
 ```
 
+### HonooSettingsManager
+
+提供一个额外的精简的配置属性文件，以字典类型保存，支持加密，支持单一属性值和数组属性值。
+
+```c#
+
+internal static void Create(string filePath)
+{
+    //
+    // 使用自定义配置文件。
+    //
+    using (HonooSettingsManager manager = File.Exists(filePath) ? new HonooSettingsManager(filePath) : new HonooSettingsManager())
+    {
+        //
+        // 赋值并设置注释。
+        //
+        manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 value.");
+        manager.Default.Properties.AddOrUpdate("prop2", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+        manager.Default.Properties.AddOrUpdate("prop3", 123456789);
+        manager.Default.Properties.AddOrUpdateArray("prop4", new int[] { 1, 2, 3, 4, 5 });
+        manager.Default.Properties.AddOrUpdate("prop5", "Remove this.");
+        var md = new string[][][] {
+            new string[][] {
+                new string[] { "A1", "A2", "A3" },
+            },
+            new string[][] {
+                new string[] { "B1", "B2" },
+            },
+            new string[][] {
+                new string[] { "C1", "C2", "C3", "C4" },
+            },
+        };
+        manager.Default.Properties.AddOrUpdateArray("prop6", md);
+        //
+        // 移除属性的方法。移除属性时相关注释一并移除。
+        //
+        manager.Default.Properties.Remove("prop5");
+        //
+        // 附加配置容器。
+        //
+        HonooSection section = manager.Sections.GetOrAdd("section1");
+        section.SetComment("\"This is \"hoonoo-settings\" section1");
+        section.Properties.AddOrUpdate("prop1", 123456789);
+        //
+        // 保存到指定的文件。
+        //
+        manager.Save(filePath);
+    }
+}
+
+```
+
+```c#
+
+internal static void Load(string filePath)
+{
+    //
+    // 使用自定义配置文件。
+    //
+    using (HonooSettingsManager manager = new HonooSettingsManager(filePath))
+    {
+        //
+        // 取出属性和注释。
+        //
+        HonooProperty value1 = manager.Default.Properties.GetValue("prop1");
+        if (value1.TryGetComment(out string comment1))
+        {
+            Console.WriteLine(comment1);
+        }
+        Console.WriteLine(value1.GetValue(string.Empty));
+        //
+        HonooProperty value2 = manager.Default.Properties.GetValue("prop2");
+        value2.TryGetValue(out byte[] val2);
+        Console.WriteLine(BitConverter.ToString(val2));
+        //
+        Console.WriteLine(manager.Default.Properties.GetValue("prop3").GetValue(0));
+        //
+        manager.Default.Properties.TryGetArrayValue("prop4", out int[] value4);
+        foreach (var val4 in value4)
+        {
+            Console.WriteLine(val4);
+        }
+        //
+        manager.Default.Properties.TryGetArrayValue("prop6", out string[][][] value6);
+        //
+        HonooSection section = manager.Sections.GetValue("section1");
+        Console.WriteLine(section.GetComment());
+        Console.WriteLine(section.Properties.GetValue("prop1").Value);
+
+
+    }
+}
+
+```
+
 ### UWP
 
 ```c#
@@ -372,6 +469,10 @@ public static async void Test()
 ```
 
 ## CHANGELOG
+
+### 1.4.11
+
+**Features* HonooSettingsManager 增加多维数组支持。多维数组只能以 string 类型读写。
 
 ### 1.4.10
 

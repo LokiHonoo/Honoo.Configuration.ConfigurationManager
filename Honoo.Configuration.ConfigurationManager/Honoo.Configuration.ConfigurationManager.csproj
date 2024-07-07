@@ -18,16 +18,14 @@ Provides an method to encrypt the configuration file.
 
 Waring: The encryption method is different from ASP.NET, and the generated encryption file can only using by this project tool.
 
-Provides an condensed configuration property file, used by dictionary type, supports encryption, supports single/array property. 
-
-Use the "HonooSettingsManager" class to read and write this file.</Description>
+Provide "HonooSettingsManager"" class to read/write a concise configuration file, using dictionary type, support encryption, and support single value and array values.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager</PackageProjectUrl>
     <RepositoryUrl>https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager</RepositoryUrl>
     <PackageTags>Honoo;Configuration;ConfigurationManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-	<VersionPrefix>1.4.10</VersionPrefix>
+	<VersionPrefix>1.4.11</VersionPrefix>
     <PackageReadmeFile>README-NuGet.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
