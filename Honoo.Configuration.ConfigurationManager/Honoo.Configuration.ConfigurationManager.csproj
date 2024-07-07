@@ -27,7 +27,7 @@ Use the "HonooSettingsManager" class to read and write this file.</Description>
     <PackageTags>Honoo;Configuration;ConfigurationManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-	<VersionPrefix>1.4.8</VersionPrefix>
+	<VersionPrefix>1.4.9</VersionPrefix>
     <PackageReadmeFile>README-NuGet.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
