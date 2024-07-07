@@ -7,7 +7,7 @@
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
   - [USAGE](#usage)
-    - [Github](#github)
+    - [GitHub](#github)
   - [LICENSE](#license)
 
 <!-- /code_chunk_output -->
@@ -29,7 +29,7 @@ Use the "HonooSettingsManager" class to read and write this file.
 
 ## USAGE
 
-### Github
+### GitHub
 
 <https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager>
 
