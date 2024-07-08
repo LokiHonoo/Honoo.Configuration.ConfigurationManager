@@ -6,7 +6,7 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
-  - [USAGE](#usage)
+  - [GUIDE](#guide)
     - [GitHub](#github)
   - [LICENSE](#license)
 
@@ -25,7 +25,7 @@ Waring: The encryption method is different from ASP.NET, and the generated encry
 
 Provide "HonooSettingsManager"" class to read/write a concise configuration file, using dictionary type, support encryption, and support single value and array values.
 
-## USAGE
+## GUIDE
 
 ### GitHub
 

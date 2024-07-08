@@ -26,31 +26,16 @@ Provide "HonooSettingsManager"" class to read/write a concise configuration file
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
 	<VersionPrefix>1.4.11</VersionPrefix>
-    <PackageReadmeFile>README-NuGet.md</PackageReadmeFile>
+    <PackageReadmeFile>Honoo.Configuration.ConfigurationManager.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\bin\Debug</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\bin\Release</OutputPath>
-    <DocumentationFile>..\bin\Release\$(TargetFramework)\$(PackageId).xml</DocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\README-NuGet.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="README-Nuget.md">
+    <None Include="Honoo.Configuration.ConfigurationManager.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

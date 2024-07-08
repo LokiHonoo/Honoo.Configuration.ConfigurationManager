@@ -6,9 +6,9 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [INTRODUCTION](#introduction)
-  - [USAGE](#usage)
+  - [GUIDE](#guide)
     - [NuGet](#nuget)
-  - [DEMO](#demo)
+  - [USAGE](#usage)
     - [Namespace](#namespace)
     - [appSettings](#appsettings)
     - [connectionStrings](#connectionstrings)
@@ -42,13 +42,13 @@
 
 提供 HonooSettingsManager 类读写一个精简的配置属性文件，以字典类型保存，支持加密，支持单一属性值和数组属性值。
 
-## USAGE
+## GUIDE
 
 ### NuGet
 
 <https://www.nuget.org/packages/Honoo.Configuration.ConfigurationManager/>
 
-## DEMO
+## USAGE
 
 ### Namespace
 
