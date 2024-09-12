@@ -8,6 +8,7 @@
 		<Copyright>Copyright (C) Loki Honoo 2020. All rights reserved.</Copyright>
 		<Company>Loki Honoo</Company>
 		<Authors>Loki Honoo</Authors>
+		<BaseOutputPath>..\bin\</BaseOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net40'">
@@ -19,8 +20,8 @@
 		<PackageReference Include="System.Data.SqlClient">
 		  <Version>4.8.6</Version>
 		</PackageReference>
-	</ItemGroup>
-
+	</ItemGroup>	
+	
 	<ItemGroup>
 	  <ProjectReference Include="..\Honoo.Configuration.ConfigurationManager\Honoo.Configuration.ConfigurationManager.csproj" />
 	</ItemGroup>

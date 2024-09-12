@@ -31,7 +31,8 @@ Provide "HonooSettingsManager"" class to read/write a concise configuration file
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<BaseOutputPath>..\bin\</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
