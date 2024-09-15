@@ -21,6 +21,13 @@ namespace Honoo.Configuration
         /// </summary>
         public int Count => _properties.Count;
 
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <returns></returns>
+        public AddProperty this[string key] => GetValue(key);
+
         #endregion Properties
 
         #region Construction
@@ -342,7 +349,7 @@ namespace Honoo.Configuration
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out byte[] value)
+        public bool TryGetValue(string key, out Binaries value)
         {
             if (TryGetValue(key, out AddProperty val))
             {
@@ -559,9 +566,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte[] GetValue(string key, byte[] defaultValue)
+        public Binaries GetValue(string key, Binaries defaultValue)
         {
-            return TryGetValue(key, out byte[] value) ? value : defaultValue;
+            return TryGetValue(key, out Binaries value) ? value : defaultValue;
         }
 
         /// <summary>

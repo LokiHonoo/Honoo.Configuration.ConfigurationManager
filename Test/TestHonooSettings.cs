@@ -20,22 +20,22 @@ namespace Test
                 // 赋值并设置注释。
                 //
                 manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 value.");
-                manager.Default.Properties.AddOrUpdate("prop2", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+                manager.Default.Properties.AddOrUpdate("prop2", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
                 manager.Default.Properties.AddOrUpdate("prop3", 123456789);
-                manager.Default.Properties.AddOrUpdateArray("prop4", new int[] { 1, 2, 3, 4, 5 });
+                manager.Default.Properties.AddOrUpdate("prop4", new int[] { 1, 2, 3, 4, 5 });
                 manager.Default.Properties.AddOrUpdate("prop5", "Remove this.");
-                var md = new string[][][] {
-                    new string[][] {
-                        new string[] { "A1", "A2", "A3" },
+                var md = new long[][][] {
+                    new long[][] {
+                        new long[] { 1, 2, 3 },
                     },
-                    new string[][] {
-                        new string[] { "B1", "B2" },
+                    new long[][] {
+                        new long[] { 4, 5 },
                     },
-                    new string[][] {
-                        new string[] { "C1", "C2", "C3", "C4" },
+                    new long[][] {
+                        new long[] { 6, 7, 8, 9 },
                     },
                 };
-                manager.Default.Properties.AddOrUpdateArray("prop6", md);
+                manager.Default.Properties.AddOrUpdate("prop6", md);
                 //
                 // 移除属性的方法。移除属性时相关注释一并移除。
                 //
@@ -71,18 +71,18 @@ namespace Test
                 Console.WriteLine(value1.GetValue(string.Empty));
                 //
                 HonooProperty value2 = manager.Default.Properties.GetValue("prop2");
-                value2.TryGetValue(out byte[] val2);
-                Console.WriteLine(BitConverter.ToString(val2));
+                value2.TryGetValue(out Binaries val2);
+                Console.WriteLine(val2.Hex);
                 //
                 Console.WriteLine(manager.Default.Properties.GetValue("prop3").GetValue(0));
                 //
-                manager.Default.Properties.TryGetArrayValue("prop4", out int[] value4);
+                manager.Default.Properties.TryGetValue("prop4", out int[] value4);
                 foreach (var val4 in value4)
                 {
                     Console.WriteLine(val4);
                 }
                 //
-                manager.Default.Properties.TryGetArrayValue("prop6", out string[][][] value6);
+                manager.Default.Properties.TryGetValue("prop6", out string[][][] value6);
                 //
                 HonooSection section = manager.Sections.GetValue("section1");
                 Console.WriteLine(section.GetComment());

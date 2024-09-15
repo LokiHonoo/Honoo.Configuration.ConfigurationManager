@@ -21,6 +21,13 @@ namespace Honoo.Configuration
         /// </summary>
         public int Count => _sections.Count;
 
+        /// <summary>
+        /// 获取与指定名称关联的配置容器。
+        /// </summary>
+        /// <param name="name">配置容器的名称。</param>
+        /// <returns></returns>
+        public HonooSection this[string name] => GetValue(name);
+
         #endregion Properties
 
         #region Construction

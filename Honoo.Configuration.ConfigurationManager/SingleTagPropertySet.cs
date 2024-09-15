@@ -21,6 +21,13 @@ namespace Honoo.Configuration
         /// </summary>
         public int Count => _properties.Count;
 
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <returns></returns>
+        public SingleTagProperty this[string key] => GetValue(key);
+
         #endregion Properties
 
         #region Construction
@@ -223,9 +230,13 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public SingleTagProperty Add(string key, byte[] value)
+        public SingleTagProperty Add(string key, Binaries value)
         {
-            return Add(key, BitConverter.ToString(value).Replace("-", string.Empty));
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            return Add(key, value.Hex);
         }
 
         /// <summary>
@@ -424,9 +435,13 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public void AddOrUpdate(string key, byte[] value)
+        public void AddOrUpdate(string key, Binaries value)
         {
-            AddOrUpdate(key, BitConverter.ToString(value).Replace("-", string.Empty));
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            AddOrUpdate(key, value.Hex);
         }
 
         /// <summary>
@@ -701,7 +716,7 @@ namespace Honoo.Configuration
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out byte[] value)
+        public bool TryGetValue(string key, out Binaries value)
         {
             if (TryGetValue(key, out SingleTagProperty val))
             {
@@ -918,9 +933,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte[] GetValue(string key, byte[] defaultValue)
+        public Binaries GetValue(string key, Binaries defaultValue)
         {
-            return TryGetValue(key, out byte[] value) ? value : defaultValue;
+            return TryGetValue(key, out Binaries value) ? value : defaultValue;
         }
 
         /// <summary>

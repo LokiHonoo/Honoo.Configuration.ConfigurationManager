@@ -22,6 +22,13 @@ namespace Honoo.Configuration
         /// </summary>
         public int Count => _properties.Count;
 
+        /// <summary>
+        /// 获取与指定名称关联的连接属性的值。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <returns></returns>
+        public ConnectionStringProperty this[string name]=> GetValue(name);
+
         #endregion Properties
 
         #region Construction

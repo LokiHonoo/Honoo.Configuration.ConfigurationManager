@@ -18,6 +18,7 @@
     - [HonooSettingsManager](#honoosettingsmanager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
+    - [1.4.12](#1412)
     - [1.4.11](#1411)
     - [1.4.10](#1410)
     - [1.3.4](#134)
@@ -74,8 +75,8 @@ internal static void Create(string filePath)
         // 赋值并设置注释。
         //
         manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
-        manager.AppSettings.Properties.AddOrUpdate("prop2", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
-        manager.AppSettings.Properties.AddOrUpdate("prop3", 123456789);
+        manager.AppSettings.Properties.AddOrUpdate("prop2", 123456789);
+        manager.AppSettings.Properties.AddOrUpdate("prop3", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
         manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
         manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
 
@@ -100,22 +101,25 @@ internal static void Load(string filePath)
         //
         // 取出属性和注释。
         //
-        AddProperty value2 = manager.AppSettings.Properties.GetValue("prop1");
-        if (value2.TryGetComment(out string comment2))
+        AddProperty value1 = manager.AppSettings.Properties.GetValue("prop1");
+        if (value1.TryGetComment(out string comment1))
         {
-            Console.WriteLine(comment2);
+            Console.WriteLine(comment1);
         }
-        Console.WriteLine(value2.Value);
+        Console.WriteLine(value1.Value);
         //
-        int value3 = manager.AppSettings.Properties.GetValue("prop3", 55555);
-        Console.WriteLine(value3);
+        int value2 = manager.AppSettings.Properties.GetValue("prop2", 55555);
+        Console.WriteLine(value2);
+        //
+        AddProperty value3 = manager.AppSettings.Properties["prop3"];
+        Console.WriteLine(value3.GetValue(Binaries.Empty));
         //
         if (manager.AppSettings.Properties.TryGetValue("prop4", out LoaderOptimization value4))
         {
             Console.WriteLine(value4);
         }
         // 取出应用控制标签后的属性。
-        foreach (AddProperty property in manager.AppSettings.PropertySetControlled)
+        foreach (AddProperty property in manager.AppSettings.GetControlledProperties())
         {
             Console.WriteLine(property.Value);
         }
@@ -370,22 +374,22 @@ internal static void Create(string filePath)
         // 赋值并设置注释。
         //
         manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 value.");
-        manager.Default.Properties.AddOrUpdate("prop2", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+        manager.Default.Properties.AddOrUpdate("prop2", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
         manager.Default.Properties.AddOrUpdate("prop3", 123456789);
-        manager.Default.Properties.AddOrUpdateArray("prop4", new int[] { 1, 2, 3, 4, 5 });
+        manager.Default.Properties.AddOrUpdate("prop4", new int[] { 1, 2, 3, 4, 5 });
         manager.Default.Properties.AddOrUpdate("prop5", "Remove this.");
-        var md = new string[][][] {
-            new string[][] {
-                new string[] { "A1", "A2", "A3" },
+        var md = new long[][][] {
+            new long[][] {
+                new long[] { 1, 2, 3 },
             },
-            new string[][] {
-                new string[] { "B1", "B2" },
+            new long[][] {
+                new long[] { 4, 5 },
             },
-            new string[][] {
-                new string[] { "C1", "C2", "C3", "C4" },
+            new long[][] {
+                new long[] { 6, 7, 8, 9 },
             },
         };
-        manager.Default.Properties.AddOrUpdateArray("prop6", md);
+        manager.Default.Properties.AddOrUpdate("prop6", md);
         //
         // 移除属性的方法。移除属性时相关注释一并移除。
         //
@@ -425,24 +429,22 @@ internal static void Load(string filePath)
         Console.WriteLine(value1.GetValue(string.Empty));
         //
         HonooProperty value2 = manager.Default.Properties.GetValue("prop2");
-        value2.TryGetValue(out byte[] val2);
-        Console.WriteLine(BitConverter.ToString(val2));
+        value2.TryGetValue(out Binaries val2);
+        Console.WriteLine(val2.Hex);
         //
         Console.WriteLine(manager.Default.Properties.GetValue("prop3").GetValue(0));
         //
-        manager.Default.Properties.TryGetArrayValue("prop4", out int[] value4);
+        manager.Default.Properties.TryGetValue("prop4", out int[] value4);
         foreach (var val4 in value4)
         {
             Console.WriteLine(val4);
         }
         //
-        manager.Default.Properties.TryGetArrayValue("prop6", out string[][][] value6);
+        manager.Default.Properties.TryGetValue("prop6", out string[][][] value6);
         //
         HonooSection section = manager.Sections.GetValue("section1");
         Console.WriteLine(section.GetComment());
         Console.WriteLine(section.Properties.GetValue("prop1").Value);
-
-
     }
 }
 
@@ -470,9 +472,13 @@ public static async void Test()
 
 ## CHANGELOG
 
+### 1.4.12
+
+**Features* 新增 Binaries 类型用于封装 byte[]。避免过多的 [] 符号造成的视觉混乱。
+
 ### 1.4.11
 
-**Features* HonooSettingsManager 增加多维数组支持。多维数组只能以 string 类型读写。
+**Features* HonooSettingsManager 增加多维数组支持。
 
 ### 1.4.10
 

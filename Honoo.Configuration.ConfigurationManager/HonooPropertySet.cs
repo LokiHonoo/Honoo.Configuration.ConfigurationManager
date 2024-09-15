@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -21,6 +23,13 @@ namespace Honoo.Configuration
         /// 获取配置属性集合中包含的元素数。
         /// </summary>
         public int Count => _properties.Count;
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <returns></returns>
+        public HonooProperty this[string key] => GetValue(key);
 
         #endregion Properties
 
@@ -261,9 +270,13 @@ namespace Honoo.Configuration
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty Add(string key, byte[] value)
+        public HonooProperty Add(string key, Binaries value)
         {
-            return Add(key, BitConverter.ToString(value).Replace("-", string.Empty));
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            return Add(key, value.Hex);
         }
 
         /// <summary>
@@ -280,7 +293,7 @@ namespace Honoo.Configuration
 
         #endregion Add
 
-        #region AddArray
+        #region AddArray1
 
         /// <summary>
         /// 添加一个配置属性。
@@ -289,9 +302,9 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, string[][][] values)
+        public HonooProperty Add(string key, IList<string> values)
         {
-            return Add(new HonooProperty(key, values));
+            return Add(new HonooProperty(key, values.ToArray()));
         }
 
         /// <summary>
@@ -301,31 +314,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, string[][] values)
-        {
-            return Add(new HonooProperty(key, values));
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<string> values)
-        {
-            return Add(new HonooProperty(key, values));
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="values">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<bool> values)
+        public HonooProperty Add(string key, IList<bool> values)
         {
             if (values == null)
             {
@@ -336,7 +325,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString());
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -346,7 +335,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<sbyte> values)
+        public HonooProperty Add(string key, IList<sbyte> values)
         {
             if (values == null)
             {
@@ -357,7 +346,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -367,7 +356,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<byte> values)
+        public HonooProperty Add(string key, IList<byte> values)
         {
             if (values == null)
             {
@@ -378,7 +367,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -388,7 +377,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<short> values)
+        public HonooProperty Add(string key, IList<short> values)
         {
             if (values == null)
             {
@@ -399,7 +388,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -409,7 +398,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<ushort> values)
+        public HonooProperty Add(string key, IList<ushort> values)
         {
             if (values == null)
             {
@@ -420,7 +409,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -430,7 +419,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<int> values)
+        public HonooProperty Add(string key, IList<int> values)
         {
             if (values == null)
             {
@@ -441,7 +430,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -451,7 +440,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<uint> values)
+        public HonooProperty Add(string key, IList<uint> values)
         {
             if (values == null)
             {
@@ -462,7 +451,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -472,7 +461,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<long> values)
+        public HonooProperty Add(string key, IList<long> values)
         {
             if (values == null)
             {
@@ -483,7 +472,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -493,7 +482,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<ulong> values)
+        public HonooProperty Add(string key, IList<ulong> values)
         {
             if (values == null)
             {
@@ -504,7 +493,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -514,7 +503,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<float> values)
+        public HonooProperty Add(string key, IList<float> values)
         {
             if (values == null)
             {
@@ -525,7 +514,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -535,7 +524,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<double> values)
+        public HonooProperty Add(string key, IList<double> values)
         {
             if (values == null)
             {
@@ -546,7 +535,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -556,7 +545,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<decimal> values)
+        public HonooProperty Add(string key, IList<decimal> values)
         {
             if (values == null)
             {
@@ -567,7 +556,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString(CultureInfo.InvariantCulture));
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -577,7 +566,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<char> values)
+        public HonooProperty Add(string key, IList<char> values)
         {
             if (values == null)
             {
@@ -588,7 +577,7 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString());
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -598,18 +587,18 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray(string key, IList<byte[]> values)
+        public HonooProperty Add(string key, IList<Binaries> values)
         {
             if (values == null)
             {
                 throw new ArgumentNullException(nameof(values));
             }
             List<string> result = new List<string>();
-            foreach (byte[] value in values)
+            foreach (Binaries value in values)
             {
-                result.Add(BitConverter.ToString(value).Replace("-", string.Empty));
+                result.Add(value.Hex);
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
         /// <summary>
@@ -619,7 +608,7 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddArray<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
+        public HonooProperty Add<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
         {
             if (values == null)
             {
@@ -630,10 +619,897 @@ namespace Honoo.Configuration
             {
                 result.Add(value.ToString());
             }
-            return AddArray(key, result.ToArray());
+            return Add(key, result.ToArray());
         }
 
-        #endregion AddArray
+        #endregion AddArray1
+
+        #region AddArray2
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, string[][] values)
+        {
+            return Add(new HonooProperty(key, values));
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, bool[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (bool[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (bool val in value)
+                {
+                    result.Add(val.ToString());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, sbyte[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (sbyte[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (sbyte val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, byte[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (byte[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (byte val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, short[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (short[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (short val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, ushort[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (ushort[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (ushort val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, int[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (int[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (int val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, uint[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (uint[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (uint val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, long[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (long[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (long val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, ulong[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (ulong[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (ulong val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, float[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (float[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (float val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, double[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (double[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (double val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, decimal[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (decimal[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (decimal val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, char[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (char[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (char val in value)
+                {
+                    result.Add(val.ToString(CultureInfo.InvariantCulture));
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, Binaries[][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (Binaries[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (Binaries val in value)
+                {
+                    result.Add(val.Hex);
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add<TEnum>(string key, TEnum[][] values) where TEnum : Enum
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[]> resultX = new List<string[]>();
+            foreach (TEnum[] value in values)
+            {
+                List<string> result = new List<string>();
+                foreach (TEnum val in value)
+                {
+                    result.Add(val.ToString());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        #endregion AddArray2
+
+        #region AddArray3
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, string[][][] values)
+        {
+            return Add(new HonooProperty(key, values));
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, bool[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (bool[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (bool[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (bool v in val)
+                    {
+                        res.Add(v.ToString());
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, sbyte[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (sbyte[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (sbyte[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (sbyte v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, byte[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (byte[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (byte[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (byte v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, short[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (short[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (short[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (short v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, ushort[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (ushort[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (ushort[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (ushort v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, int[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (int[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (int[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (int v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, uint[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (uint[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (uint[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (uint v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, long[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (long[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (long[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (long v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, ulong[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (ulong[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (ulong[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (ulong v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, float[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (float[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (float[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (float v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, double[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (double[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (double[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (double v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, decimal[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (decimal[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (decimal[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (decimal v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, char[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (char[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (char[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (char v in val)
+                    {
+                        res.Add(v.ToString(CultureInfo.InvariantCulture));
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add(string key, Binaries[][][] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (Binaries[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (Binaries[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (Binaries v in val)
+                    {
+                        res.Add(v.Hex);
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty Add<TEnum>(string key, TEnum[][][] values) where TEnum : Enum
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<string[][]> resultX = new List<string[][]>();
+            foreach (TEnum[][] value in values)
+            {
+                List<string[]> result = new List<string[]>();
+                foreach (TEnum[] val in value)
+                {
+                    List<string> res = new List<string>();
+                    foreach (TEnum v in val)
+                    {
+                        res.Add(v.ToString());
+                    }
+                    result.Add(res.ToArray());
+                }
+                resultX.Add(result.ToArray());
+            }
+            return Add(key, resultX.ToArray());
+        }
+
+        #endregion AddArray3
 
         #region AddOrUpdate
 
@@ -662,7 +1538,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, string value)
         {
-            return AddOrUpdate(new HonooProperty(key, value));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -674,7 +1551,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, bool value)
         {
-            return AddOrUpdate(key, value.ToString());
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -686,7 +1564,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, sbyte value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -698,7 +1577,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, byte value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -710,7 +1590,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, short value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -722,7 +1603,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ushort value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -734,7 +1616,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, int value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -746,7 +1629,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, uint value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -758,7 +1642,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, long value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -770,7 +1655,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ulong value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -782,7 +1668,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, float value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -794,7 +1681,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, double value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -806,7 +1694,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, decimal value)
         {
-            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -818,7 +1707,8 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, char value)
         {
-            return AddOrUpdate(key, value.ToString());
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -828,9 +1718,10 @@ namespace Honoo.Configuration
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdate(string key, byte[] value)
+        public HonooProperty AddOrUpdate(string key, Binaries value)
         {
-            return AddOrUpdate(key, BitConverter.ToString(value).Replace("-", string.Empty));
+            Remove(key);
+            return Add(key, value);
         }
 
         /// <summary>
@@ -842,12 +1733,13 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate<TEnum>(string key, TEnum value) where TEnum : Enum
         {
-            return AddOrUpdate(key, value.ToString());
+            Remove(key);
+            return Add(key, value);
         }
 
         #endregion AddOrUpdate
 
-        #region AddOrUpdateArray
+        #region AddOrUpdateArray1
 
         /// <summary>
         /// 添加或更新一个配置属性。
@@ -856,9 +1748,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, string[][][] values)
+        public HonooProperty AddOrUpdate(string key, IList<string> values)
         {
-            return AddOrUpdate(new HonooProperty(key, values));
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -868,9 +1761,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, string[][] values)
+        public HonooProperty AddOrUpdate(string key, IList<bool> values)
         {
-            return AddOrUpdate(new HonooProperty(key, values));
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -880,9 +1774,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<string> values)
+        public HonooProperty AddOrUpdate(string key, IList<sbyte> values)
         {
-            return AddOrUpdate(new HonooProperty(key, values));
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -892,18 +1787,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<bool> values)
+        public HonooProperty AddOrUpdate(string key, IList<byte> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (bool value in values)
-            {
-                result.Add(value.ToString());
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -913,18 +1800,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<sbyte> values)
+        public HonooProperty AddOrUpdate(string key, IList<short> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (sbyte value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -934,18 +1813,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<byte> values)
+        public HonooProperty AddOrUpdate(string key, IList<ushort> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (byte value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -955,18 +1826,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<short> values)
+        public HonooProperty AddOrUpdate(string key, IList<int> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (short value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -976,18 +1839,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<ushort> values)
+        public HonooProperty AddOrUpdate(string key, IList<uint> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (ushort value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -997,18 +1852,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<int> values)
+        public HonooProperty AddOrUpdate(string key, IList<long> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (int value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -1018,18 +1865,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<uint> values)
+        public HonooProperty AddOrUpdate(string key, IList<ulong> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (uint value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -1039,18 +1878,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<long> values)
+        public HonooProperty AddOrUpdate(string key, IList<float> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (long value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -1060,18 +1891,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<ulong> values)
+        public HonooProperty AddOrUpdate(string key, IList<double> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (ulong value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -1081,18 +1904,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<float> values)
+        public HonooProperty AddOrUpdate(string key, IList<decimal> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (float value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -1102,18 +1917,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<double> values)
+        public HonooProperty AddOrUpdate(string key, IList<char> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (double value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -1123,18 +1930,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<decimal> values)
+        public HonooProperty AddOrUpdate(string key, IList<Binaries> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (decimal value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -1144,18 +1943,27 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<char> values)
+        public HonooProperty AddOrUpdate<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (char value in values)
-            {
-                result.Add(value.ToString());
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
+        }
+
+        #endregion AddOrUpdateArray1
+
+        #region AddOrUpdateArray2
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, string[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -1165,18 +1973,10 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray(string key, IList<byte[]> values)
+        public HonooProperty AddOrUpdate(string key, bool[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (byte[] value in values)
-            {
-                result.Add(BitConverter.ToString(value).Replace("-", string.Empty));
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
         /// <summary>
@@ -1186,21 +1986,394 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty AddOrUpdateArray<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
+        public HonooProperty AddOrUpdate(string key, sbyte[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (TEnum value in values)
-            {
-                result.Add(value.ToString());
-            }
-            return AddOrUpdateArray(key, result.ToArray());
+            Remove(key);
+            return Add(key, values);
         }
 
-        #endregion AddOrUpdateArray
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, byte[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, short[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, ushort[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, int[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, uint[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, long[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, ulong[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, float[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, double[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, decimal[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, char[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, Binaries[][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate<TEnum>(string key, TEnum[][] values) where TEnum : Enum
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        #endregion AddOrUpdateArray2
+
+        #region AddOrUpdateArray3
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, string[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, bool[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, sbyte[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, byte[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, short[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, ushort[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, int[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, uint[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, long[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, ulong[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, float[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, double[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, decimal[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, char[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate(string key, Binaries[][][] values)
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooProperty AddOrUpdate<TEnum>(string key, TEnum[][][] values) where TEnum : Enum
+        {
+            Remove(key);
+            return Add(key, values);
+        }
+
+        #endregion AddOrUpdateArray3
 
         #region TryGetValue
 
@@ -1461,7 +2634,7 @@ namespace Honoo.Configuration
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out byte[] value)
+        public bool TryGetValue(string key, out Binaries value)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
@@ -1490,7 +2663,7 @@ namespace Honoo.Configuration
 
         #endregion TryGetValue
 
-        #region TryGetArrayValue
+        #region TryGetArrayValue1
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
@@ -1499,11 +2672,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out string[][][] values)
+        public bool TryGetValue(string key, out string[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1516,11 +2689,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out string[][] values)
+        public bool TryGetValue(string key, out bool[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1533,11 +2706,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out string[] values)
+        public bool TryGetValue(string key, out sbyte[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1550,11 +2723,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out bool[] values)
+        public bool TryGetValue(string key, out byte[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1567,11 +2740,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out sbyte[] values)
+        public bool TryGetValue(string key, out short[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1584,11 +2757,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out byte[] values)
+        public bool TryGetValue(string key, out ushort[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1601,11 +2774,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out short[] values)
+        public bool TryGetValue(string key, out int[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1618,11 +2791,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out ushort[] values)
+        public bool TryGetValue(string key, out uint[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1635,11 +2808,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out int[] values)
+        public bool TryGetValue(string key, out long[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1652,11 +2825,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out uint[] values)
+        public bool TryGetValue(string key, out ulong[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1669,11 +2842,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out long[] values)
+        public bool TryGetValue(string key, out float[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1686,11 +2859,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out ulong[] values)
+        public bool TryGetValue(string key, out double[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1703,11 +2876,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out float[] values)
+        public bool TryGetValue(string key, out decimal[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1720,11 +2893,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out double[] values)
+        public bool TryGetValue(string key, out char[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1737,11 +2910,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out decimal[] values)
+        public bool TryGetValue(string key, out Binaries[] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1754,11 +2927,32 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out char[] values)
+        public bool TryGetValue<TEnum>(string key, out TEnum[] values) where TEnum : struct
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        #endregion TryGetArrayValue1
+
+        #region TryGetArrayValue2
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out string[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1771,11 +2965,11 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue(string key, out byte[][] values)
+        public bool TryGetValue(string key, out bool[][] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
@@ -1788,17 +2982,514 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetArrayValue<TEnum>(string key, out TEnum[] values) where TEnum : struct
+        public bool TryGetValue(string key, out sbyte[][] values)
         {
             if (TryGetValue(key, out HonooProperty val))
             {
-                return val.TryGetArrayValue(out values);
+                return val.TryGetValue(out values);
             }
             values = default;
             return false;
         }
 
-        #endregion TryGetArrayValue
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out byte[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out short[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out ushort[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out int[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out uint[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out long[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out ulong[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out float[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out double[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out decimal[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out char[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out Binaries[][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue<TEnum>(string key, out TEnum[][] values) where TEnum : struct
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        #endregion TryGetArrayValue2
+
+        #region TryGetArrayValue3
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out string[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out bool[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out sbyte[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out byte[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out short[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out ushort[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out int[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out uint[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out long[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out ulong[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out float[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out double[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out decimal[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out char[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue(string key, out Binaries[][][] values)
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="values">配置属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool TryGetValue<TEnum>(string key, out TEnum[][][] values) where TEnum : struct
+        {
+            if (TryGetValue(key, out HonooProperty val))
+            {
+                return val.TryGetValue(out values);
+            }
+            values = default;
+            return false;
+        }
+
+        #endregion TryGetArrayValue3
 
         #region GetValue
 
@@ -1988,9 +3679,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte[] GetValue(string key, byte[] defaultValue)
+        public Binaries GetValue(string key, Binaries defaultValue)
         {
-            return TryGetValue(key, out byte[] value) ? value : defaultValue;
+            return TryGetValue(key, out Binaries value) ? value : defaultValue;
         }
 
         /// <summary>
@@ -2007,7 +3698,7 @@ namespace Honoo.Configuration
 
         #endregion GetValue
 
-        #region GetArrayValue
+        #region GetArrayValue1
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
@@ -2016,9 +3707,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string[][][] GetArrayValue(string key, string[][][] defaultValues)
+        public string[] GetValue(string key, string[] defaultValues)
         {
-            return TryGetArrayValue(key, out string[][][] values) ? values : defaultValues;
+            return TryGetValue(key, out string[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2028,9 +3719,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string[][] GetArrayValue(string key, string[][] defaultValues)
+        public bool[] GetValue(string key, bool[] defaultValues)
         {
-            return TryGetArrayValue(key, out string[][] values) ? values : defaultValues;
+            return TryGetValue(key, out bool[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2040,9 +3731,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string[] GetArrayValue(string key, string[] defaultValues)
+        public sbyte[] GetValue(string key, sbyte[] defaultValues)
         {
-            return TryGetArrayValue(key, out string[] values) ? values : defaultValues;
+            return TryGetValue(key, out sbyte[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2052,9 +3743,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool[] GetArrayValue(string key, bool[] defaultValues)
+        public byte[] GetValue(string key, byte[] defaultValues)
         {
-            return TryGetArrayValue(key, out bool[] values) ? values : defaultValues;
+            return TryGetValue(key, out byte[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2064,9 +3755,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public sbyte[] GetArrayValue(string key, sbyte[] defaultValues)
+        public short[] GetValue(string key, short[] defaultValues)
         {
-            return TryGetArrayValue(key, out sbyte[] values) ? values : defaultValues;
+            return TryGetValue(key, out short[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2076,9 +3767,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte[] GetArrayValue(string key, byte[] defaultValues)
+        public ushort[] GetValue(string key, ushort[] defaultValues)
         {
-            return TryGetArrayValue(key, out byte[] values) ? values : defaultValues;
+            return TryGetValue(key, out ushort[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2088,9 +3779,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public short[] GetArrayValue(string key, short[] defaultValues)
+        public int[] GetValue(string key, int[] defaultValues)
         {
-            return TryGetArrayValue(key, out short[] values) ? values : defaultValues;
+            return TryGetValue(key, out int[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2100,9 +3791,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ushort[] GetArrayValue(string key, ushort[] defaultValues)
+        public uint[] GetValue(string key, uint[] defaultValues)
         {
-            return TryGetArrayValue(key, out ushort[] values) ? values : defaultValues;
+            return TryGetValue(key, out uint[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2112,9 +3803,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public int[] GetArrayValue(string key, int[] defaultValues)
+        public long[] GetValue(string key, long[] defaultValues)
         {
-            return TryGetArrayValue(key, out int[] values) ? values : defaultValues;
+            return TryGetValue(key, out long[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2124,9 +3815,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public uint[] GetArrayValue(string key, uint[] defaultValues)
+        public ulong[] GetValue(string key, ulong[] defaultValues)
         {
-            return TryGetArrayValue(key, out uint[] values) ? values : defaultValues;
+            return TryGetValue(key, out ulong[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2136,9 +3827,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public long[] GetArrayValue(string key, long[] defaultValues)
+        public float[] GetValue(string key, float[] defaultValues)
         {
-            return TryGetArrayValue(key, out long[] values) ? values : defaultValues;
+            return TryGetValue(key, out float[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2148,9 +3839,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ulong[] GetArrayValue(string key, ulong[] defaultValues)
+        public double[] GetValue(string key, double[] defaultValues)
         {
-            return TryGetArrayValue(key, out ulong[] values) ? values : defaultValues;
+            return TryGetValue(key, out double[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2160,9 +3851,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public float[] GetArrayValue(string key, float[] defaultValues)
+        public decimal[] GetValue(string key, decimal[] defaultValues)
         {
-            return TryGetArrayValue(key, out float[] values) ? values : defaultValues;
+            return TryGetValue(key, out decimal[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2172,9 +3863,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public double[] GetArrayValue(string key, double[] defaultValues)
+        public char[] GetValue(string key, char[] defaultValues)
         {
-            return TryGetArrayValue(key, out double[] values) ? values : defaultValues;
+            return TryGetValue(key, out char[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2184,9 +3875,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public decimal[] GetArrayValue(string key, decimal[] defaultValues)
+        public Binaries[] GetValue(string key, Binaries[] defaultValues)
         {
-            return TryGetArrayValue(key, out decimal[] values) ? values : defaultValues;
+            return TryGetValue(key, out Binaries[] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2196,9 +3887,25 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public char[] GetArrayValue(string key, char[] defaultValues)
+        public TEnum[] GetValue<TEnum>(string key, TEnum[] defaultValues) where TEnum : struct
         {
-            return TryGetArrayValue(key, out char[] values) ? values : defaultValues;
+            return TryGetValue(key, out TEnum[] values) ? values : defaultValues;
+        }
+
+        #endregion GetArrayValue1
+
+        #region GetArrayValue2
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string[][] GetValue(string key, string[][] defaultValues)
+        {
+            return TryGetValue(key, out string[][] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2208,9 +3915,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte[][] GetArrayValue(string key, byte[][] defaultValues)
+        public bool[][] GetValue(string key, bool[][] defaultValues)
         {
-            return TryGetArrayValue(key, out byte[][] values) ? values : defaultValues;
+            return TryGetValue(key, out bool[][] values) ? values : defaultValues;
         }
 
         /// <summary>
@@ -2220,12 +3927,364 @@ namespace Honoo.Configuration
         /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public TEnum[] GetArrayValue<TEnum>(string key, TEnum[] defaultValues) where TEnum : struct
+        public sbyte[][] GetValue(string key, sbyte[][] defaultValues)
         {
-            return TryGetArrayValue(key, out TEnum[] values) ? values : defaultValues;
+            return TryGetValue(key, out sbyte[][] values) ? values : defaultValues;
         }
 
-        #endregion GetArrayValue
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public byte[][] GetValue(string key, byte[][] defaultValues)
+        {
+            return TryGetValue(key, out byte[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public short[][] GetValue(string key, short[][] defaultValues)
+        {
+            return TryGetValue(key, out short[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ushort[][] GetValue(string key, ushort[][] defaultValues)
+        {
+            return TryGetValue(key, out ushort[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public int[][] GetValue(string key, int[][] defaultValues)
+        {
+            return TryGetValue(key, out int[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public uint[][] GetValue(string key, uint[][] defaultValues)
+        {
+            return TryGetValue(key, out uint[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public long[][] GetValue(string key, long[][] defaultValues)
+        {
+            return TryGetValue(key, out long[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ulong[][] GetValue(string key, ulong[][] defaultValues)
+        {
+            return TryGetValue(key, out ulong[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public float[][] GetValue(string key, float[][] defaultValues)
+        {
+            return TryGetValue(key, out float[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public double[][] GetValue(string key, double[][] defaultValues)
+        {
+            return TryGetValue(key, out double[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public decimal[][] GetValue(string key, decimal[][] defaultValues)
+        {
+            return TryGetValue(key, out decimal[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public char[][] GetValue(string key, char[][] defaultValues)
+        {
+            return TryGetValue(key, out char[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public Binaries[][] GetValue(string key, Binaries[][] defaultValues)
+        {
+            return TryGetValue(key, out Binaries[][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public TEnum[][] GetValue<TEnum>(string key, TEnum[][] defaultValues) where TEnum : struct
+        {
+            return TryGetValue(key, out TEnum[][] values) ? values : defaultValues;
+        }
+
+        #endregion GetArrayValue2
+
+        #region GetArrayValue3
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string[][][] GetValue(string key, string[][][] defaultValues)
+        {
+            return TryGetValue(key, out string[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public bool[][][] GetValue(string key, bool[][][] defaultValues)
+        {
+            return TryGetValue(key, out bool[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public sbyte[][][] GetValue(string key, sbyte[][][] defaultValues)
+        {
+            return TryGetValue(key, out sbyte[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public byte[][][] GetValue(string key, byte[][][] defaultValues)
+        {
+            return TryGetValue(key, out byte[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public short[][][] GetValue(string key, short[][][] defaultValues)
+        {
+            return TryGetValue(key, out short[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ushort[][][] GetValue(string key, ushort[][][] defaultValues)
+        {
+            return TryGetValue(key, out ushort[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public int[][][] GetValue(string key, int[][][] defaultValues)
+        {
+            return TryGetValue(key, out int[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public uint[][][] GetValue(string key, uint[][][] defaultValues)
+        {
+            return TryGetValue(key, out uint[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public long[][][] GetValue(string key, long[][][] defaultValues)
+        {
+            return TryGetValue(key, out long[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ulong[][][] GetValue(string key, ulong[][][] defaultValues)
+        {
+            return TryGetValue(key, out ulong[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public float[][][] GetValue(string key, float[][][] defaultValues)
+        {
+            return TryGetValue(key, out float[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public double[][][] GetValue(string key, double[][][] defaultValues)
+        {
+            return TryGetValue(key, out double[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public decimal[][][] GetValue(string key, decimal[][][] defaultValues)
+        {
+            return TryGetValue(key, out decimal[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public char[][][] GetValue(string key, char[][][] defaultValues)
+        {
+            return TryGetValue(key, out char[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public Binaries[][][] GetValue(string key, Binaries[][][] defaultValues)
+        {
+            return TryGetValue(key, out Binaries[][][] values) ? values : defaultValues;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，仍返回 <paramref name="defaultValues"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public TEnum[][][] GetValue<TEnum>(string key, TEnum[][][] defaultValues) where TEnum : struct
+        {
+            return TryGetValue(key, out TEnum[][][] values) ? values : defaultValues;
+        }
+
+        #endregion GetArrayValue3
 
         /// <summary>
         /// 从配置属性集合中移除所有配置属性。

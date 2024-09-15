@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
@@ -333,9 +334,13 @@ namespace Honoo.Configuration
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty Add(string key, byte[] value)
+        public AddProperty Add(string key, Binaries value)
         {
-            return Add(key, BitConverter.ToString(value).Replace("-", string.Empty));
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            return Add(key, value.Hex);
         }
 
         /// <summary>
@@ -825,16 +830,16 @@ namespace Honoo.Configuration
         /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out byte[][] values)
+        public bool TryGetValue(string key, out Binaries[] values)
         {
-            List<byte[]> result = new List<byte[]>();
+            List<Binaries> result = new List<Binaries>();
             for (int i = 0; i < _properties.Count; i++)
             {
                 if (_properties[i] is AddProperty property)
                 {
                     if (property.Key == key)
                     {
-                        if (property.TryGetValue(out byte[] val))
+                        if (property.TryGetValue(out Binaries val))
                         {
                             result.Add(val);
                         }
@@ -1072,9 +1077,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte[][] GetValue(string key, byte[][] defaultValue)
+        public Binaries[] GetValue(string key, Binaries[] defaultValue)
         {
-            return TryGetValue(key, out byte[][] values) ? values : defaultValue;
+            return TryGetValue(key, out Binaries[] values) ? values : defaultValue;
         }
 
         /// <summary>

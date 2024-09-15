@@ -25,7 +25,7 @@ Provide "HonooSettingsManager" class to read/write a concise configuration file,
     <PackageTags>Honoo;Configuration;ConfigurationManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-	<VersionPrefix>1.4.11</VersionPrefix>
+	<VersionPrefix>1.4.12</VersionPrefix>
     <PackageReadmeFile>Honoo.Configuration.ConfigurationManager.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>

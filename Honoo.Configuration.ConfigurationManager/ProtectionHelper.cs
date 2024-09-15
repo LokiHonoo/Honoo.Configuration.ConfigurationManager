@@ -7,6 +7,7 @@ namespace Honoo.Configuration
 {
     internal static class ProtectionHelper
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5350:不要使用弱加密算法", Justification = "<挂起>")]
         internal static XElement Decrypt(XElement root, RSACryptoServiceProvider rsa)
         {
             XName name = root.Name;
@@ -60,6 +61,17 @@ namespace Honoo.Configuration
                     }
                     break;
 
+                case "http://www.w3.org/2001/04/xmlenc#tripledes-cbc":
+                    using (TripleDESCryptoServiceProvider algorithm = new TripleDESCryptoServiceProvider() { KeySize = 192 })
+                    {
+                        byte[] key = new byte[24];
+                        Buffer.BlockCopy(pms, 0, key, 0, 24);
+                        byte[] iv = new byte[8];
+                        Buffer.BlockCopy(pms, 24, iv, 0, 8);
+                        data = Decrypt(algorithm, key, iv, dataEncrypted);
+                    }
+                    break;
+
                 default: break;
             }
             return XElement.Parse(Encoding.UTF8.GetString(data));
@@ -98,7 +110,7 @@ namespace Honoo.Configuration
             return result;
         }
 
-        private static byte[] Decrypt(AesCryptoServiceProvider algorithm, byte[] key, byte[] iv, byte[] data)
+        private static byte[] Decrypt(SymmetricAlgorithm algorithm, byte[] key, byte[] iv, byte[] data)
         {
             using (var decryptor = algorithm.CreateDecryptor(key, iv))
             {

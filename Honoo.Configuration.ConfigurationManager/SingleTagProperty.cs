@@ -196,9 +196,15 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
-        public bool TryGetValue(out byte[] value)
+        public bool TryGetValue(out Binaries value)
         {
-            return XValueHelper.TryParse(_value, out value);
+            if (XValueHelper.TryParse(_value, out byte[] val))
+            {
+                value = new Binaries(val);
+                return true;
+            }
+            value = null;
+            return false;
         }
 
         /// <summary>
@@ -380,9 +386,9 @@ namespace Honoo.Configuration
         /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte[] GetValue(byte[] defaultValue)
+        public Binaries GetValue(Binaries defaultValue)
         {
-            return TryGetValue(out byte[] value) ? value : defaultValue;
+            return TryGetValue(out Binaries value) ? value : defaultValue;
         }
 
         /// <summary>

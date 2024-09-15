@@ -21,8 +21,8 @@ namespace Test
                 // 赋值并设置注释。
                 //
                 manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
-                manager.AppSettings.Properties.AddOrUpdate("prop2", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
-                manager.AppSettings.Properties.AddOrUpdate("prop3", 123456789);
+                manager.AppSettings.Properties.AddOrUpdate("prop2", 123456789);
+                manager.AppSettings.Properties.AddOrUpdate("prop3", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
                 manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
                 manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
                 //
@@ -46,15 +46,18 @@ namespace Test
                 //
                 // 取出属性和注释。
                 //
-                AddProperty value2 = manager.AppSettings.Properties.GetValue("prop1");
-                if (value2.TryGetComment(out string comment2))
+                AddProperty value1 = manager.AppSettings.Properties.GetValue("prop1");
+                if (value1.TryGetComment(out string comment1))
                 {
-                    Console.WriteLine(comment2);
+                    Console.WriteLine(comment1);
                 }
-                Console.WriteLine(value2.Value);
+                Console.WriteLine(value1.Value);
                 //
-                int value3 = manager.AppSettings.Properties.GetValue("prop3", 55555);
-                Console.WriteLine(value3);
+                int value2 = manager.AppSettings.Properties.GetValue("prop2", 55555);
+                Console.WriteLine(value2);
+                //
+                AddProperty value3 = manager.AppSettings.Properties["prop3"];
+                Console.WriteLine(value3.GetValue(Binaries.Empty));
                 //
                 if (manager.AppSettings.Properties.TryGetValue("prop4", out LoaderOptimization value4))
                 {
