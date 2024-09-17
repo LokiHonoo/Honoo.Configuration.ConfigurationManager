@@ -181,24 +181,19 @@ namespace Honoo.Configuration
         /// 创建 ConfigurationManager 的新实例。
         /// </summary>
         /// <param name="stream">指定配置文件的流。</param>
-        /// <param name="closeStream">读取完成后关闭流。</param>
         /// <param name="protectionAlgorithm">
         /// 指定一个非对称加密算法，用于读取加密配置文件。
         /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public ConfigurationManager(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public ConfigurationManager(Stream stream, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
             _root = XElement.Load(stream);
-            if (closeStream)
-            {
-                stream.Close();
-            }
             _root = Coerce(_root, protectionAlgorithm);
             _root.Changed += (s, e) => { OnChanged(); };
         }
@@ -207,24 +202,19 @@ namespace Honoo.Configuration
         /// 创建 ConfigurationManager 的新实例。
         /// </summary>
         /// <param name="reader">指定配置文件的读取器。</param>
-        /// <param name="closeReader">读取完成后关闭读取器。</param>
         /// <param name="protectionAlgorithm">
         /// 指定一个非对称加密算法，用于读取加密配置文件。
         /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public ConfigurationManager(XmlReader reader, bool closeReader = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public ConfigurationManager(XmlReader reader, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (reader == null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
             _root = XElement.Load(reader);
-            if (closeReader)
-            {
-                reader.Close();
-            }
             _root = Coerce(_root, protectionAlgorithm);
             _root.Changed += (s, e) => { OnChanged(); };
         }

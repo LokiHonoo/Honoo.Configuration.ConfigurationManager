@@ -148,11 +148,11 @@ internal static void Create(string filePath)
         };
         SqlConnection connection = new SqlConnection(builder.ConnectionString);
         //
-        // 赋值并设置注释。如果不设置引擎参数，读取时不能访问连接实例。
+        // 赋值并设置注释。
         //
         manager.ConnectionStrings.Properties.AddOrUpdate("prop1", connection).SetComment("This is \"connectionStrings\" prop1 comment.");
         manager.ConnectionStrings.Properties.AddOrUpdate("prop2", connection.ConnectionString, connection.GetType().Namespace);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop3", connection.ConnectionString, typeof(SqlConnection).AssemblyQualifiedName);
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop3", connection.ConnectionString, string.Empty);
         manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).SetComment("It's will remove this.");
         //
         // 移除属性的方法。
@@ -188,7 +188,7 @@ internal static void Load(string filePath)
             //
             // 访问实例。
             //
-            SqlConnection connection = (SqlConnection)value2.CreateInstance();
+            SqlConnection connection = value2.CreateInstance<SqlConnection>();
             Console.WriteLine(connection.ConnectionString);
         }
     }
@@ -478,7 +478,7 @@ public static async void Test()
 
 ### 1.4.11
 
-**Features* HonooSettingsManager 增加多维数组支持。
+**Features* HonooSettingsManager 增加 2 维数组和 3 维数组支持。
 
 ### 1.4.10
 

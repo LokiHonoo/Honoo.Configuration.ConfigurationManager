@@ -30,25 +30,32 @@ namespace Test
                 "<D>T/HI9dZFQ2XkBB2SvFSFQqwnPzIyLeqekSJcqm782E3iDk4wF7VQgmdW0Yqil/HhE5IBAxc4q6VsTdkhHa8aIGLLpMsks5rvCZrTIy+5x4zG/XkVIgxjQ2xOx3KR/xuGisxOzI+jgc6I8DGBw7tSaCVfynNqVe4jgGov7szGMBU=</D>" +
                 "</RSAKeyValue>");
             StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, writerSettings);
-            //
-            // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
-            //
-            using (ConfigurationManager manager = new ConfigurationManager())
+            using (XmlWriter writer = XmlWriter.Create(sb, writerSettings))
             {
-                manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"protection\" test.").SetComment("This is \"protection\" test.");
                 //
-                // 加密方式保存到指定的文件。
+                // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
                 //
-                manager.Save(writer, rsa);
-                writer.Close();
+                using (ConfigurationManager manager = new ConfigurationManager())
+                {
+                    manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"protection\" test.").SetComment("This is \"protection\" test.");
+                    //
+                    // 加密方式保存到指定的文件。
+                    //
+                    manager.Save(writer, rsa);
+                    writer.Close();
+                }
             }
             Console.WriteLine(sb.ToString());
             Console.WriteLine();
-            XmlReader reader = XmlReader.Create(new StringReader(sb.ToString()));
-            using (ConfigurationManager manager = new ConfigurationManager(reader, true, rsa))
+            //
+            //
+            //
+            using (XmlReader reader = XmlReader.Create(new StringReader(sb.ToString())))
             {
-                Console.WriteLine(manager.GetXmlString());
+                using (ConfigurationManager manager = new ConfigurationManager(reader, rsa))
+                {
+                    Console.WriteLine(manager.GetXmlString());
+                }
             }
             Console.WriteLine();
             Console.WriteLine();
@@ -57,25 +64,29 @@ namespace Test
             //
             //
             sb = new StringBuilder();
-            writer = XmlWriter.Create(sb, writerSettings);
-            //
-            // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
-            //
-            using (HonooSettingsManager manager = new HonooSettingsManager())
+            using (XmlWriter writer = XmlWriter.Create(sb, writerSettings))
             {
-                manager.Default.Properties.AddOrUpdate("prop1", "This is \"protection\" test.").SetComment("This is \"protection\" test.");
-                //
-                // 加密方式保存到指定的文件。
-                //
-                manager.Save(writer, rsa);
-                writer.Close();
+                using (HonooSettingsManager manager = new HonooSettingsManager())
+                {
+                    manager.Default.Properties.AddOrUpdate("prop1", "This is \"protection\" test.").SetComment("This is \"protection\" test.");
+                    //
+                    // 加密方式保存到指定的文件。
+                    //
+                    manager.Save(writer, rsa);
+                    writer.Close();
+                }
             }
             Console.WriteLine(sb.ToString());
             Console.WriteLine();
-            reader = XmlReader.Create(new StringReader(sb.ToString()));
-            using (HonooSettingsManager manager = new HonooSettingsManager(reader, true, rsa))
+            //
+            // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
+            //
+            using (XmlReader reader = XmlReader.Create(new StringReader(sb.ToString())))
             {
-                Console.WriteLine(manager.GetXmlString());
+                using (HonooSettingsManager manager = new HonooSettingsManager(reader, rsa))
+                {
+                    Console.WriteLine(manager.GetXmlString());
+                }
             }
         }
     }

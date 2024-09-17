@@ -9,20 +9,21 @@
 	<SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Honoo.Configuration.ConfigurationManager.snk</AssemblyOriginatorKeyFile>
     <Authors>Loki Honoo</Authors>
-    <Description>The project is a replacement for "System.Configuration.ConfigurationManager".
-Used to read/write default profiles or custom profiles in the .NET Framework 4.0+/.NET Standard 2.0+.
+    <Description>
+		The project is a replacement for "System.Configuration.ConfigurationManager".
+		Used to read/write default profiles or custom profiles in the .NET Framework 4.0+/.NET Standard 2.0+.
 
-Read/write support for appSettings, connectionStrings, configSections, assemblyBinding/linkedConfiguration nodes.
+		Read/write support for appSettings, connectionStrings, configSections, assemblyBinding/linkedConfiguration nodes.
 
-Provides an method to encrypt the configuration file. 
+		Provides an method to encrypt the configuration file.
 
-Waring: The encryption method is different from ASP.NET, and the generated encryption file can only using by this project tool.
+		Waring: The encryption method is different from ASP.NET, and the generated encryption file can only using by this project tool.
 
-Provide "HonooSettingsManager" class to read/write a concise configuration file, using dictionary type, support encryption, and support single value and array values.</Description>
+		Provides "HonooSettingsManager" class to read/write a concise configuration file, using dictionary type, support encryption, and support single value and array values.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager</PackageProjectUrl>
     <RepositoryUrl>https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager</RepositoryUrl>
-    <PackageTags>Honoo;Configuration;ConfigurationManager</PackageTags>
+    <PackageTags>Honoo;Configuration;ConfigurationManager;HonooSettingsManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
 	<VersionPrefix>1.4.12</VersionPrefix>
@@ -30,7 +31,6 @@ Provide "HonooSettingsManager" class to read/write a concise configuration file,
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-all</AnalysisLevel>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	<BaseOutputPath>..\bin\</BaseOutputPath>
   </PropertyGroup>

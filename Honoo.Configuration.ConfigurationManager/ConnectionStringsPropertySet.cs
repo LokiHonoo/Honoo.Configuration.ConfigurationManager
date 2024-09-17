@@ -27,7 +27,8 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
         /// <returns></returns>
-        public ConnectionStringProperty this[string name]=> GetValue(name);
+        /// <exception cref="Exception"/>
+        public ConnectionStringProperty this[string name] => GetValue(name);
 
         #endregion Properties
 

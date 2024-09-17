@@ -21,12 +21,15 @@ namespace Honoo.Configuration
         /// 获取配置组集合中包含的元素数。
         /// </summary>
         public int Count => _groups.Count;
+
         /// <summary>
         /// 获取与指定名称关联的配置组。
         /// </summary>
         /// <param name="name">配置组的名称。</param>
         /// <returns></returns>
-        public ConfigSectionGroup this[string name]=> GetValue(name);
+        /// <exception cref="Exception"/>
+        public ConfigSectionGroup this[string name] => GetValue(name);
+
         #endregion Properties
 
         #region Construction

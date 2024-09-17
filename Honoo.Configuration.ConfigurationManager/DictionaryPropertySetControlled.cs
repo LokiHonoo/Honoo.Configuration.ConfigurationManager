@@ -26,6 +26,7 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
+        /// <exception cref="Exception"/>
         public AddProperty this[string key] => GetValue(key);
 
         #endregion Properties

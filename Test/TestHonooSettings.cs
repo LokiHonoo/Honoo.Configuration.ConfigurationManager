@@ -19,7 +19,7 @@ namespace Test
                 //
                 // 赋值并设置注释。
                 //
-                manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 value.");
+                manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 comment.");
                 manager.Default.Properties.AddOrUpdate("prop2", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
                 manager.Default.Properties.AddOrUpdate("prop3", 123456789);
                 manager.Default.Properties.AddOrUpdate("prop4", new int[] { 1, 2, 3, 4, 5 });
@@ -82,7 +82,7 @@ namespace Test
                     Console.WriteLine(val4);
                 }
                 //
-                manager.Default.Properties.TryGetValue("prop6", out string[][][] value6);
+                manager.Default.Properties.TryGetValue("prop6", out string[][][] _);
                 //
                 HonooSection section = manager.Sections.GetValue("section1");
                 Console.WriteLine(section.GetComment());

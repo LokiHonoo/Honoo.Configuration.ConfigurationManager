@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
@@ -72,7 +71,7 @@ namespace Honoo.Configuration
         #region Add
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="property">配置属性的值。</param>
         /// <returns></returns>

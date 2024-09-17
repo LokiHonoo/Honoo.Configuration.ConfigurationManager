@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Xml;
@@ -29,6 +28,7 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
+        /// <exception cref="Exception"/>
         public HonooProperty this[string key] => GetValue(key);
 
         #endregion Properties
@@ -1514,7 +1514,7 @@ namespace Honoo.Configuration
         #region AddOrUpdate
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="property">配置属性的值。</param>
         /// <returns></returns>
@@ -1530,7 +1530,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1543,7 +1543,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1556,7 +1556,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1569,7 +1569,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1582,7 +1582,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1595,7 +1595,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1608,7 +1608,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1621,7 +1621,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1634,7 +1634,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1647,7 +1647,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1660,7 +1660,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1673,7 +1673,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1686,7 +1686,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1699,7 +1699,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1712,7 +1712,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1725,7 +1725,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1742,7 +1742,7 @@ namespace Honoo.Configuration
         #region AddOrUpdateArray1
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1755,7 +1755,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1768,7 +1768,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1781,7 +1781,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1794,7 +1794,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1807,7 +1807,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1820,7 +1820,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1833,7 +1833,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1846,7 +1846,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1859,7 +1859,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1872,7 +1872,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1885,7 +1885,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1898,7 +1898,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1911,7 +1911,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1924,7 +1924,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1937,7 +1937,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1954,7 +1954,7 @@ namespace Honoo.Configuration
         #region AddOrUpdateArray2
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1967,7 +1967,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1980,7 +1980,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1993,7 +1993,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2006,7 +2006,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2019,7 +2019,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2032,7 +2032,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2045,7 +2045,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2058,7 +2058,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2071,7 +2071,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2084,7 +2084,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2097,7 +2097,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2110,7 +2110,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2123,7 +2123,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2136,7 +2136,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2149,7 +2149,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2166,7 +2166,7 @@ namespace Honoo.Configuration
         #region AddOrUpdateArray3
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2179,7 +2179,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2192,7 +2192,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2205,7 +2205,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2218,7 +2218,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2231,7 +2231,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2244,7 +2244,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2257,7 +2257,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2270,7 +2270,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2283,7 +2283,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2296,7 +2296,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2309,7 +2309,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2322,7 +2322,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2335,7 +2335,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2348,7 +2348,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2361,7 +2361,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。
+        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>

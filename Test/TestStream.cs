@@ -34,8 +34,9 @@ namespace Test
             //
             using (FileStream input = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                using (ConfigurationManager manager = new ConfigurationManager(input, true))
+                using (ConfigurationManager manager = new ConfigurationManager(input))
                 {
+                    input.Close();
                     //
                     // 保存到指定的流。
                     //

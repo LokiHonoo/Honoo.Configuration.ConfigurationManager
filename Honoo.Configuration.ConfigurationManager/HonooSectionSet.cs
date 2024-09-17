@@ -26,6 +26,7 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
+        /// <exception cref="Exception"/>
         public HonooSection this[string name] => GetValue(name);
 
         #endregion Properties

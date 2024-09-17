@@ -23,7 +23,7 @@ Provides an method to encrypt the configuration file.
 
 Waring: The encryption method is different from ASP.NET, and the generated encryption file can only using by this project tool.
 
-Provide "HonooSettingsManager"" class to read/write a concise configuration file, using dictionary type, support encryption, and support single value and array values.
+Provides "HonooSettingsManager" class to read/write a concise configuration file, using dictionary type, support encryption, and support single value and array values.
 
 ## GUIDE
 
