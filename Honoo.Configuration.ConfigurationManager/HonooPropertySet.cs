@@ -316,16 +316,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<bool> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (bool value in values)
-            {
-                result.Add(value.ToString());
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -337,16 +328,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<sbyte> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (sbyte value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -358,16 +340,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<byte> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (byte value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -379,16 +352,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<short> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (short value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -400,16 +364,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<ushort> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (ushort value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -421,16 +376,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<int> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (int value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -442,16 +388,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<uint> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (uint value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -463,16 +400,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<long> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (long value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -484,16 +412,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<ulong> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (ulong value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -505,16 +424,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<float> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (float value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -526,16 +436,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<double> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (double value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -547,16 +448,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<decimal> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (decimal value in values)
-            {
-                result.Add(value.ToString(CultureInfo.InvariantCulture));
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -568,16 +460,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<char> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (char value in values)
-            {
-                result.Add(value.ToString());
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -589,16 +472,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, IList<Binaries> values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (Binaries value in values)
-            {
-                result.Add(value.Hex);
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         /// <summary>
@@ -610,16 +484,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string> result = new List<string>();
-            foreach (TEnum value in values)
-            {
-                result.Add(value.ToString());
-            }
-            return Add(key, result.ToArray());
+            return Add(key, XValueHelper.Convert(values));
         }
 
         #endregion AddArray1
@@ -647,21 +512,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, bool[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (bool[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (bool val in value)
-                {
-                    result.Add(val.ToString());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -673,21 +524,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, sbyte[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (sbyte[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (sbyte val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -699,21 +536,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, byte[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (byte[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (byte val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -725,21 +548,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, short[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (short[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (short val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -751,21 +560,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, ushort[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (ushort[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (ushort val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -777,21 +572,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, int[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (int[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (int val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -803,21 +584,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, uint[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (uint[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (uint val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -829,21 +596,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, long[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (long[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (long val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -855,21 +608,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, ulong[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (ulong[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (ulong val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -881,21 +620,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, float[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (float[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (float val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -907,21 +632,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, double[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (double[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (double val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -933,21 +644,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, decimal[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (decimal[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (decimal val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -959,21 +656,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, char[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (char[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (char val in value)
-                {
-                    result.Add(val.ToString(CultureInfo.InvariantCulture));
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -985,21 +668,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, Binaries[][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (Binaries[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (Binaries val in value)
-                {
-                    result.Add(val.Hex);
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1011,21 +680,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add<TEnum>(string key, TEnum[][] values) where TEnum : Enum
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[]> resultX = new List<string[]>();
-            foreach (TEnum[] value in values)
-            {
-                List<string> result = new List<string>();
-                foreach (TEnum val in value)
-                {
-                    result.Add(val.ToString());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         #endregion AddArray2
@@ -1053,26 +708,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, bool[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (bool[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (bool[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (bool v in val)
-                    {
-                        res.Add(v.ToString());
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1084,26 +720,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, sbyte[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (sbyte[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (sbyte[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (sbyte v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1115,26 +732,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, byte[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (byte[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (byte[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (byte v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1146,26 +744,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, short[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (short[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (short[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (short v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1177,26 +756,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, ushort[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (ushort[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (ushort[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (ushort v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1208,26 +768,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, int[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (int[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (int[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (int v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1239,26 +780,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, uint[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (uint[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (uint[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (uint v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1270,26 +792,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, long[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (long[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (long[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (long v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1301,26 +804,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, ulong[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (ulong[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (ulong[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (ulong v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1332,26 +816,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, float[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (float[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (float[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (float v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1363,26 +828,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, double[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (double[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (double[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (double v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1394,26 +840,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, decimal[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (decimal[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (decimal[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (decimal v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1425,26 +852,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, char[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (char[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (char[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (char v in val)
-                    {
-                        res.Add(v.ToString(CultureInfo.InvariantCulture));
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1456,26 +864,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add(string key, Binaries[][][] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (Binaries[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (Binaries[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (Binaries v in val)
-                    {
-                        res.Add(v.Hex);
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
@@ -1487,26 +876,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty Add<TEnum>(string key, TEnum[][][] values) where TEnum : Enum
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            List<string[][]> resultX = new List<string[][]>();
-            foreach (TEnum[][] value in values)
-            {
-                List<string[]> result = new List<string[]>();
-                foreach (TEnum[] val in value)
-                {
-                    List<string> res = new List<string>();
-                    foreach (TEnum v in val)
-                    {
-                        res.Add(v.ToString());
-                    }
-                    result.Add(res.ToArray());
-                }
-                resultX.Add(result.ToArray());
-            }
-            return Add(key, resultX.ToArray());
+            return Add(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         #endregion AddArray3
@@ -1514,7 +884,7 @@ namespace Honoo.Configuration
         #region AddOrUpdate
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="property">配置属性的值。</param>
         /// <returns></returns>
@@ -1525,12 +895,26 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(property));
             }
-            Remove(property.Key);
-            return Add(property);
+            if (TryGetValue(property.Key, out HonooProperty prop))
+            {
+                if (property.Comment != null)
+                {
+                    prop.Content.AddBeforeSelf(property.Comment);
+                }
+                prop.Content.AddBeforeSelf(property.Content);
+                prop.Comment?.Remove();
+                prop.Content.Remove();
+                _properties[prop.Key] = property;
+                return property;
+            }
+            else
+            {
+                return Add(property);
+            }
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1538,12 +922,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, string value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(new HonooProperty(key, value));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1551,12 +934,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, bool value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString());
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1564,12 +946,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, sbyte value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1577,12 +958,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, byte value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1590,12 +970,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, short value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1603,12 +982,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ushort value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1616,12 +994,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, int value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1629,12 +1006,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, uint value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1642,12 +1018,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, long value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1655,12 +1030,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ulong value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1668,12 +1042,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, float value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1681,12 +1054,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, double value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1694,12 +1066,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, decimal value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1707,12 +1078,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, char value)
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1720,12 +1090,15 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, Binaries value)
         {
-            Remove(key);
-            return Add(key, value);
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            return AddOrUpdate(key, value.Hex);
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
@@ -1733,8 +1106,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate<TEnum>(string key, TEnum value) where TEnum : Enum
         {
-            Remove(key);
-            return Add(key, value);
+            return AddOrUpdate(key, value.ToString());
         }
 
         #endregion AddOrUpdate
@@ -1742,7 +1114,7 @@ namespace Honoo.Configuration
         #region AddOrUpdateArray1
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1750,12 +1122,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<string> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, values.ToArray()));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1763,12 +1134,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<bool> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1776,12 +1146,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<sbyte> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1789,12 +1158,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<byte> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1802,12 +1170,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<short> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1815,12 +1182,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<ushort> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1828,12 +1194,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<int> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1841,12 +1206,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<uint> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1854,12 +1218,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<long> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1867,12 +1230,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<ulong> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1880,12 +1242,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<float> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1893,12 +1254,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<double> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1906,12 +1266,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<decimal> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1919,12 +1278,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<char> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1932,12 +1290,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, IList<Binaries> values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1945,8 +1302,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate<TEnum>(string key, IList<TEnum> values) where TEnum : Enum
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         #endregion AddOrUpdateArray1
@@ -1954,7 +1310,7 @@ namespace Honoo.Configuration
         #region AddOrUpdateArray2
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1962,12 +1318,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, string[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, values));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1975,12 +1330,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, bool[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -1988,12 +1342,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, sbyte[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2001,12 +1354,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, byte[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2014,12 +1366,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, short[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2027,12 +1378,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ushort[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2040,12 +1390,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, int[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2053,12 +1402,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, uint[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2066,12 +1414,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, long[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2079,12 +1426,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ulong[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2092,12 +1438,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, float[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2105,12 +1450,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, double[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2118,12 +1462,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, decimal[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2131,12 +1474,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, char[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2144,12 +1486,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, Binaries[][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2157,8 +1498,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate<TEnum>(string key, TEnum[][] values) where TEnum : Enum
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         #endregion AddOrUpdateArray2
@@ -2166,7 +1506,7 @@ namespace Honoo.Configuration
         #region AddOrUpdateArray3
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2174,12 +1514,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, string[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, values));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2187,12 +1526,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, bool[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2200,12 +1538,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, sbyte[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2213,12 +1550,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, byte[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2226,12 +1562,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, short[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2239,12 +1574,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ushort[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2252,12 +1586,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, int[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2265,12 +1598,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, uint[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2278,12 +1610,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, long[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2291,12 +1622,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, ulong[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2304,12 +1634,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, float[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2317,12 +1646,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, double[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2330,12 +1658,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, decimal[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2343,12 +1670,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, char[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2356,12 +1682,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate(string key, Binaries[][][] values)
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="values">配置属性的值。</param>
@@ -2369,8 +1694,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooProperty AddOrUpdate<TEnum>(string key, TEnum[][][] values) where TEnum : Enum
         {
-            Remove(key);
-            return Add(key, values);
+            return AddOrUpdate(new HonooProperty(key, XValueHelper.Convert(values)));
         }
 
         #endregion AddOrUpdateArray3

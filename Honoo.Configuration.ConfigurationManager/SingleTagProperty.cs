@@ -413,9 +413,5 @@ namespace Honoo.Configuration
             return _content.ToString();
         }
 
-        internal void ResetContent(XAttribute content)
-        {
-            _content = content;
-        }
     }
 }

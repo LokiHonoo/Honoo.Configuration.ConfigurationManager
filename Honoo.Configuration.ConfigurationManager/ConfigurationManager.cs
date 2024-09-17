@@ -111,7 +111,7 @@ namespace Honoo.Configuration
         #region Event
 
         /// <summary>
-        /// 在 ConfigurationManager 实例内容改变时执行。
+        /// 在 ConfigurationManager 实例内容改变时执行。慎用，每个修改都会调用此事件。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event ChangedEventHandler Changed;

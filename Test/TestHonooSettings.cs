@@ -20,6 +20,8 @@ namespace Test
                 // 赋值并设置注释。
                 //
                 manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 comment.");
+                manager.Default.Properties.Remove("prop7");
+                manager.Default.Properties.Add("prop7", "Update this.");
                 manager.Default.Properties.AddOrUpdate("prop2", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
                 manager.Default.Properties.AddOrUpdate("prop3", 123456789);
                 manager.Default.Properties.AddOrUpdate("prop4", new int[] { 1, 2, 3, 4, 5 });
@@ -36,10 +38,15 @@ namespace Test
                     },
                 };
                 manager.Default.Properties.AddOrUpdate("prop6", md);
+                //manager.Default.Properties.Add("prop1", "Test unique.");
                 //
                 // 移除属性的方法。移除属性时相关注释一并移除。
                 //
                 manager.Default.Properties.Remove("prop5");
+                //
+                // 更新。
+                //
+                manager.Default.Properties.AddOrUpdate("prop7", "Update this successful.");
                 //
                 // 附加配置容器。
                 //

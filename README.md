@@ -18,7 +18,7 @@
     - [HonooSettingsManager](#honoosettingsmanager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.4.13](#1413)
+    - [1.4.14](#1414)
     - [1.4.11](#1411)
     - [1.4.10](#1410)
     - [1.3.4](#134)
@@ -472,7 +472,7 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.4.13
+### 1.4.14
 
 **Features* 新增 Binaries 类型用于封装 byte[]。避免过多的 [] 符号造成的视觉混乱。
 
@@ -491,8 +491,6 @@ public static async void Test()
 **Features* 提供 NameValueSection.GetControlledProperties() 用于获取应用 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
 
 **Features* 提供 AppSettingsManager.GetControlledProperties() 用于获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
-
-**Features* AddArray() 和 AddOrUpdateArray() 方法支持泛型。
 
 **Features* 提供 AppSettingsManager 用于读写 appSettings 节点的 file 属性指定的附加配置文件。
 

@@ -71,7 +71,7 @@ namespace Honoo.Configuration
         #region Add
 
         /// <summary>
-        /// 添加或更新一个配置属性。当更新一个配置属性时，删除原节点，并在列表尾部添加。
+        /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="property">配置属性的值。</param>
         /// <returns></returns>

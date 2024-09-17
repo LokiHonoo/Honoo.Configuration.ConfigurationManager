@@ -16,7 +16,7 @@
     <PackageTags>Honoo;Configuration;ConfigurationManager;HonooSettingsManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-	<VersionPrefix>1.4.13</VersionPrefix>
+	<VersionPrefix>1.4.14</VersionPrefix>
     <PackageReadmeFile>Honoo.Configuration.ConfigurationManager.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>

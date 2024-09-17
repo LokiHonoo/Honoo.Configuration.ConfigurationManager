@@ -131,8 +131,22 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(property));
             }
-            Remove(property.Name);
-            return Add(property);
+            if (TryGetValue(property.Name, out ConnectionStringProperty prop))
+            {
+                if (property.Comment != null)
+                {
+                    prop.Content.AddBeforeSelf(property.Comment);
+                }
+                prop.Content.AddBeforeSelf(property.Content);
+                prop.Comment?.Remove();
+                prop.Content.Remove();
+                _properties[prop.Name] = property;
+                return property;
+            }
+            else
+            {
+                return Add(property);
+            }
         }
 
         /// <summary>

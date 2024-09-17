@@ -36,7 +36,14 @@ namespace Test
                 //
                 section1.Properties.AddOrUpdate("prop1", 0.6789d);
                 section1.SetComment("This is \"SingleTagSection\" comment.");
+                section1.Properties.Remove("prop3");
+                section1.Properties.Add("prop3", "Update this.");
                 section1.Properties.AddOrUpdate("prop2", "abc");
+                //section1.Properties.Add("prop1", "Test unique.");
+                //
+                // 更新。
+                //
+                section1.Properties.AddOrUpdate("prop3", "Update this successful.");
                 //
                 // NameValueSection 允许同名键值。
                 //

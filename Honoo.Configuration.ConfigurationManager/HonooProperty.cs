@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 
 namespace Honoo.Configuration
@@ -65,7 +64,7 @@ namespace Honoo.Configuration
             _content = GetElement(key, values);
             _comment = null;
             _key = key ?? throw new ArgumentNullException(nameof(key));
-            _value = values.ToArray();
+            _value = values;
             _isArray = true;
         }
 

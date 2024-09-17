@@ -31,6 +31,7 @@ namespace Test
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop2", connection.ConnectionString, connection.GetType().Namespace);
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop3", connection.ConnectionString, string.Empty);
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).SetComment("It's will remove this.");
+                //manager.ConnectionStrings.Properties.Add("prop1", connection);
                 //
                 // 移除属性的方法。
                 //

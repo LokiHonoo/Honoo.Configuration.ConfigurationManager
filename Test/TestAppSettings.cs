@@ -21,14 +21,21 @@ namespace Test
                 // 赋值并设置注释。
                 //
                 manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
+                manager.AppSettings.Properties.Remove("prop6");
+                manager.AppSettings.Properties.Add("prop6", "Update this.");
                 manager.AppSettings.Properties.AddOrUpdate("prop2", 123456789);
                 manager.AppSettings.Properties.AddOrUpdate("prop3", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
                 manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
                 manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
+                //manager.AppSettings.Properties.Add("prop1", "Test unique.");
                 //
                 // 移除属性的方法。移除属性时相关注释一并移除。
                 //
                 manager.AppSettings.Properties.Remove("prop5");
+                //
+                // 更新。
+                //
+                manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this successful.");
                 //
                 // 保存到指定的文件。
                 //
