@@ -11,7 +11,8 @@ namespace Honoo.Configuration
     {
         #region Construction
 
-        internal TextSection(XElement declaration, XElement content, XComment comment) : base(declaration, content, comment)
+        internal TextSection(XElement declaration, XElement content, XComment comment)
+            : base(ConfigSectionKind.TextSection, declaration, content, comment)
         {
         }
 

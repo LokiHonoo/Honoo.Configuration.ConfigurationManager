@@ -18,7 +18,7 @@
     - [HonooSettingsManager](#honoosettingsmanager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.4.15](#1415)
+    - [1.4.16](#1416)
     - [1.4.11](#1411)
     - [1.4.10](#1410)
     - [1.3.4](#134)
@@ -494,7 +494,7 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.4.15
+### 1.4.16
 
 **Features* 新增 Binaries 类型用于封装 byte[]。避免过多的 [] 符号造成的视觉混乱。
 
