@@ -14,6 +14,14 @@ namespace Honoo.Configuration
     {
         #region Properties
 
+        private static readonly Dictionary<Type, int> _kind = new Dictionary<Type, int>()
+        {
+            {typeof(TextSection),0},
+            {typeof(SingleTagSection),1},
+            {typeof(NameValueSection),2},
+            {typeof(DictionarySection),3}
+        };
+
         private readonly XElement _contentContainer;
         private readonly XElement _declarationContainer;
         private readonly Dictionary<string, ConfigSection> _sections = new Dictionary<string, ConfigSection>();
@@ -95,6 +103,63 @@ namespace Honoo.Configuration
         #endregion Construction
 
         #region GetOrAdd
+
+        /// <summary>
+        /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个 <typeparamref name="T"/> 参数指定类型的配置容器并返回值。
+        /// </summary>
+        /// <typeparam name="T">添加配置容器时使用的类型。</typeparam>
+        /// <param name="name">配置容器的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public T GetOrAdd<T>(string name) where T : ConfigSection
+        {
+            if (_sections.TryGetValue(name, out ConfigSection value))
+            {
+                if (value is T val)
+                {
+                    return val;
+                }
+                else
+                {
+                    throw new ArgumentException($"The section exists but is not of the specified type - {typeof(T)}.");
+                }
+            }
+            else
+            {
+                XElement declaration = new XElement("section");
+                declaration.SetAttributeValue("name", name);
+                XElement content = new XElement(name);
+                ConfigSection section;
+                switch (_kind[typeof(T)])
+                {
+                    case 0:
+                        declaration.SetAttributeValue("type", "Honoo.Configuration.TextSectionHandler");
+                        section = new TextSection(declaration, content, null);
+                        break;
+
+                    case 1:
+                        declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
+                        section = new SingleTagSection(declaration, content, null);
+                        break;
+
+                    case 2:
+                        declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
+                        section = new NameValueSection(declaration, content, null);
+                        break;
+
+                    case 3:
+                        declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
+                        section = new DictionarySection(declaration, content, null);
+                        break;
+
+                    default: throw new ArgumentException($"The invalid argument - {nameof(T)}.");
+                }
+                _sections.Add(name, section);
+                _declarationContainer.Add(declaration);
+                _contentContainer.Add(content);
+                return section as T;
+            }
+        }
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个 <paramref name="kind"/> 参数指定类型的配置容器并返回值。
