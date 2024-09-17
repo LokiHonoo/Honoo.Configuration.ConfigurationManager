@@ -16,8 +16,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal SingleTagSection(XElement declaration, XElement content, XComment comment)
-            : base(ConfigSectionKind.SingleTagSection, declaration, content, comment)
+        internal SingleTagSection(XElement declaration, XElement content, XComment comment) : base(declaration, content, comment)
         {
             _properties = new SingleTagPropertySet(content);
         }

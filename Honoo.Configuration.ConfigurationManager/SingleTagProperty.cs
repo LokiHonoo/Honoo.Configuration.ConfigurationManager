@@ -412,6 +412,5 @@ namespace Honoo.Configuration
         {
             return _content.ToString();
         }
-
     }
 }

@@ -69,10 +69,10 @@ namespace Honoo.Configuration
                         ConfigSection section;
                         switch (type)
                         {
-                            case "SingleTagSectionHandler":
-                            case "System.Configuration.SingleTagSectionHandler":
-                            case "System.Configuration.SingleTagSectionHandler, System.Configuration":
-                                section = new SingleTagSection(declaration, content, comment);
+                            case "DictionarySectionHandler":
+                            case "System.Configuration.DictionarySectionHandler":
+                            case "System.Configuration.DictionarySectionHandler, System.Configuration":
+                                section = new DictionarySection(declaration, content, comment);
                                 break;
 
                             case "NameValueSectionHandler":
@@ -81,10 +81,10 @@ namespace Honoo.Configuration
                                 section = new NameValueSection(declaration, content, comment);
                                 break;
 
-                            case "DictionarySectionHandler":
-                            case "System.Configuration.DictionarySectionHandler":
-                            case "System.Configuration.DictionarySectionHandler, System.Configuration":
-                                section = new DictionarySection(declaration, content, comment);
+                            case "SingleTagSectionHandler":
+                            case "System.Configuration.SingleTagSectionHandler":
+                            case "System.Configuration.SingleTagSectionHandler, System.Configuration":
+                                section = new SingleTagSection(declaration, content, comment);
                                 break;
 
                             case "TextSectionHandler":
@@ -105,7 +105,8 @@ namespace Honoo.Configuration
         #region GetOrAdd
 
         /// <summary>
-        /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个 <typeparamref name="T"/> 参数指定类型的配置容器并返回值。
+        /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个 <typeparamref name="T"/> 类型的配置容器并返回值。
+        /// <br/>如果配置容器存在但不是指定的类型，方法抛出 <see cref="ArgumentException"/>。
         /// </summary>
         /// <typeparam name="T">添加配置容器时使用的类型。</typeparam>
         /// <param name="name">配置容器的名称。</param>
@@ -158,55 +159,6 @@ namespace Honoo.Configuration
                 _declarationContainer.Add(declaration);
                 _contentContainer.Add(content);
                 return section as T;
-            }
-        }
-
-        /// <summary>
-        /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个 <paramref name="kind"/> 参数指定类型的配置容器并返回值。
-        /// </summary>
-        /// <param name="name">配置容器的名称。</param>
-        /// <param name="kind">添加配置容器时使用的类型。</param>
-        /// <exception cref="Exception"/>
-        public ConfigSection GetOrAdd(string name, ConfigSectionKind kind)
-        {
-            if (_sections.TryGetValue(name, out ConfigSection value))
-            {
-                return value;
-            }
-            else
-            {
-                XElement declaration = new XElement("section");
-                declaration.SetAttributeValue("name", name);
-                XElement content = new XElement(name);
-                ConfigSection section;
-                switch (kind)
-                {
-                    case ConfigSectionKind.TextSection:
-                        declaration.SetAttributeValue("type", "Honoo.Configuration.TextSectionHandler");
-                        section = new TextSection(declaration, content, null);
-                        break;
-
-                    case ConfigSectionKind.SingleTagSection:
-                        declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
-                        section = new SingleTagSection(declaration, content, null);
-                        break;
-
-                    case ConfigSectionKind.NameValueSection:
-                        declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
-                        section = new NameValueSection(declaration, content, null);
-                        break;
-
-                    case ConfigSectionKind.DictionarySection:
-                        declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
-                        section = new DictionarySection(declaration, content, null);
-                        break;
-
-                    default: throw new ArgumentException($"The invalid argument - {nameof(kind)}.");
-                }
-                _sections.Add(name, section);
-                _declarationContainer.Add(declaration);
-                _contentContainer.Add(content);
-                return section;
             }
         }
 

@@ -18,7 +18,7 @@
     - [HonooSettingsManager](#honoosettingsmanager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.4.14](#1414)
+    - [1.4.15](#1415)
     - [1.4.11](#1411)
     - [1.4.10](#1410)
     - [1.3.4](#134)
@@ -75,15 +75,21 @@ internal static void Create(string filePath)
         // 赋值并设置注释。
         //
         manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
+        manager.AppSettings.Properties.Remove("prop6");
+        manager.AppSettings.Properties.Add("prop6", "Update this.");
         manager.AppSettings.Properties.AddOrUpdate("prop2", 123456789);
         manager.AppSettings.Properties.AddOrUpdate("prop3", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
         manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
         manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
-
+        //manager.AppSettings.Properties.Add("prop1", "Test unique.");
         //
         // 移除属性的方法。移除属性时相关注释一并移除。
         //
         manager.AppSettings.Properties.Remove("prop5");
+        //
+        // 更新。
+        //
+        manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this successful.");
         //
         // 保存到指定的文件。
         //
@@ -154,6 +160,7 @@ internal static void Create(string filePath)
         manager.ConnectionStrings.Properties.AddOrUpdate("prop2", connection.ConnectionString, connection.GetType().Namespace);
         manager.ConnectionStrings.Properties.AddOrUpdate("prop3", connection.ConnectionString, string.Empty);
         manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).SetComment("It's will remove this.");
+        //manager.ConnectionStrings.Properties.Add("prop1", connection);
         //
         // 移除属性的方法。
         //
@@ -220,18 +227,26 @@ internal static void Create(string filePath)
         //
         // 配置容器。
         //
-        SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionKind.SingleTagSection);
-        NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
-        DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
+        SingleTagSection section1 = manager.ConfigSections.Sections.GetOrAdd<SingleTagSection>("section1");
+        NameValueSection section2 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section2");
+        DictionarySection section3 = group.Sections.GetOrAdd<DictionarySection>("section3");
         //
         // SingleTagSection 使用唯一键值。不支持属性值注释。
         //
         section1.Properties.AddOrUpdate("prop1", 0.6789d);
         section1.SetComment("This is \"SingleTagSection\" comment.");
+        section1.Properties.Remove("prop3");
+        section1.Properties.Add("prop3", "Update this.");
         section1.Properties.AddOrUpdate("prop2", "abc");
+        //section1.Properties.Add("prop1", "Test unique.");
+        //
+        // 更新。
+        //
+        section1.Properties.AddOrUpdate("prop3", "Update this successful.");
         //
         // NameValueSection 允许同名键值。
         //
+        section2.Properties.Clear();
         section2.Properties.Add("prop1", 155.66d).SetComment("This is \"NameValueSection\" prop1 comment.");
         section2.Properties.Add("prop1", 7.9992d).SetComment("This is \"NameValueSection\" prop1 comment.");
         section2.SetComment("This is \"NameValueSection\" comment.");
@@ -244,20 +259,20 @@ internal static void Create(string filePath)
         //
         // 以文本方式创建。
         //
-        TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
+        TextSection section4 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section4");
         section4.SetAttribute("attr1", "attr1value");
         section4.SetValue("<!-- Comment --><arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>");
         section4.SetComment("This is \"TextSection\" comment.");
 
-        TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
+        TextSection section5 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section5");
         section5.SetValue("<![CDATA[<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>]]>");
 
-        TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
+        TextSection section6 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section6");
         section6.SetValue("abcdefg");
         //
         //
         //
-        NameValueSection section7 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section7", ConfigSectionKind.NameValueSection);
+        NameValueSection section7 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section7");
         section7.SetComment("It's will remove this.");
         manager.ConfigSections.Sections.Remove("section7");
         //
@@ -278,12 +293,12 @@ internal static void Load(string filePath)
         // 取出容器。
         //
         ConfigSectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
-        SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionKind.SingleTagSection);
-        NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
-        DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
-        TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
-        TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
-        TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
+        SingleTagSection section1 = manager.ConfigSections.Sections.GetOrAdd<SingleTagSection>("section1");
+        NameValueSection section2 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section2");
+        DictionarySection section3 = group.Sections.GetOrAdd<DictionarySection>("section3");
+        TextSection section4 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section4");
+        TextSection section5 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section5");
+        TextSection section6 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section6");
         //
         // 取出属性和注释。
         //
@@ -373,7 +388,9 @@ internal static void Create(string filePath)
         //
         // 赋值并设置注释。
         //
-        manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 value.");
+        manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 comment.");
+        manager.Default.Properties.Remove("prop7");
+        manager.Default.Properties.Add("prop7", "Update this.");
         manager.Default.Properties.AddOrUpdate("prop2", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
         manager.Default.Properties.AddOrUpdate("prop3", 123456789);
         manager.Default.Properties.AddOrUpdate("prop4", new int[] { 1, 2, 3, 4, 5 });
@@ -390,10 +407,15 @@ internal static void Create(string filePath)
             },
         };
         manager.Default.Properties.AddOrUpdate("prop6", md);
+        //manager.Default.Properties.Add("prop1", "Test unique.");
         //
         // 移除属性的方法。移除属性时相关注释一并移除。
         //
         manager.Default.Properties.Remove("prop5");
+        //
+        // 更新。
+        //
+        manager.Default.Properties.AddOrUpdate("prop7", "Update this successful.");
         //
         // 附加配置容器。
         //
@@ -440,7 +462,7 @@ internal static void Load(string filePath)
             Console.WriteLine(val4);
         }
         //
-        manager.Default.Properties.TryGetValue("prop6", out string[][][] value6);
+        manager.Default.Properties.TryGetValue("prop6", out string[][][] _);
         //
         HonooSection section = manager.Sections.GetValue("section1");
         Console.WriteLine(section.GetComment());
@@ -472,7 +494,7 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.4.14
+### 1.4.15
 
 **Features* 新增 Binaries 类型用于封装 byte[]。避免过多的 [] 符号造成的视觉混乱。
 

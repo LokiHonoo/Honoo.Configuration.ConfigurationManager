@@ -28,9 +28,9 @@ namespace Test
                 //
                 // 配置容器。
                 //
-                SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionKind.SingleTagSection);
-                NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
-                DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
+                SingleTagSection section1 = manager.ConfigSections.Sections.GetOrAdd<SingleTagSection>("section1");
+                NameValueSection section2 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section2");
+                DictionarySection section3 = group.Sections.GetOrAdd<DictionarySection>("section3");
                 //
                 // SingleTagSection 使用唯一键值。不支持属性值注释。
                 //
@@ -60,20 +60,20 @@ namespace Test
                 //
                 // 以文本方式创建。
                 //
-                TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
+                TextSection section4 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section4");
                 section4.SetAttribute("attr1", "attr1value");
                 section4.SetValue("<!-- Comment --><arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>");
                 section4.SetComment("This is \"TextSection\" comment.");
 
-                TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
+                TextSection section5 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section5");
                 section5.SetValue("<![CDATA[<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>]]>");
 
-                TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
+                TextSection section6 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section6");
                 section6.SetValue("abcdefg");
                 //
                 //
                 //
-                NameValueSection section7 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section7", ConfigSectionKind.NameValueSection);
+                NameValueSection section7 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section7");
                 section7.SetComment("It's will remove this.");
                 manager.ConfigSections.Sections.Remove("section7");
                 //
@@ -94,12 +94,12 @@ namespace Test
                 // 取出容器。
                 //
                 ConfigSectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
-                SingleTagSection section1 = (SingleTagSection)manager.ConfigSections.Sections.GetOrAdd("section1", ConfigSectionKind.SingleTagSection);
-                NameValueSection section2 = (NameValueSection)manager.ConfigSections.Sections.GetOrAdd("section2", ConfigSectionKind.NameValueSection);
-                DictionarySection section3 = (DictionarySection)group.Sections.GetOrAdd("section3", ConfigSectionKind.DictionarySection);
-                TextSection section4 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section4", ConfigSectionKind.TextSection);
-                TextSection section5 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section5", ConfigSectionKind.TextSection);
-                TextSection section6 = (TextSection)manager.ConfigSections.Sections.GetOrAdd("section6", ConfigSectionKind.TextSection);
+                SingleTagSection section1 = manager.ConfigSections.Sections.GetOrAdd<SingleTagSection>("section1");
+                NameValueSection section2 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section2");
+                DictionarySection section3 = group.Sections.GetOrAdd<DictionarySection>("section3");
+                TextSection section4 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section4");
+                TextSection section5 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section5");
+                TextSection section6 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section6");
                 //
                 // 取出属性和注释。
                 //
