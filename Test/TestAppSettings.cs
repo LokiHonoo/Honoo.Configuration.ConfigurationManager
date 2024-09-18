@@ -64,7 +64,7 @@ namespace Test
                 Console.WriteLine(value2);
                 //
                 AddProperty value3 = manager.AppSettings.Properties["prop3"];
-                Console.WriteLine(value3.GetValue(Binaries.Empty));
+                Console.WriteLine(value3.GetValue(new Binaries()));
                 //
                 if (manager.AppSettings.Properties.TryGetValue("prop4", out LoaderOptimization value4))
                 {

@@ -884,10 +884,10 @@ namespace Honoo.Configuration
                 }
                 return result;
             }
-#if NETSTANDARD2_0_OR_GREATER
-            return Array.Empty<byte>();
-#else
+#if NET40
             return new byte[0];
+#else
+            return Array.Empty<byte>();
 #endif
         }
 
