@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
 
 namespace Honoo.Configuration
 {
@@ -10,29 +7,19 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class Binaries
     {
-        #region NetVer
+        /// <summary>
+        /// 空值。
+        /// </summary>
+        public static readonly Binaries Empty = new Binaries();
 
-#if NET40
         private readonly byte[] _bytes;
+        private readonly string _hex;
 
         /// <summary>
         /// 获取数组值。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public byte[] Bytes => (byte[])_bytes.Clone();
-
-#else
-        private readonly ReadOnlyCollection<byte> _bytes;
-
-        /// <summary>
-        /// 获取数组值。
-        /// </summary>
-        public ReadOnlyCollection<byte> Bytes => _bytes;
-#endif
-
-        #endregion NetVer
-
-        private readonly string _hex;
 
         /// <summary>
         /// 获取十六进制字符串。
@@ -44,18 +31,6 @@ namespace Honoo.Configuration
         /// <summary>
         /// 创建 Binaries 的新实例。
         /// </summary>
-        public Binaries()
-        {
-#if NET40
-            _bytes = new byte[0];
-#else
-            _bytes = new ReadOnlyCollection<byte>(Array.Empty<byte>());
-#endif
-        }
-
-        /// <summary>
-        /// 创建 Binaries 的新实例。
-        /// </summary>
         /// <param name="bytes">数组类型。</param>
         public Binaries(byte[] bytes)
         {
@@ -63,13 +38,8 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(bytes));
             }
-            _hex = BitConverter.ToString(bytes, 0).Replace("-", string.Empty);
-#if NET40
-
             _bytes = (byte[])bytes.Clone();
-#else
-            _bytes = new ReadOnlyCollection<byte>(bytes);
-#endif
+            _hex = BitConverter.ToString(bytes, 0).Replace("-", string.Empty);
         }
 
         /// <summary>
@@ -78,12 +48,18 @@ namespace Honoo.Configuration
         /// <param name="hex">十六进制字符串类型。</param>
         public Binaries(string hex)
         {
-            _hex = hex;
-#if NET40
             _bytes = XValueHelper.Parse(hex);
+            _hex = hex;
+        }
+
+        private Binaries()
+        {
+#if NET40
+            _bytes = new byte[0];
 #else
-            _bytes = new ReadOnlyCollection<byte>(XValueHelper.Parse(hex));
+            _bytes = Array.Empty<byte>();
 #endif
+            _hex = string.Empty;
         }
 
         #endregion Construction
