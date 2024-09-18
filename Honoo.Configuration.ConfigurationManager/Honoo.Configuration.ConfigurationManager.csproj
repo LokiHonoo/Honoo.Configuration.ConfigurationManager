@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFrameworks>net40;net462;netstandard2.0</TargetFrameworks>
     <PackageId>Honoo.Configuration.ConfigurationManager</PackageId>
-    <Company>Loki Honoo</Company>
+    <Authors>LokiHonoo</Authors>	  
+    <Company>LokiHonoo</Company>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	<Copyright>Copyright (C) Loki Honoo 2020. All rights reserved.</Copyright>
 	<SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Honoo.Configuration.ConfigurationManager.snk</AssemblyOriginatorKeyFile>
-    <Authors>Loki Honoo</Authors>
     <Description>The project is a replacement for "System.Configuration.ConfigurationManager". Used to read/write default profiles or custom profiles in the .NET Framework 4.0+/.NET Standard 2.0+. Provides "HonooSettingsManager" class to read/write a concise configuration file, using dictionary type, support encryption, and support single value and array values.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager</PackageProjectUrl>
