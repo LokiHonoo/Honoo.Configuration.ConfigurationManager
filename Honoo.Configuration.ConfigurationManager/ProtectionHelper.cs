@@ -18,19 +18,20 @@ namespace Honoo.Configuration
             XElement dataElement = root.Element(ns + "EncryptedData");
             string dataAlgorithm = dataElement.Attribute("Algorithm").Value;
             byte[] dataEncrypted = Convert.FromBase64String(dataElement.Element(ns + "CipherData").Value.Trim());
-            byte[] pms = null;
-            byte[] data = null;
+            byte[] pms;
+            byte[] data;
             switch (keyAlgorithm)
             {
                 case "http://www.w3.org/2001/04/xmlenc#rsa-1_5": pms = rsa.Decrypt(keyEncrypted, false); break;
                 case "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p": pms = rsa.Decrypt(keyEncrypted, true); break;
-                default: break;
+                default: throw new CryptographicException($"Unknown encryption identifier -\"{keyAlgorithm}\".");
             }
             switch (dataAlgorithm)
             {
                 case "http://www.w3.org/2001/04/xmlenc#aes128-cbc":
-                    using (AesCryptoServiceProvider algorithm = new AesCryptoServiceProvider() { KeySize = 128 })
+                    using (Aes algorithm = Aes.Create())
                     {
+                        algorithm.KeySize = 128;
                         byte[] key = new byte[16];
                         Buffer.BlockCopy(pms, 0, key, 0, 16);
                         byte[] iv = new byte[16];
@@ -40,8 +41,9 @@ namespace Honoo.Configuration
                     break;
 
                 case "http://www.w3.org/2001/04/xmlenc#aes192-cbc":
-                    using (AesCryptoServiceProvider algorithm = new AesCryptoServiceProvider() { KeySize = 192 })
+                    using (Aes algorithm = Aes.Create())
                     {
+                        algorithm.KeySize = 192;
                         byte[] key = new byte[24];
                         Buffer.BlockCopy(pms, 0, key, 0, 24);
                         byte[] iv = new byte[16];
@@ -51,8 +53,9 @@ namespace Honoo.Configuration
                     break;
 
                 case "http://www.w3.org/2001/04/xmlenc#aes256-cbc":
-                    using (AesCryptoServiceProvider algorithm = new AesCryptoServiceProvider() { KeySize = 256 })
+                    using (Aes algorithm = Aes.Create())
                     {
+                        algorithm.KeySize = 256;
                         byte[] key = new byte[32];
                         Buffer.BlockCopy(pms, 0, key, 0, 32);
                         byte[] iv = new byte[16];
@@ -62,8 +65,9 @@ namespace Honoo.Configuration
                     break;
 
                 case "http://www.w3.org/2001/04/xmlenc#tripledes-cbc":
-                    using (TripleDESCryptoServiceProvider algorithm = new TripleDESCryptoServiceProvider() { KeySize = 192 })
+                    using (TripleDES algorithm = TripleDES.Create())
                     {
+                        algorithm.KeySize = 192;
                         byte[] key = new byte[24];
                         Buffer.BlockCopy(pms, 0, key, 0, 24);
                         byte[] iv = new byte[8];
@@ -72,7 +76,7 @@ namespace Honoo.Configuration
                     }
                     break;
 
-                default: break;
+                default: throw new CryptographicException($"Unknown encryption identifier -\"{dataAlgorithm}\".");
             }
             return XElement.Parse(Encoding.UTF8.GetString(data));
         }
@@ -86,8 +90,9 @@ namespace Honoo.Configuration
             byte[] keyEncrypted;
             string dataAlgorithm = "http://www.w3.org/2001/04/xmlenc#aes128-cbc";
             string keyAlgorithm = "http://www.w3.org/2001/04/xmlenc#rsa-1_5";
-            using (AesCryptoServiceProvider algorithm = new AesCryptoServiceProvider() { KeySize = 128 })
+            using (Aes algorithm = Aes.Create())
             {
+                algorithm.KeySize = 128;
                 byte[] pms = new byte[16 + 16];
                 Buffer.BlockCopy(algorithm.Key, 0, pms, 0, 16);
                 Buffer.BlockCopy(algorithm.IV, 0, pms, 16, 16);
@@ -118,7 +123,7 @@ namespace Honoo.Configuration
             }
         }
 
-        private static byte[] Encrypt(AesCryptoServiceProvider algorithm, byte[] data)
+        private static byte[] Encrypt(Aes algorithm, byte[] data)
         {
             using (var encryptor = algorithm.CreateEncryptor())
             {

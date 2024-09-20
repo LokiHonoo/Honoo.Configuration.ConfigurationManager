@@ -8,17 +8,24 @@ namespace Test
         private static void Main()
         {
             string filePath1 = "config.main.xml";
+            string filePath5 = "honoo-settings.xml";
+            bool clear = false;
             //
             // 清除内容。
             //
-            //using (ConfigurationManager manager = new ConfigurationManager(filePath))
-            //{
-            //    manager.AppSettings.Properties.Clear();
-            //    manager.ConnectionStrings.Properties.Clear();
-            //    manager.ConfigSections.Groups.Clear();
-            //    manager.ConfigSections.Sections.Clear();
-            //    manager.Save(filePath);
-            //}
+            if (clear)
+            {
+                using (Honoo.Configuration.ConfigurationManager manager = new Honoo.Configuration.ConfigurationManager(filePath1))
+                {
+                    manager.Clear();
+                    manager.Save(filePath1);
+                }
+                using (Honoo.Configuration.HonooSettingsManager manager = new Honoo.Configuration.HonooSettingsManager(filePath5))
+                {
+                    manager.Clear();
+                    manager.Save(filePath5);
+                }
+            }
             //
             //
             //
@@ -41,7 +48,6 @@ namespace Test
             Console.WriteLine();
             Console.WriteLine();
             //
-            string filePath5 = "honoo-settings.xml";
             TestHonooSettings.Create(filePath5);
             TestHonooSettings.Load(filePath5);
             Console.WriteLine();

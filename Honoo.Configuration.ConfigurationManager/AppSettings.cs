@@ -80,7 +80,7 @@ namespace Honoo.Configuration
         /// </summary>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
-        public DictionaryPropertySetControlled GetControlledProperties()
+        public DictionaryPropertySetControlled GetPropertySetControlled()
         {
             return new DictionaryPropertySetControlled(_content);
         }

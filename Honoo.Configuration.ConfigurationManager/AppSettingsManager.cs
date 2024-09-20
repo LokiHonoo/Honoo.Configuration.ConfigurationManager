@@ -209,6 +209,46 @@ namespace Honoo.Configuration
 
         #endregion Construction
 
+        #region File
+
+        /// <summary>
+        /// 获取 "file" 属性的值。
+        /// </summary>
+        /// <returns></returns>
+        public string GetFileAttribute()
+        {
+            return TryGetFileAttribute(out string file) ? file : null;
+        }
+
+        /// <summary>
+        /// 设置 "file" 属性的值、添加或删除 "file" 属性。
+        /// </summary>
+        /// <param name="value">"file" 属性的值。"file" 特性指向一个根节点为 &lt;appSettings&gt; 的配置文件。</param>
+        /// <returns></returns>
+        public void SetFileAttribute(string value)
+        {
+            _root.SetAttributeValue("file", value);
+        }
+
+        /// <summary>
+        /// 获取 "file" 属性的值。
+        /// <br/>如果没有找到指定属性，返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="value">"file" 属性的值。</param>
+        /// <returns></returns>
+        public bool TryGetFileAttribute(out string value)
+        {
+            if (_root.Attribute("file") is XAttribute attribute)
+            {
+                value = attribute.Value;
+                return true;
+            }
+            value = null;
+            return false;
+        }
+
+        #endregion File
+
         #region Save
 
         /// <summary>
@@ -283,52 +323,21 @@ namespace Honoo.Configuration
 
         #endregion Save
 
-        #region File
-
         /// <summary>
-        /// 获取 "file" 属性的值。
+        /// 清除所有节点，没有被 <see cref="AppSettingsManager"/> 管理的节点和内容也会全部删除。
         /// </summary>
         /// <returns></returns>
-        public string GetFileAttribute()
+        public void Clear()
         {
-            return TryGetFileAttribute(out string file) ? file : null;
+            _root.RemoveAll();
         }
-
-        /// <summary>
-        /// 设置 "file" 属性的值、添加或删除 "file" 属性。
-        /// </summary>
-        /// <param name="value">"file" 属性的值。"file" 特性指向一个根节点为 &lt;appSettings&gt; 的配置文件。</param>
-        /// <returns></returns>
-        public void SetFileAttribute(string value)
-        {
-            _root.SetAttributeValue("file", value);
-        }
-
-        /// <summary>
-        /// 获取 "file" 属性的值。
-        /// <br/>如果没有找到指定属性，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">"file" 属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetFileAttribute(out string value)
-        {
-            if (_root.Attribute("file") is XAttribute attribute)
-            {
-                value = attribute.Value;
-                return true;
-            }
-            value = null;
-            return false;
-        }
-
-        #endregion File
 
         /// <summary>
         /// 获取应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。当配置文件修改时应重新获取。
         /// </summary>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
-        public DictionaryPropertySetControlled GetControlledProperties()
+        public DictionaryPropertySetControlled GetPropertySetControlled()
         {
             return new DictionaryPropertySetControlled(_root);
         }

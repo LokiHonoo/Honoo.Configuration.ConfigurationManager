@@ -16,7 +16,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal NameValueSection(XElement declaration, XElement content, XComment comment) 
+        internal NameValueSection(XElement declaration, XElement content, XComment comment)
             : base(ConfigSectionKind.NameValueSection, declaration, content, comment)
         {
             _properties = new NameValuePropertySet(content);
@@ -29,7 +29,7 @@ namespace Honoo.Configuration
         /// </summary>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
-        public NameValuePropertySetControlled GetControlledProperties()
+        public NameValuePropertySetControlled GetPropertySetControlled()
         {
             return new NameValuePropertySetControlled(base.Content);
         }

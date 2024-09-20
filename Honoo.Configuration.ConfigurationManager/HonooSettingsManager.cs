@@ -300,6 +300,15 @@ namespace Honoo.Configuration
         #endregion Save
 
         /// <summary>
+        /// 清除所有节点，没有被 <see cref="HonooSettingsManager"/> 管理的节点和内容也会全部删除。
+        /// </summary>
+        /// <returns></returns>
+        public void Clear()
+        {
+            _root.RemoveAll();
+        }
+
+        /// <summary>
         /// 返回配置文件的缩进 XML 文档文本。
         /// </summary>
         /// <param name="protectionAlgorithm">
@@ -361,7 +370,7 @@ namespace Honoo.Configuration
         private XElement Clean(XElement root)
         {
             XElement result = XElement.Parse(root.ToString());
-            if (_default != null && _default.Properties.Count == 0 && _default.Comment == null)
+            if (_default != null && _default.Properties.Count == 0 && !_default.Comment.HasValue)
             {
                 result.Element("default").Remove();
             }

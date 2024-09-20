@@ -27,10 +27,10 @@ namespace Test
                 //
                 // 赋值并设置注释。
                 //
-                manager.ConnectionStrings.Properties.AddOrUpdate("prop1", connection).SetComment("This is \"connectionStrings\" prop1 comment.");
+                manager.ConnectionStrings.Properties.AddOrUpdate("prop1", connection).Comment.SetValue("This is \"connectionStrings\" prop1 comment.");
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop2", connection.ConnectionString, connection.GetType().Namespace);
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop3", connection.ConnectionString, string.Empty);
-                manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).SetComment("It's will remove this.");
+                manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).Comment.SetValue("It's will remove this.");
                 //manager.ConnectionStrings.Properties.Add("prop1", connection);
                 //
                 // 移除属性的方法。
@@ -54,7 +54,7 @@ namespace Test
                 // 取出属性和注释。
                 //
                 ConnectionStringProperty value1 = manager.ConnectionStrings.Properties.GetValue("prop1");
-                if (value1.TryGetComment(out string comment1))
+                if (value1.Comment.TryGetValue(out string comment1))
                 {
                     Console.WriteLine(comment1);
                 }

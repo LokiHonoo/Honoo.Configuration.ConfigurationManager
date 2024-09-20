@@ -330,6 +330,15 @@ namespace Honoo.Configuration
         #endregion Save
 
         /// <summary>
+        /// 清除所有节点，没有被 <see cref="ConfigurationManager"/> 管理的节点和内容也会全部删除。
+        /// </summary>
+        /// <returns></returns>
+        public void Clear()
+        {
+            _root.RemoveAll();
+        }
+
+        /// <summary>
         /// 返回配置文件的缩进 XML 文档文本。
         /// </summary>
         /// <param name="protectionAlgorithm">

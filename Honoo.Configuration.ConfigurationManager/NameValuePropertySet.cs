@@ -104,9 +104,9 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             _properties.Add(property);
-            if (property.Comment != null)
+            if (property.Comment.HasValue)
             {
-                _container.Add(property.Comment);
+                _container.Add(property.Comment.Comment);
             }
             _container.Add(property.Content);
             return property;
@@ -125,9 +125,9 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             _properties.Add(property);
-            if (property.Comment != null)
+            if (property.Comment.HasValue)
             {
-                _container.Add(property.Comment);
+                _container.Add(property.Comment.Comment);
             }
             _container.Add(property.Content);
             return property;
@@ -146,9 +146,9 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             _properties.Add(property);
-            if (property.Comment != null)
+            if (property.Comment.HasValue)
             {
-                _container.Add(property.Comment);
+                _container.Add(property.Comment.Comment);
             }
             _container.Add(property.Content);
             return property;
@@ -1153,7 +1153,7 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             bool removed = _properties.Remove(property);
-            property.Comment?.Remove();
+            property.Comment.Remove();
             property.Content.Remove();
             return removed;
         }
@@ -1174,7 +1174,7 @@ namespace Honoo.Configuration
                 {
                     if (property.Key == key)
                     {
-                        property.Comment?.Remove();
+                        property.Comment.Remove();
                         property.Content.Remove();
                         _properties.RemoveAt(i);
                         removed = true;

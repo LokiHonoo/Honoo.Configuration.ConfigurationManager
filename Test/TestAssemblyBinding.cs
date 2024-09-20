@@ -20,7 +20,7 @@ namespace Test
                 //
                 while (manager.AssemblyBinding.Properties.Count < 3)
                 {
-                    manager.AssemblyBinding.Properties.Add("file://c:\\aa.tt").SetComment("This is \"linkedConfiguration\" comment.");
+                    manager.AssemblyBinding.Properties.Add("file://c:\\aa.tt").Comment.SetValue("This is \"linkedConfiguration\" comment.");
                 }
                 //
                 // 移除属性的方法。
@@ -44,7 +44,7 @@ namespace Test
                 // 取出属性和注释。
                 //
                 LinkedConfigurationProperty value2 = manager.AssemblyBinding.Properties.GetValue(0);
-                if (value2.TryGetComment(out string comment2))
+                if (value2.Comment.TryGetValue(out string comment2))
                 {
                     Console.WriteLine(comment2);
                 }
@@ -52,7 +52,7 @@ namespace Test
                 //
                 if (manager.AssemblyBinding.Properties.TryGetValue(1, out LinkedConfigurationProperty value3))
                 {
-                    if (value3.TryGetComment(out string comment3))
+                    if (value3.Comment.TryGetValue(out string comment3))
                     {
                         Console.WriteLine(comment3);
                     }

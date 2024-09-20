@@ -133,9 +133,9 @@ namespace Honoo.Configuration
             }
             _keys.Add(property.Key);
             _properties.Add(property);
-            if (property.Comment != null)
+            if (property.Comment.HasValue)
             {
-                _container.Add(property.Comment);
+                _container.Add(property.Comment.Comment);
             }
             _container.Add(property.Content);
             return property;
@@ -154,9 +154,9 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             _properties.Add(property);
-            if (property.Comment != null)
+            if (property.Comment.HasValue)
             {
-                _container.Add(property.Comment);
+                _container.Add(property.Comment.Comment);
             }
             _container.Add(property.Content);
             return property;
@@ -175,9 +175,9 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             _properties.Add(property);
-            if (property.Comment != null)
+            if (property.Comment.HasValue)
             {
-                _container.Add(property.Comment);
+                _container.Add(property.Comment.Comment);
             }
             _container.Add(property.Content);
             return property;
@@ -401,12 +401,12 @@ namespace Honoo.Configuration
             }
             if (TryGet(property.Key, out int index, out AddProperty prop))
             {
-                if (property.Comment != null)
+                if (property.Comment.HasValue)
                 {
-                    prop.Content.AddBeforeSelf(property.Comment);
+                    prop.Content.AddBeforeSelf(property.Comment.Comment);
                 }
                 prop.Content.AddBeforeSelf(property.Content);
-                prop.Comment?.Remove();
+                prop.Comment.Remove();
                 prop.Content.Remove();
                 _properties[index] = property;
                 return property;
@@ -1171,7 +1171,7 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             bool removed = _properties.Remove(property);
-            property.Comment?.Remove();
+            property.Comment.Remove();
             property.Content.Remove();
             if (property is AddProperty prop)
             {
@@ -1195,7 +1195,7 @@ namespace Honoo.Configuration
                 {
                     if (property.Key == key)
                     {
-                        property.Comment?.Remove();
+                        property.Comment.Remove();
                         property.Content.Remove();
                         _keys.Remove(key);
                         _properties.RemoveAt(i);

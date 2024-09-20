@@ -16,7 +16,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal DictionarySection(XElement declaration, XElement content, XComment comment) 
+        internal DictionarySection(XElement declaration, XElement content, XComment comment)
             : base(ConfigSectionKind.DictionarySection, declaration, content, comment)
         {
             _properties = new DictionaryPropertySet(content);
@@ -29,7 +29,7 @@ namespace Honoo.Configuration
         /// </summary>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
-        public DictionaryPropertySetControlled GetControlledProperties()
+        public DictionaryPropertySetControlled GetPropertySetControlled()
         {
             return new DictionaryPropertySetControlled(base.Content);
         }

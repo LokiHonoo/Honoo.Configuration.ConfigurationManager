@@ -167,7 +167,7 @@ namespace Honoo.Configuration
         {
             if (_groups.TryGetValue(name, out ConfigSectionGroup value))
             {
-                value.Comment?.Remove();
+                value.Comment.Remove();
                 value.Declaration.Remove();
                 value.Content.Remove();
                 _groups.Remove(name);

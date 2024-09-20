@@ -159,7 +159,7 @@ namespace Honoo.Configuration
         {
             if (_sections.TryGetValue(name, out HonooSection value))
             {
-                value.Comment?.Remove();
+                value.Comment.Remove();
                 value.Content.Remove();
                 _sections.Remove(name);
                 return true;

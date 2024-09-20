@@ -18,7 +18,7 @@
     - [HonooSettingsManager](#honoosettingsmanager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.4.16](#1416)
+    - [1.4.17](#1417)
     - [1.4.11](#1411)
     - [1.4.10](#1410)
     - [1.3.4](#134)
@@ -74,9 +74,8 @@ internal static void Create(string filePath)
         //
         // 赋值并设置注释。
         //
-        manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
-        manager.AppSettings.Properties.Remove("prop6");
-        manager.AppSettings.Properties.Add("prop6", "Update this.");
+        manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").Comment.SetValue("This is \"appSettings\" prop1 comment.");
+        manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this.");
         manager.AppSettings.Properties.AddOrUpdate("prop2", 123456789);
         manager.AppSettings.Properties.AddOrUpdate("prop3", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
         manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
@@ -108,7 +107,7 @@ internal static void Load(string filePath)
         // 取出属性和注释。
         //
         AddProperty value1 = manager.AppSettings.Properties.GetValue("prop1");
-        if (value1.TryGetComment(out string comment1))
+        if (value1.Comment.TryGetValue(out string comment1))
         {
             Console.WriteLine(comment1);
         }
@@ -156,10 +155,10 @@ internal static void Create(string filePath)
         //
         // 赋值并设置注释。
         //
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop1", connection).SetComment("This is \"connectionStrings\" prop1 comment.");
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop1", connection).Comment.SetValue("This is \"connectionStrings\" prop1 comment.");
         manager.ConnectionStrings.Properties.AddOrUpdate("prop2", connection.ConnectionString, connection.GetType().Namespace);
         manager.ConnectionStrings.Properties.AddOrUpdate("prop3", connection.ConnectionString, string.Empty);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).SetComment("It's will remove this.");
+        manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).Comment.SetValue("It's will remove this.");;
         //manager.ConnectionStrings.Properties.Add("prop1", connection);
         //
         // 移除属性的方法。
@@ -183,7 +182,7 @@ internal static void Load(string filePath)
         // 取出属性和注释。
         //
         ConnectionStringProperty value1 = manager.ConnectionStrings.Properties.GetValue("prop1");
-        if (value1.TryGetComment(out string comment1))
+        if (value1.Comment.TryGetValue(out string comment1))
         {
             Console.WriteLine(comment1);
         }
@@ -223,7 +222,7 @@ internal static void Create(string filePath)
         // 配置组。
         //
         ConfigSectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
-        group.SetComment("This is \"ConfigSectionGroup\" comment.");
+        group.Comment.SetValue("This is \"ConfigSectionGroup\" comment.");
         //
         // 配置容器。
         //
@@ -234,7 +233,7 @@ internal static void Create(string filePath)
         // SingleTagSection 使用唯一键值。不支持属性值注释。
         //
         section1.Properties.AddOrUpdate("prop1", 0.6789d);
-        section1.SetComment("This is \"SingleTagSection\" comment.");
+        section1.Comment.SetValue("This is \"SingleTagSection\" comment.");
         section1.Properties.Remove("prop3");
         section1.Properties.Add("prop3", "Update this.");
         section1.Properties.AddOrUpdate("prop2", "abc");
@@ -247,14 +246,14 @@ internal static void Create(string filePath)
         // NameValueSection 允许同名键值。
         //
         section2.Properties.Clear();
-        section2.Properties.Add("prop1", 155.66d).SetComment("This is \"NameValueSection\" prop1 comment.");
-        section2.Properties.Add("prop1", 7.9992d).SetComment("This is \"NameValueSection\" prop1 comment.");
-        section2.SetComment("This is \"NameValueSection\" comment.");
+        section2.Properties.Add("prop1", 155.66d).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
+        section2.Properties.Add("prop1", 7.9992d).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
+        section2.Comment.SetValue("This is \"NameValueSection\" comment.");
         //
         // DictionarySection 使用唯一键值。
         //
-        section3.Properties.AddOrUpdate("prop1", "DictionarySection prop.").SetComment("This is \"DictionarySection\" prop1 comment.");
-        section3.SetComment("This is \"DictionarySection\" comment.");
+        section3.Properties.AddOrUpdate("prop1", "DictionarySection prop.").Comment.SetValue("This is \"DictionarySection\" prop1 comment.");
+        section3.Comment.SetValue("This is \"DictionarySection\" comment.");
 
         //
         // 以文本方式创建。
@@ -262,7 +261,7 @@ internal static void Create(string filePath)
         TextSection section4 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section4");
         section4.SetAttribute("attr1", "attr1value");
         section4.SetValue("<!-- Comment --><arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>");
-        section4.SetComment("This is \"TextSection\" comment.");
+        section4.Comment.SetValue("This is \"TextSection\" comment.");
 
         TextSection section5 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section5");
         section5.SetValue("<![CDATA[<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>]]>");
@@ -273,7 +272,7 @@ internal static void Create(string filePath)
         //
         //
         NameValueSection section7 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section7");
-        section7.SetComment("It's will remove this.");
+        section7.Comment.SetValue("It's will remove this.");
         manager.ConfigSections.Sections.Remove("section7");
         //
         // 保存到指定的文件。
@@ -388,9 +387,8 @@ internal static void Create(string filePath)
         //
         // 赋值并设置注释。
         //
-        manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 comment.");
-        manager.Default.Properties.Remove("prop7");
-        manager.Default.Properties.Add("prop7", "Update this.");
+        manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").Comment.SetValue("This is \"hoonoo-settings\" prop1 comment.");
+        manager.Default.Properties.AddOrUpdate("prop7", "Update this.");
         manager.Default.Properties.AddOrUpdate("prop2", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
         manager.Default.Properties.AddOrUpdate("prop3", 123456789);
         manager.Default.Properties.AddOrUpdate("prop4", new int[] { 1, 2, 3, 4, 5 });
@@ -420,7 +418,7 @@ internal static void Create(string filePath)
         // 附加配置容器。
         //
         HonooSection section = manager.Sections.GetOrAdd("section1");
-        section.SetComment("\"This is \"hoonoo-settings\" section1");
+        section.Comment.SetValue("\"This is \"hoonoo-settings\" section1");
         section.Properties.AddOrUpdate("prop1", 123456789);
         //
         // 保存到指定的文件。
@@ -444,7 +442,7 @@ internal static void Load(string filePath)
         // 取出属性和注释。
         //
         HonooProperty value1 = manager.Default.Properties.GetValue("prop1");
-        if (value1.TryGetComment(out string comment1))
+        if (value1.Comment.TryGetValue(out string comment1))
         {
             Console.WriteLine(comment1);
         }
@@ -465,7 +463,7 @@ internal static void Load(string filePath)
         manager.Default.Properties.TryGetValue("prop6", out string[][][] _);
         //
         HonooSection section = manager.Sections.GetValue("section1");
-        Console.WriteLine(section.GetComment());
+        Console.WriteLine(section.Comment.GetValue());
         Console.WriteLine(section.Properties.GetValue("prop1").Value);
     }
 }
@@ -493,6 +491,10 @@ public static async void Test()
 ```
 
 ## CHANGELOG
+
+### 1.4.17
+
+**Features* 注释操作提取到单独的 ConfigComment 类中。
 
 ### 1.4.16
 

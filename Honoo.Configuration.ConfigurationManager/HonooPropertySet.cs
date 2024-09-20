@@ -83,9 +83,9 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             _properties.Add(property.Key, property);
-            if (property.Comment != null)
+            if (property.Comment.HasValue)
             {
-                _container.Add(property.Comment);
+                _container.Add(property.Comment.Comment);
             }
             _container.Add(property.Content);
             return property;
@@ -897,12 +897,12 @@ namespace Honoo.Configuration
             }
             if (TryGetValue(property.Key, out HonooProperty prop))
             {
-                if (property.Comment != null)
+                if (property.Comment.HasValue)
                 {
-                    prop.Content.AddBeforeSelf(property.Comment);
+                    prop.Content.AddBeforeSelf(property.Comment.Comment);
                 }
                 prop.Content.AddBeforeSelf(property.Content);
-                prop.Comment?.Remove();
+                prop.Comment.Remove();
                 prop.Content.Remove();
                 _properties[prop.Key] = property;
                 return property;
@@ -3655,7 +3655,7 @@ namespace Honoo.Configuration
         {
             if (_properties.TryGetValue(key, out HonooProperty value))
             {
-                value.Comment?.Remove();
+                value.Comment.Remove();
                 value.Content.Remove();
                 _properties.Remove(key);
                 return true;

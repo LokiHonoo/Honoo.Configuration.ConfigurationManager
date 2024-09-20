@@ -82,9 +82,9 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             _properties.Add(property.Name, property);
-            if (property.Comment != null)
+            if (property.Comment.HasValue)
             {
-                _container.Add(property.Comment);
+                _container.Add(property.Comment.Comment);
             }
             _container.Add(property.Content);
             return property;
@@ -133,12 +133,12 @@ namespace Honoo.Configuration
             }
             if (TryGetValue(property.Name, out ConnectionStringProperty prop))
             {
-                if (property.Comment != null)
+                if (property.Comment.HasValue)
                 {
-                    prop.Content.AddBeforeSelf(property.Comment);
+                    prop.Content.AddBeforeSelf(property.Comment.Comment);
                 }
                 prop.Content.AddBeforeSelf(property.Content);
-                prop.Comment?.Remove();
+                prop.Comment.Remove();
                 prop.Content.Remove();
                 _properties[prop.Name] = property;
                 return property;
@@ -288,7 +288,7 @@ namespace Honoo.Configuration
                 throw new ArgumentNullException(nameof(property));
             }
             bool removed = _properties.Remove(property.Name);
-            property.Comment?.Remove();
+            property.Comment.Remove();
             property.Content.Remove();
             return removed;
         }
@@ -304,7 +304,7 @@ namespace Honoo.Configuration
         {
             if (_properties.TryGetValue(name, out ConnectionStringProperty value))
             {
-                value.Comment?.Remove();
+                value.Comment.Remove();
                 value.Content.Remove();
                 _properties.Remove(name);
                 return true;

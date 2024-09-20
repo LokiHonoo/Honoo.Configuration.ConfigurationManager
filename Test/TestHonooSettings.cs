@@ -19,9 +19,8 @@ namespace Test
                 //
                 // 赋值并设置注释。
                 //
-                manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").SetComment("This is \"hoonoo-settings\" prop1 comment.");
-                manager.Default.Properties.Remove("prop7");
-                manager.Default.Properties.Add("prop7", "Update this.");
+                manager.Default.Properties.AddOrUpdate("prop1", "This is \"hoonoo-settings\" prop1 value.").Comment.SetValue("This is \"hoonoo-settings\" prop1 comment.");
+                manager.Default.Properties.AddOrUpdate("prop7", "Update this.");
                 manager.Default.Properties.AddOrUpdate("prop2", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
                 manager.Default.Properties.AddOrUpdate("prop3", 123456789);
                 manager.Default.Properties.AddOrUpdate("prop4", new int[] { 1, 2, 3, 4, 5 });
@@ -51,7 +50,7 @@ namespace Test
                 // 附加配置容器。
                 //
                 HonooSection section = manager.Sections.GetOrAdd("section1");
-                section.SetComment("\"This is \"hoonoo-settings\" section1");
+                section.Comment.SetValue("\"This is \"hoonoo-settings\" section1");
                 section.Properties.AddOrUpdate("prop1", 123456789);
                 //
                 // 保存到指定的文件。
@@ -71,7 +70,7 @@ namespace Test
                 // 取出属性和注释。
                 //
                 HonooProperty value1 = manager.Default.Properties.GetValue("prop1");
-                if (value1.TryGetComment(out string comment1))
+                if (value1.Comment.TryGetValue(out string comment1))
                 {
                     Console.WriteLine(comment1);
                 }
@@ -92,7 +91,7 @@ namespace Test
                 manager.Default.Properties.TryGetValue("prop6", out string[][][] _);
                 //
                 HonooSection section = manager.Sections.GetValue("section1");
-                Console.WriteLine(section.GetComment());
+                Console.WriteLine(section.Comment.GetValue());
                 Console.WriteLine(section.Properties.GetValue("prop1").Value);
             }
         }

@@ -20,9 +20,8 @@ namespace Test
                 //
                 // 赋值并设置注释。
                 //
-                manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").SetComment("This is \"appSettings\" prop1 value.");
-                manager.AppSettings.Properties.Remove("prop6");
-                manager.AppSettings.Properties.Add("prop6", "Update this.");
+                manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").Comment.SetValue("This is \"appSettings\" prop1 comment.");
+                manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this.");
                 manager.AppSettings.Properties.AddOrUpdate("prop2", 123456789);
                 manager.AppSettings.Properties.AddOrUpdate("prop3", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
                 manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
@@ -54,7 +53,7 @@ namespace Test
                 // 取出属性和注释。
                 //
                 AddProperty value1 = manager.AppSettings.Properties.GetValue("prop1");
-                if (value1.TryGetComment(out string comment1))
+                if (value1.Comment.TryGetValue(out string comment1))
                 {
                     Console.WriteLine(comment1);
                 }
@@ -71,7 +70,7 @@ namespace Test
                     Console.WriteLine(value4);
                 }
                 // 取出应用控制标签后的属性。
-                foreach (AddProperty property in manager.AppSettings.GetControlledProperties())
+                foreach (AddProperty property in manager.AppSettings.GetPropertySetControlled())
                 {
                     Console.WriteLine(property.Value);
                 }

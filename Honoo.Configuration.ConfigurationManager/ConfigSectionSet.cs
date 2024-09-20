@@ -330,7 +330,7 @@ namespace Honoo.Configuration
         {
             if (_sections.TryGetValue(name, out ConfigSection value))
             {
-                value.Comment?.Remove();
+                value.Comment.Remove();
                 value.Declaration.Remove();
                 value.Content.Remove();
                 _sections.Remove(name);
