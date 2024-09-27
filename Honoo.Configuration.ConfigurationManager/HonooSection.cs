@@ -33,6 +33,7 @@ namespace Honoo.Configuration
             if (_content == null)
             {
                 _content = new XElement(name);
+                _comment = new ConfigComment(null, _content);
                 root.AddFirst(_content);
             }
             else
@@ -41,6 +42,10 @@ namespace Honoo.Configuration
                 if (pre != null && pre.NodeType == XmlNodeType.Comment)
                 {
                     _comment = new ConfigComment((XComment)pre, _content);
+                }
+                else
+                {
+                    _comment = new ConfigComment(null, _content);
                 }
             }
             _properties = new HonooPropertySet(_content);

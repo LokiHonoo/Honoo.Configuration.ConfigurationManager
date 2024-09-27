@@ -80,7 +80,7 @@ namespace Honoo.Configuration
                 declaration.SetAttributeValue("name", name);
                 XElement content = new XElement(name);
                 ConfigSectionGroup group = new ConfigSectionGroup(declaration, content, null);
-                _groups.Add(name, value);
+                _groups.Add(name, group);
                 _declarationContainer.Add(declaration);
                 _contentContainer.Add(content);
                 return group;

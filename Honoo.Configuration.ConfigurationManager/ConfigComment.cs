@@ -27,8 +27,8 @@ namespace Honoo.Configuration
         /// <param name="leader">内容节点。</param>
         internal ConfigComment(XComment comment, XElement leader)
         {
-            _leader = leader;
             _comment = comment;
+            _leader = leader;
         }
 
         #endregion Construction

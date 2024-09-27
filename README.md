@@ -18,7 +18,9 @@
     - [HonooSettingsManager](#honoosettingsmanager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
+    - [1.4.18](#1418)
     - [1.4.17](#1417)
+    - [1.4.16](#1416)
     - [1.4.11](#1411)
     - [1.4.10](#1410)
     - [1.3.4](#134)
@@ -491,6 +493,10 @@ public static async void Test()
 ```
 
 ## CHANGELOG
+
+### 1.4.18
+
+**Fix* 修复 BUG。
 
 ### 1.4.17
 

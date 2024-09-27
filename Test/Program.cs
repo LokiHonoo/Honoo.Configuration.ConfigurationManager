@@ -44,10 +44,10 @@ namespace Test
             Console.WriteLine();
             Console.WriteLine(File.ReadAllText(filePath1));
             Console.ReadKey(true);
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
             //
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
             TestHonooSettings.Create(filePath5);
             TestHonooSettings.Load(filePath5);
             Console.WriteLine();
@@ -55,6 +55,15 @@ namespace Test
             Console.WriteLine(File.ReadAllText(filePath5));
             Console.ReadKey(true);
             //
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            TestComment.Test();
+            Console.ReadKey(true);
+            //
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
             TestProtection.Create();
             Console.ReadKey(true);
         }

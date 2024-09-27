@@ -22,6 +22,15 @@ namespace Honoo.Configuration
         /// </summary>
         public int Count => _properties.Count;
 
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
+        public AddProperty[] this[string key] => GetValue(key);
+
         #endregion Properties
 
         #region Construction

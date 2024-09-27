@@ -21,6 +21,14 @@ namespace Honoo.Configuration
         /// </summary>
         public int Count => _properties.Count;
 
+        /// <summary>
+        /// 获取指定索引处的连接属性的值。
+        /// </summary>
+        /// <param name="index">连接属性的索引。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public LinkedConfigurationProperty this[int index] => GetValue(index);
+
         #endregion Properties
 
         #region Construction
