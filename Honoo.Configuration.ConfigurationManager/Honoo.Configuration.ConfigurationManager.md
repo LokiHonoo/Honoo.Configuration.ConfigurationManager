@@ -19,11 +19,11 @@ Used to read/write default profiles or custom profiles in the .NET Framework 4.0
 
 Read/write support for appSettings, connectionStrings, configSections, assemblyBinding/linkedConfiguration nodes.
 
-Provides an method to encrypt the configuration file. 
+Provides an method to encrypt the configuration file (not a ASP.NET encryption). 
 
 Waring: The encryption method is different from ASP.NET, and the generated encryption file can only using by this project tool.
 
-Provides "HonooSettingsManager" class to read/write a concise configuration file, using dictionary type, support encryption, and support single value and array values.
+Provides another "HonooSettingsManager" class to read/write a concise configuration file, using dictionary type, encryption supported, and single value and array values supported.
 
 ## GUIDE
 
