@@ -102,6 +102,52 @@ namespace Honoo.Configuration
 
         #endregion Construction
 
+        #region Add
+
+        /// <summary>
+        /// 添加一个配置容器。
+        /// </summary>
+        /// <param name="name">配置容器的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public T Add<T>(string name) where T : ConfigSection
+        {
+            XElement declaration = new XElement("section");
+            declaration.SetAttributeValue("name", name);
+            XElement content = new XElement(name);
+            ConfigSection section;
+            switch (_kind[typeof(T)])
+            {
+                case ConfigSectionKind.TextSection:
+                    declaration.SetAttributeValue("type", "Honoo.Configuration.TextSectionHandler");
+                    section = new TextSection(declaration, content, null);
+                    break;
+
+                case ConfigSectionKind.SingleTagSection:
+                    declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
+                    section = new SingleTagSection(declaration, content, null);
+                    break;
+
+                case ConfigSectionKind.NameValueSection:
+                    declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
+                    section = new NameValueSection(declaration, content, null);
+                    break;
+
+                case ConfigSectionKind.DictionarySection:
+                    declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
+                    section = new DictionarySection(declaration, content, null);
+                    break;
+
+                default: throw new ArgumentException($"The invalid argument - {nameof(T)}.");
+            }
+            _sections.Add(name, section);
+            _declarationContainer.Add(declaration);
+            _contentContainer.Add(content);
+            return section as T;
+        }
+
+        #endregion Add
+
         #region GetOrAdd
 
         /// <summary>
@@ -127,38 +173,7 @@ namespace Honoo.Configuration
             }
             else
             {
-                XElement declaration = new XElement("section");
-                declaration.SetAttributeValue("name", name);
-                XElement content = new XElement(name);
-                ConfigSection section;
-                switch (_kind[typeof(T)])
-                {
-                    case ConfigSectionKind.TextSection:
-                        declaration.SetAttributeValue("type", "Honoo.Configuration.TextSectionHandler");
-                        section = new TextSection(declaration, content, null);
-                        break;
-
-                    case ConfigSectionKind.SingleTagSection:
-                        declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
-                        section = new SingleTagSection(declaration, content, null);
-                        break;
-
-                    case ConfigSectionKind.NameValueSection:
-                        declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
-                        section = new NameValueSection(declaration, content, null);
-                        break;
-
-                    case ConfigSectionKind.DictionarySection:
-                        declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
-                        section = new DictionarySection(declaration, content, null);
-                        break;
-
-                    default: throw new ArgumentException($"The invalid argument - {nameof(T)}.");
-                }
-                _sections.Add(name, section);
-                _declarationContainer.Add(declaration);
-                _contentContainer.Add(content);
-                return section as T;
+                return Add<T>(name);
             }
         }
 

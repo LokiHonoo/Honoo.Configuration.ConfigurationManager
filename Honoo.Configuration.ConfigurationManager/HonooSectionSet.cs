@@ -55,6 +55,26 @@ namespace Honoo.Configuration
 
         #endregion Construction
 
+        #region Add
+
+        /// <summary>
+        /// 添加一个配置容器。
+        /// </summary>
+        /// <param name="name">配置容器的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooSection Add(string name)
+        {
+            XElement content = new XElement(HonooSettingsManager.Namespace + "section");
+            content.SetAttributeValue("name", name);
+            HonooSection section = new HonooSection(content, null);
+            _sections.Add(name, section);
+            _container.Add(content);
+            return section;
+        }
+
+        #endregion Add
+
         #region GetOrAdd
 
         /// <summary>
@@ -70,12 +90,7 @@ namespace Honoo.Configuration
             }
             else
             {
-                XElement content = new XElement(HonooSettingsManager.Namespace + "section");
-                content.SetAttributeValue("name", name);
-                HonooSection section = new HonooSection(content, null);
-                _sections.Add(name, section);
-                _container.Add(content);
-                return section;
+                return Add(name);
             }
         }
 

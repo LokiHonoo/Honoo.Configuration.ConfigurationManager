@@ -61,6 +61,28 @@ namespace Honoo.Configuration
 
         #endregion Construction
 
+        #region Add
+
+        /// <summary>
+        /// 添加一个配置组。
+        /// </summary>
+        /// <param name="name">配置组的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConfigSectionGroup Add(string name)
+        {
+            XElement declaration = new XElement("sectionGroup");
+            declaration.SetAttributeValue("name", name);
+            XElement content = new XElement(name);
+            ConfigSectionGroup group = new ConfigSectionGroup(declaration, content, null);
+            _groups.Add(name, group);
+            _declarationContainer.Add(declaration);
+            _contentContainer.Add(content);
+            return group;
+        }
+
+        #endregion Add
+
         #region GetOrAdd
 
         /// <summary>
@@ -76,14 +98,7 @@ namespace Honoo.Configuration
             }
             else
             {
-                XElement declaration = new XElement("sectionGroup");
-                declaration.SetAttributeValue("name", name);
-                XElement content = new XElement(name);
-                ConfigSectionGroup group = new ConfigSectionGroup(declaration, content, null);
-                _groups.Add(name, group);
-                _declarationContainer.Add(declaration);
-                _contentContainer.Add(content);
-                return group;
+                return Add(name);
             }
         }
 
