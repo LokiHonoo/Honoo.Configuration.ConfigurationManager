@@ -377,21 +377,18 @@ namespace Honoo.Configuration
             {
                 throw new FileLoadException("File is not a configuration file.");
             }
-            if (protectionAlgorithm != null)
+            if (root.Attribute("protected") is XAttribute attribute)
             {
-                if (root.Attribute("protected") is XAttribute attribute)
+                if (bool.TryParse(attribute.Value, out bool isProtected))
                 {
-                    if (bool.TryParse(attribute.Value, out bool isProtected))
+                    if (isProtected)
                     {
-                        if (isProtected)
-                        {
-                            root = ProtectionHelper.Decrypt(root, protectionAlgorithm);
-                        }
+                        root = ProtectionHelper.Decrypt(root, protectionAlgorithm);
                     }
-                    else
-                    {
-                        throw new CryptographicException($"Attribute \"protected\" is not a boolean value.");
-                    }
+                }
+                else
+                {
+                    throw new CryptographicException($"Attribute \"protected\" is not a boolean value.");
                 }
             }
             return root;

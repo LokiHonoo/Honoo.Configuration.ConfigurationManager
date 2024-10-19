@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;net462;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
     <PackageId>Honoo.Configuration.ConfigurationManager</PackageId>
     <Authors>Loki Honoo</Authors>	  
     <Company>Loki Honoo</Company>
@@ -9,19 +9,19 @@
 	<Copyright>Copyright (C) Loki Honoo 2020. All rights reserved.</Copyright>
 	<SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Honoo.Configuration.ConfigurationManager.snk</AssemblyOriginatorKeyFile>
-    <Description>The project is a replacement for "System.Configuration.ConfigurationManager". Used to read/write default profiles or custom profiles in the .NET Framework 4.0+/.NET Standard 2.0+. Provides an method to encrypt the configuration file(not a ASP.NET encryption). 
+    <Description>The project is a replacement for "System.Configuration.ConfigurationManager".  Used to read/write default profiles or custom profiles in the .NET Framework 4.0+/.NET Standard 2.0+. Provides an method to encrypt the configuration file(not a ASP.NET encryption). 
 
-ConfigurationManager(filename)
-manager.AppSettings.Properties.AddOrUpdate("prop1", 123456789);
+Provides another "HonooSettingsManager" class to read/write a concise configuration file, encryption supported, dictionary/list nesting supported.
 
-Provides another "HonooSettingsManager" class to read/write a concise configuration file, using dictionary type, encryption supported, and single value and array values supported.</Description>
+var manager = new ConfigurationManager(filename);
+manager.AppSettings.Properties.AddOrUpdate("prop1", 123456789);</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager</PackageProjectUrl>
     <RepositoryUrl>https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager</RepositoryUrl>
     <PackageTags>Honoo;Configuration;ConfigurationManager;HonooSettingsManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-	<VersionPrefix>1.4.19</VersionPrefix>
+	<VersionPrefix>1.5.0</VersionPrefix>
     <PackageReadmeFile>Honoo.Configuration.ConfigurationManager.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>

@@ -13,17 +13,17 @@ namespace Test
             using (HonooSettingsManager manager = new HonooSettingsManager())
             {
                 manager.Default.Comment.SetValue("default comment");
-                manager.Default.Properties.AddOrUpdate("prop1", "prop1 value.").Comment.SetValue("prop1 comment.");
+                manager.Default.AddOrUpdate("prop1", new HonooString("prop1 value.")).Comment.SetValue("prop1 comment.");
 
-                HonooSection section = manager.Sections.GetOrAdd("section1");
+                HonooDictionary section = manager.Sections.GetOrAdd("section1");
                 section.Comment.SetValue("section1 comment.");
-                section.Properties.AddOrUpdate("prop1", 123456789).Comment.SetValue("prop1 comment.");
+                section.AddOrUpdate("prop1", new HonooString("123456789")).Comment.SetValue("prop1 comment.");
                 //
                 //
                 //
                 Console.WriteLine(manager.Default.Comment.GetValue());
                 Console.WriteLine(manager.Sections["section1"].Comment.GetValue());
-                Console.WriteLine(manager.Sections["section1"].Properties["prop1"].Comment.GetValue());
+                Console.WriteLine(manager.Sections["section1"]["prop1"].Comment.GetValue());
             }
 
             using (AppSettingsManager manager = new AppSettingsManager())

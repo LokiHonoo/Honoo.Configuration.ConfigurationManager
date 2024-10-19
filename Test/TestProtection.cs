@@ -68,7 +68,7 @@ namespace Test
             {
                 using (HonooSettingsManager manager = new HonooSettingsManager())
                 {
-                    manager.Default.Properties.AddOrUpdate("prop1", "This is \"protection\" test.").Comment.SetValue("This is \"protection\" test.");
+                    manager.Default.AddOrUpdate("prop1", new HonooString("This is \"protection\" test.")).Comment.SetValue("This is \"protection\" test.");
                     //
                     // 加密方式保存到指定的文件。
                     //

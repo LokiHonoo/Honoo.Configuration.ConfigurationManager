@@ -16,7 +16,7 @@ namespace Honoo.Configuration
 
         private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
-        private HonooSection _default;
+        private HonooDictionary _default;
         private bool _disposed;
         private XElement _root;
         private HonooSectionSet _sections;
@@ -24,20 +24,21 @@ namespace Honoo.Configuration
         /// <summary>
         /// 映射到 &lt;default /&gt; 配置容器节点。
         /// </summary>
-        public HonooSection Default
+        public HonooDictionary Default
         {
             get
             {
                 if (!_disposed && _default == null)
                 {
-                    _default = new HonooSection(_root);
+                    GetDefault(out XElement content, out XComment comment);
+                    _default = new HonooDictionary(content, comment);
                 }
                 return _default;
             }
         }
 
         /// <summary>
-        /// 获取配置容器集合。不包括 &lt;default /&gt; 节点。
+        /// 获取配置容器集合。
         /// </summary>
         public HonooSectionSet Sections
         {
@@ -347,21 +348,18 @@ namespace Honoo.Configuration
             {
                 throw new FileLoadException("File is not a settings(https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/) file.");
             }
-            if (protectionAlgorithm != null)
+            if (root.Attribute("protected") is XAttribute attribute)
             {
-                if (root.Attribute("protected") is XAttribute attribute)
+                if (bool.TryParse(attribute.Value, out bool isProtected))
                 {
-                    if (bool.TryParse(attribute.Value, out bool isProtected))
+                    if (isProtected)
                     {
-                        if (isProtected)
-                        {
-                            root = ProtectionHelper.Decrypt(root, protectionAlgorithm);
-                        }
+                        root = ProtectionHelper.Decrypt(root, protectionAlgorithm);
                     }
-                    else
-                    {
-                        throw new CryptographicException($"Attribute \"protected\" is not a boolean value.");
-                    }
+                }
+                else
+                {
+                    throw new CryptographicException($"Attribute \"protected\" is not a boolean value.");
                 }
             }
             return root;
@@ -370,7 +368,7 @@ namespace Honoo.Configuration
         private XElement Clean(XElement root)
         {
             XElement result = XElement.Parse(root.ToString());
-            if (_default != null && _default.Properties.Count == 0 && !_default.Comment.HasValue)
+            if (_default != null && _default.Count == 0 && !_default.Comment.HasValue)
             {
                 result.Element("default").Remove();
             }
@@ -391,6 +389,25 @@ namespace Honoo.Configuration
                 }
             }
             return result;
+        }
+
+        private void GetDefault(out XElement content, out XComment comment)
+        {
+            comment = null;
+            content = _root.Element(_namespace + "default");
+            if (content == null)
+            {
+                content = new XElement(_namespace + "default");
+                _root.AddFirst(content);
+            }
+            else
+            {
+                XNode pre = content.PreviousNode;
+                if (pre != null && pre.NodeType == XmlNodeType.Comment)
+                {
+                    comment = (XComment)pre;
+                }
+            }
         }
     }
 }
