@@ -1138,7 +1138,7 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool Contains(string key)
+        public bool ContainsKey(string key)
         {
             return _keys.Contains(key);
         }

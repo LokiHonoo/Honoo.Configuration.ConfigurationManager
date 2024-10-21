@@ -152,7 +152,7 @@ namespace Honoo.Configuration
         /// <param name="name">配置组的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool Contains(string name)
+        public bool ContainsName(string name)
         {
             return _groups.ContainsKey(name);
         }

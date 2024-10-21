@@ -255,7 +255,7 @@ namespace Honoo.Configuration
         /// <param name="name">连接属性的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool Contains(string name)
+        public bool ContainsName(string name)
         {
             return _properties.ContainsKey(name);
         }

@@ -368,7 +368,7 @@ namespace Honoo.Configuration
         private XElement Clean(XElement root)
         {
             XElement result = XElement.Parse(root.ToString());
-            if (_default != null && _default.Count == 0 && !_default.Comment.HasValue)
+            if (_default != null && _default.Properties.Count == 0 && !_default.Comment.HasValue)
             {
                 result.Element("default").Remove();
             }

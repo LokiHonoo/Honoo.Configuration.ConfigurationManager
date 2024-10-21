@@ -26,7 +26,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public HonooString(string value) : base(HonooPropertyKind.HonooString, GetElement(value), null)
         {
-            _value = value;
+            _value = value.Trim();
         }
 
         internal HonooString(XElement content, XComment comment) : base(HonooPropertyKind.HonooString, content, comment)
@@ -214,6 +214,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
+            value = value.Trim();
             base.Content.Value = value;
             _value = value;
             return this;

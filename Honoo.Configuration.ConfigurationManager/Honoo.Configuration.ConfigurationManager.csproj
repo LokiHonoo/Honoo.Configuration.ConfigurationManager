@@ -21,7 +21,7 @@ manager.AppSettings.Properties.AddOrUpdate("prop1", 123456789);</Description>
     <PackageTags>Honoo;Configuration;ConfigurationManager;HonooSettingsManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-	<VersionPrefix>1.5.0</VersionPrefix>
+	<VersionPrefix>1.5.1</VersionPrefix>
     <PackageReadmeFile>Honoo.Configuration.ConfigurationManager.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
