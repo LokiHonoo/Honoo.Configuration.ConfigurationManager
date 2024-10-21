@@ -18,6 +18,7 @@
     - [HonooSettingsManager](#honoosettingsmanager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
+    - [1.5.2](#152)
     - [1.5.1](#151)
     - [1.4.19-final](#1419-final)
     - [1.4.18](#1418)
@@ -392,15 +393,15 @@ internal static void Create(string filePath)
         // 赋值并设置注释。
         //
         manager.Default.Properties.AddOrUpdate("prop1", new HonooString("This is \"hoonoo-settings\" prop1 value.")).Comment.SetValue("This is \"hoonoo-settings\" prop1 comment.");
-        manager.Default.Properties.AddOrUpdate("prop7", new HonooString("Update this."));
+        manager.Default.Properties.AddOrUpdate("prop7", "Update this.");
         var prop2 = manager.Default.Properties.AddOrUpdate("prop2", new HonooDictionary());
-        prop2.Properties.AddOrUpdate("prop4", new HonooString("Sub this."));
+        prop2.Properties.AddOrUpdate("prop4", "Sub this dictionary prop.");
         var prop3 = manager.Default.Properties.AddOrUpdate("prop3", new HonooList());
-        prop3.Properties.Add(new HonooString("Sub this.")).Comment.SetValue("This is \"hoonoo-settings\" list prop comment."); ;
+        prop3.Properties.Add(new HonooString("Sub this list prop.")).Comment.SetValue("This is \"hoonoo-settings\" list prop comment."); ;
         HonooDictionary prop5 = prop3.Properties.Add(new HonooDictionary());
         prop5.Properties.Add("prop5", new HonooString("F024AC4"));
         manager.Default.Properties.AddOrUpdate("prop6", new HonooString("Remove this."));
-        //manager.Default.Add("prop1", new HonooString("Test unique."));
+        // manager.Default.Properties.Add("prop1", new HonooString("Test unique."));
         //
         // 移除属性的方法。移除属性时相关注释一并移除。
         //
@@ -441,22 +442,22 @@ internal static void Load(string filePath)
         {
             Console.WriteLine(comment1);
         }
-        Console.WriteLine(value1.GetStringValue());
+        Console.WriteLine(value1.ToString());
         //
         HonooDictionary value2 = manager.Default.Properties.GetValue<HonooDictionary>("prop2");
         value2.Properties.TryGetValue("prop4", out HonooString val2);
-        Console.WriteLine(val2.GetStringValue());
+        Console.WriteLine(val2.ToString());
         //
         HonooList value3 = manager.Default.Properties.GetValue<HonooList>("prop3");
         Console.WriteLine(value3.Properties[0]);
         //
         HonooString value5 = ((HonooDictionary)value3.Properties[1]).Properties.GetValue<HonooString>("prop5");
-        byte[] val5 = value5.GetBytesValue();
+        byte[] val5 = value5.ToBytes();
         Console.WriteLine(BitConverter.ToString(val5));
         //
         HonooDictionary section = manager.Sections.GetValue("section1");
         Console.WriteLine(section.Comment.GetValue());
-        Console.WriteLine(section.Properties.GetValue<HonooString>("prop1").GetInt64Value());
+        Console.WriteLine(section.Properties.GetValue<HonooString>("prop1").ToInt64());
     }
 }
 
@@ -483,6 +484,10 @@ public static async void Test()
 ```
 
 ## CHANGELOG
+
+### 1.5.2
+
+**Features* 提供针对字符串的方法的重载。
 
 ### 1.5.1
 

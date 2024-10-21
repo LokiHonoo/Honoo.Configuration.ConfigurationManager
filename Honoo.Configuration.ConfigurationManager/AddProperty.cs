@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Xml.Linq;
 
 namespace Honoo.Configuration
@@ -6,20 +8,13 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性。
     /// </summary>
-    public sealed class AddProperty : TagProperty
+    public sealed class AddProperty : TagProperty, IEquatable<AddProperty>, IComparer<AddProperty>, IComparable
     {
-        private readonly string _key;
-        private readonly string _value;
-
-        /// <summary>
-        /// 获取配置属性的键。
-        /// </summary>
-        public string Key => _key;
+        private string _value;
 
         /// <summary>
         /// 获取配置属性的值。
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1721:属性名不应与 get 方法匹配", Justification = "<挂起>")]
         public string Value => _value;
 
         #region Construction
@@ -27,382 +22,388 @@ namespace Honoo.Configuration
         /// <summary>
         /// 创建 AddProperty 的新实例。
         /// </summary>
-        /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
-        public AddProperty(string key, string value) : base(TagPropertyKind.AddProperty, GetElement(key, value), null)
+        public AddProperty(string value) : base(TagPropertyKind.AddProperty, GetElement(value), null)
         {
-            _key = key ?? throw new ArgumentNullException(nameof(key));
-            _value = value ?? throw new ArgumentNullException(nameof(value));
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            _value = value.Trim();
         }
 
         internal AddProperty(XElement content, XComment comment) : base(TagPropertyKind.AddProperty, content, comment)
         {
-            _key = content.Attribute("key").Value;
             _value = content.Attribute("value").Value;
         }
 
         #endregion Construction
 
-        #region TryGetValue
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out string value)
-        {
-            value = _value;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out bool value)
-        {
-            return bool.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out sbyte value)
-        {
-            return sbyte.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out byte value)
-        {
-            return byte.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out short value)
-        {
-            return short.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out ushort value)
-        {
-            return ushort.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out int value)
-        {
-            return int.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out uint value)
-        {
-            return uint.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out long value)
-        {
-            return long.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out ulong value)
-        {
-            return ulong.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out float value)
-        {
-            return float.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out double value)
-        {
-            return double.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out decimal value)
-        {
-            return decimal.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out char value)
-        {
-            return char.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out Binaries value)
-        {
-            if (XValueHelper.TryParse(_value, out byte[] val))
-            {
-                value = new Binaries(val);
-                return true;
-            }
-            value = null;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue<TEnum>(out TEnum value) where TEnum : struct
-        {
-            if (typeof(TEnum).BaseType.FullName == "System.Enum")
-            {
-                return Enum.TryParse(_value, false, out value);
-            }
-            value = default;
-            return false;
-        }
-
-        #endregion TryGetValue
-
         #region GetValue
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="bool"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string GetValue(string defaultValue)
+        public bool GetBooleanValue()
         {
-            return TryGetValue(out string value) ? value : defaultValue;
+            return bool.Parse(_value);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="byte"/>[] 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool GetValue(bool defaultValue)
+        /// <exception cref="Exception" />
+        public byte[] GetBytesValue()
         {
-            return TryGetValue(out bool value) ? value : defaultValue;
+            return XValueHelper.Parse(_value);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="byte"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public sbyte GetValue(sbyte defaultValue)
+        public byte GetByteValue()
         {
-            return TryGetValue(out sbyte value) ? value : defaultValue;
+            return byte.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="char"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte GetValue(byte defaultValue)
+        public char GetCharValue()
         {
-            return TryGetValue(out byte value) ? value : defaultValue;
+            return char.Parse(_value);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="DateTime"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public short GetValue(short defaultValue)
+        public DateTime GetDateTimeValue()
         {
-            return TryGetValue(out short value) ? value : defaultValue;
+            return DateTime.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="decimal"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ushort GetValue(ushort defaultValue)
+        public decimal GetDecimalValue()
         {
-            return TryGetValue(out ushort value) ? value : defaultValue;
+            return decimal.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="double"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public int GetValue(int defaultValue)
+        public double GetDoubleValue()
         {
-            return TryGetValue(out int value) ? value : defaultValue;
+            return double.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="Enum"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public uint GetValue(uint defaultValue)
+        public TEnum GetEnumValue<TEnum>() where TEnum : Enum
         {
-            return TryGetValue(out uint value) ? value : defaultValue;
+            return (TEnum)Enum.Parse(typeof(TEnum), _value, true);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="short"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public long GetValue(long defaultValue)
+        public short GetInt16Value()
         {
-            return TryGetValue(out long value) ? value : defaultValue;
+            return short.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="int"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ulong GetValue(ulong defaultValue)
+        public int GetInt32Value()
         {
-            return TryGetValue(out ulong value) ? value : defaultValue;
+            return int.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="long"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public float GetValue(float defaultValue)
+        public long GetInt64Value()
         {
-            return TryGetValue(out float value) ? value : defaultValue;
+            return long.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="sbyte"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public double GetValue(double defaultValue)
+        public sbyte GetSByteValue()
         {
-            return TryGetValue(out double value) ? value : defaultValue;
+            return sbyte.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="float"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public decimal GetValue(decimal defaultValue)
+        public float GetSingleValue()
         {
-            return TryGetValue(out decimal value) ? value : defaultValue;
+            return float.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取字符串数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public char GetValue(char defaultValue)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
+        public string GetStringValue()
         {
-            return TryGetValue(out char value) ? value : defaultValue;
+            return _value;
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="ushort"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public Binaries GetValue(Binaries defaultValue)
+        public ushort GetUInt16Value()
         {
-            return TryGetValue(out Binaries value) ? value : defaultValue;
+            return ushort.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="uint"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public TEnum GetValue<TEnum>(TEnum defaultValue) where TEnum : struct
+        public uint GetUInt32Value()
         {
-            return TryGetValue(out TEnum value) ? value : defaultValue;
+            return uint.Parse(_value, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// 获取转换为 <see cref="ulong"/> 格式的数据值。
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ulong GetUInt64Value()
+        {
+            return ulong.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         #endregion GetValue
 
-        private static XElement GetElement(string key, string value)
+        #region SetValue
+
+        /// <summary>
+        /// 设置值。
+        /// </summary>
+        /// <param name="value">文本类型的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty SetValue(string value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            value = value.Trim();
+            base.Content.SetAttributeValue("value", value);
+            _value = value;
+            return this;
+        }
+
+        #endregion SetValue
+
+        /// <summary>
+        /// 比较两个对象并返回一个值。该值指示一个对象是小于、等于还是大于另一个对象。
+        /// </summary>
+        /// <param name="x">要比较的第一个对象。</param>
+        /// <param name="y">要比较的第二个对象。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public static int Compare(AddProperty x, AddProperty y)
+        {
+            if (x is null)
+            {
+                throw new ArgumentNullException(nameof(x));
+            }
+            if (y is null)
+            {
+                throw new ArgumentNullException(nameof(y));
+            }
+            return string.Compare(x._value, y._value, StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// 比较。
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator !=(AddProperty left, AddProperty right)
+        {
+            return !(left == right);
+        }
+
+        /// <summary>
+        /// 比较。
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator <(AddProperty left, AddProperty right)
+        {
+            return (Compare(left, right) < 0);
+        }
+
+        /// <summary>
+        /// 比较。
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator <=(AddProperty left, AddProperty right)
+        {
+            return (Compare(left, right) <= 0);
+        }
+
+        /// <summary>
+        /// 比较。
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator ==(AddProperty left, AddProperty right)
+        {
+            if (left is null)
+            {
+                return right is null;
+            }
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// 比较。
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator >(AddProperty left, AddProperty right)
+        {
+            return (Compare(left, right) > 0);
+        }
+
+        /// <summary>
+        /// 比较。
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator >=(AddProperty left, AddProperty right)
+        {
+            return (Compare(left, right) >= 0);
+        }
+
+        /// <summary>
+        /// 比较两个对象并返回一个值。该值指示一个对象是小于、等于还是大于另一个对象。
+        /// </summary>
+        /// <param name="x">要比较的第一个对象。</param>
+        /// <param name="y">要比较的第二个对象。</param>
+        /// <returns></returns>
+        int IComparer<AddProperty>.Compare(AddProperty x, AddProperty y)
+        {
+            return string.Compare(x._value, y._value, StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// 将当前实例与另一个对象比较并返回一个值。该值指示当前实例在排序位置是小于、等于还是大于另一个对象。
+        /// </summary>
+        /// <param name="obj">要比较的对象。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public int CompareTo(object obj)
+        {
+            if (obj is AddProperty other)
+            {
+                return CompareTo(other);
+            }
+            throw new ArgumentException($"{nameof(obj)} is not a AddProperty.");
+        }
+
+        /// <summary>
+        /// 将当前实例与另一个对象比较并返回一个值。该值指示当前实例在排序位置是小于、等于还是大于另一个对象。
+        /// </summary>
+        /// <param name="other">要比较的对象。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public int CompareTo(AddProperty other)
+        {
+            if (other is null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+            return string.Compare(_value, other._value, StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// 确定此实例和指定的对象具有相同的值。
+        /// </summary>
+        /// <param name="other">比较的对象。</param>
+        /// <returns></returns>
+        public bool Equals(AddProperty other)
+        {
+            return other is AddProperty && other._value == _value;
+        }
+
+        /// <summary>
+        /// 确定指定的对象是否等于当前对象。
+        /// </summary>
+        /// <param name="obj">比较的对象。</param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            return obj is AddProperty other && other._value == _value;
+        }
+
+        /// <summary>
+        /// 方法已重写。获取字符串数据值的哈希代码。
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return -689372227 + EqualityComparer<string>.Default.GetHashCode(_value);
+        }
+
+        private static XElement GetElement(string value)
+        {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             XElement element = new XElement("add");
-            element.SetAttributeValue("key", key);
+            element.SetAttributeValue("key", "add_property");
             element.SetAttributeValue("value", value);
             return element;
         }

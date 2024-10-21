@@ -10,7 +10,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器集合。
     /// </summary>
-    public sealed class ConfigSectionSet : IEnumerable<ConfigSection>
+    public sealed class ConfigSectionSet : IEnumerable<KeyValuePair<string, ConfigSection>>
     {
         #region Properties
 
@@ -30,6 +30,16 @@ namespace Honoo.Configuration
         /// 获取配置容器集合中包含的元素数。
         /// </summary>
         public int Count => _sections.Count;
+
+        /// <summary>
+        /// 获取配置容器集合的键的集合。
+        /// </summary>
+        public Dictionary<string, ConfigSection>.KeyCollection Keys => _sections.Keys;
+
+        /// <summary>
+        /// 获取配置容器集合的值的集合。
+        /// </summary>
+        public Dictionary<string, ConfigSection>.ValueCollection Values => _sections.Values;
 
         /// <summary>
         /// 获取与指定名称关联的配置容器。
@@ -152,7 +162,7 @@ namespace Honoo.Configuration
 
         /// <summary>
         /// 获取与指定名称关联的配置容器的值。如果不存在，添加一个 <typeparamref name="T"/> 类型的配置容器并返回值。
-        /// <br/>如果配置容器存在但不是指定的类型，方法抛出 <see cref="ArgumentException"/>。
+        /// <br/>如果配置容器存在但不是指定的类型，则抛出 <see cref="InvalidCastException"/>。
         /// </summary>
         /// <typeparam name="T">添加配置容器时使用的类型。</typeparam>
         /// <param name="name">配置容器的名称。</param>
@@ -168,7 +178,7 @@ namespace Honoo.Configuration
                 }
                 else
                 {
-                    throw new ArgumentException($"The section exists but is not of the specified type - {typeof(T)}.");
+                    throw new InvalidCastException($"The section exists but is not of the specified type - section type:{value.GetType()}.");
                 }
             }
             else
@@ -324,14 +334,14 @@ namespace Honoo.Configuration
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<ConfigSection> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, ConfigSection>> GetEnumerator()
         {
-            return _sections.Values.GetEnumerator();
+            return _sections.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _sections.Values.GetEnumerator();
+            return _sections.GetEnumerator();
         }
 
         /// <summary>

@@ -59,6 +59,16 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
+        /// 获取转换为 <see cref="byte"/> 格式的数据值。
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public byte GetByteValue()
+        {
+            return byte.Parse(_value, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
         /// 获取转换为 <see cref="char"/> 格式的数据值。
         /// </summary>
         /// <returns></returns>
@@ -66,6 +76,16 @@ namespace Honoo.Configuration
         public char GetCharValue()
         {
             return char.Parse(_value);
+        }
+
+        /// <summary>
+        /// 获取转换为 <see cref="DateTime"/> 格式的数据值。
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public DateTime GetDateTimeValue()
+        {
+            return DateTime.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -93,19 +113,9 @@ namespace Honoo.Configuration
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public TEnum GetEnumValue<TEnum>() where TEnum : struct
+        public TEnum GetEnumValue<TEnum>() where TEnum : Enum
         {
             return (TEnum)Enum.Parse(typeof(TEnum), _value, true);
-        }
-
-        /// <summary>
-        /// 获取转换为 <see cref="float"/> 格式的数据值。
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public float GetFloatValue()
-        {
-            return float.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -139,19 +149,30 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取转换为 <see cref="byte"/> 格式的数据值。
+        /// 获取转换为 <see cref="sbyte"/> 格式的数据值。
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte GetInt8Value()
+        public sbyte GetSByteValue()
         {
-            return byte.Parse(_value, CultureInfo.InvariantCulture);
+            return sbyte.Parse(_value, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// 获取转换为 <see cref="float"/> 格式的数据值。
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public float GetSingleValue()
+        {
+            return float.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
         /// 获取字符串数据值。
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="Exception"/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
         public string GetStringValue()
         {
@@ -186,16 +207,6 @@ namespace Honoo.Configuration
         public ulong GetUInt64Value()
         {
             return ulong.Parse(_value, CultureInfo.InvariantCulture);
-        }
-
-        /// <summary>
-        /// 获取转换为 <see cref="sbyte"/> 格式的数据值。
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public sbyte GetUInt8Value()
-        {
-            return sbyte.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         #endregion GetValue
@@ -380,15 +391,6 @@ namespace Honoo.Configuration
         public override int GetHashCode()
         {
             return -414149184 + EqualityComparer<string>.Default.GetHashCode(_value);
-        }
-
-        /// <summary>
-        /// 方法已重写。获取字符串数据值。
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return _value;
         }
 
         private static XElement GetElement(string value)

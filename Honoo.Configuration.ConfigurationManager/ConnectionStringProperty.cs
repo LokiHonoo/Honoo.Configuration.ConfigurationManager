@@ -10,10 +10,9 @@ namespace Honoo.Configuration
     public sealed class ConnectionStringProperty
     {
         private readonly ConfigComment _comment;
-        private readonly string _connectionString;
         private readonly XElement _content;
-        private readonly string _name;
-        private readonly string _providerName;
+        private string _connectionString;
+        private string _providerName;
 
         /// <summary>
         /// 连接属性的注释。
@@ -24,11 +23,6 @@ namespace Honoo.Configuration
         /// 获取连接字符串。
         /// </summary>
         public string ConnectionString => _connectionString;
-
-        /// <summary>
-        /// 获取此连接属性的名称。
-        /// </summary>
-        public string Name => _name;
 
         /// <summary>
         /// 获取数据库引擎的文本名称。
@@ -42,39 +36,34 @@ namespace Honoo.Configuration
         /// <summary>
         /// 创建 ConnectionStringProperty 的新实例。
         /// </summary>
-        /// <param name="name">连接属性的名称。</param>
         /// <param name="connection">数据库连接实例。</param>
-        public ConnectionStringProperty(string name, DbConnection connection)
+        public ConnectionStringProperty(DbConnection connection)
         {
-            _name = name ?? throw new ArgumentNullException(nameof(name));
             if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
             _connectionString = connection.ConnectionString;
             _providerName = connection.GetType().Namespace;
-            _content = GetElement(name, connection.ConnectionString, connection.GetType().Namespace);
+            _content = GetElement(connection.ConnectionString, connection.GetType().Namespace);
             _comment = new ConfigComment(null, _content);
         }
 
         /// <summary>
         /// 创建 ConnectionStringProperty 的新实例。
         /// </summary>
-        /// <param name="name">连接属性的名称。</param>
         /// <param name="connectionString">连接字符串。</param>
         /// <param name="providerName">数据库引擎的文本名称。</param>
-        public ConnectionStringProperty(string name, string connectionString, string providerName)
+        public ConnectionStringProperty(string connectionString, string providerName)
         {
-            _name = name ?? throw new ArgumentNullException(nameof(name));
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             _providerName = providerName;
-            _content = GetElement(name, connectionString, providerName);
+            _content = GetElement(connectionString, providerName);
             _comment = new ConfigComment(null, _content);
         }
 
         internal ConnectionStringProperty(XElement content, XComment comment)
         {
-            _name = content.Attribute("name").Value;
             _connectionString = content.Attribute("connectionString").Value;
             _providerName = content.Attribute("providerName")?.Value;
             _content = content;
@@ -82,6 +71,47 @@ namespace Honoo.Configuration
         }
 
         #endregion Construction
+
+        #region SetValue
+
+        /// <summary>
+        /// 设置值。
+        /// </summary>
+        /// <param name="connection">数据库连接实例。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConnectionStringProperty SetValue(DbConnection connection)
+        {
+            if (connection == null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+            return SetValue(connection.ConnectionString, connection.GetType().Namespace);
+        }
+
+        /// <summary>
+        /// 设置值。
+        /// </summary>
+        /// <param name="connectionString">连接字符串。</param>
+        /// <param name="providerName">数据库引擎的文本名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConnectionStringProperty SetValue(string connectionString, string providerName)
+        {
+            if (connectionString == null)
+            {
+                throw new ArgumentNullException(nameof(connectionString));
+            }
+            connectionString = connectionString.Trim();
+            providerName = providerName?.Trim();
+            _content.SetAttributeValue("connectionString", connectionString);
+            _content.SetAttributeValue("providerName", providerName);
+            _connectionString = connectionString;
+            _providerName = providerName;
+            return this;
+        }
+
+        #endregion SetValue
 
         /// <summary>
         /// 指定具体的数据库连接类型，创建连接实例。此方法忽略数据库引擎参数 ProviderName。
@@ -102,13 +132,13 @@ namespace Honoo.Configuration
             return _content.ToString();
         }
 
-        private static XElement GetElement(string name, string connectionString, string providerName)
+        private static XElement GetElement(string connectionString, string providerName)
         {
-            XElement content = new XElement("add");
-            content.SetAttributeValue("name", name);
-            content.SetAttributeValue("connectionString", connectionString);
-            content.SetAttributeValue("providerName", providerName);
-            return content;
+            XElement element = new XElement("add");
+            element.SetAttributeValue("name", "connection_string_property");
+            element.SetAttributeValue("connectionString", connectionString);
+            element.SetAttributeValue("providerName", providerName);
+            return element;
         }
     }
 }

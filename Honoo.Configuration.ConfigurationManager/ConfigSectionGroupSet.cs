@@ -9,7 +9,7 @@ namespace Honoo.Configuration
     /// <summary>
     ///  配置组集合。
     /// </summary>
-    public sealed class ConfigSectionGroupSet : IEnumerable<ConfigSectionGroup>
+    public sealed class ConfigSectionGroupSet : IEnumerable<KeyValuePair<string, ConfigSectionGroup>>
     {
         #region Properties
 
@@ -21,6 +21,16 @@ namespace Honoo.Configuration
         /// 获取配置组集合中包含的元素数。
         /// </summary>
         public int Count => _groups.Count;
+
+        /// <summary>
+        /// 获取配置组集合的键的集合。
+        /// </summary>
+        public Dictionary<string, ConfigSectionGroup>.KeyCollection Keys => _groups.Keys;
+
+        /// <summary>
+        /// 获取配置组集合的值的集合。
+        /// </summary>
+        public Dictionary<string, ConfigSectionGroup>.ValueCollection Values => _groups.Values;
 
         /// <summary>
         /// 获取与指定名称关联的配置组。
@@ -161,14 +171,14 @@ namespace Honoo.Configuration
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<ConfigSectionGroup> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, ConfigSectionGroup>> GetEnumerator()
         {
-            return _groups.Values.GetEnumerator();
+            return _groups.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _groups.Values.GetEnumerator();
+            return _groups.GetEnumerator();
         }
 
         /// <summary>

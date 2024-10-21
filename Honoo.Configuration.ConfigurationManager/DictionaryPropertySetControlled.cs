@@ -10,7 +10,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 应用 file 属性以及 &lt;remove /&gt;、&lt;clear /&gt; 标签后的只读配置属性集合。
     /// </summary>
-    public sealed class DictionaryPropertySetControlled : IEnumerable<AddProperty>
+    public sealed class DictionaryPropertySetControlled : IEnumerable<KeyValuePair<string, AddProperty>>
     {
         #region Properties
 
@@ -20,6 +20,16 @@ namespace Honoo.Configuration
         /// 获取配置属性集合中包含的元素数。
         /// </summary>
         public int Count => _properties.Count;
+
+        /// <summary>
+        /// 获取配置属性集合的键的集合。
+        /// </summary>
+        public Dictionary<string, AddProperty>.KeyCollection Keys => _properties.Keys;
+
+        /// <summary>
+        /// 获取配置属性集合的值的集合。
+        /// </summary>
+        public Dictionary<string, AddProperty>.ValueCollection Values => _properties.Values;
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。
@@ -70,13 +80,15 @@ namespace Honoo.Configuration
                             XElement content = (XElement)enumerator.Current;
                             if (content.Name == "add")
                             {
-                                AddProperty property = new AddProperty(content, comment);
-                                _properties.Remove(property.Key);
-                                _properties.Add(property.Key, property);
+                                var key = content.Attribute("key").Value;
+                                AddProperty value = new AddProperty(content, comment);
+                                _properties.Remove(key);
+                                _properties.Add(key, value);
                             }
                             else if (content.Name == "remove")
                             {
-                                _properties.Remove(content.Attribute("key").Value);
+                                var key = content.Attribute("key").Value;
+                                _properties.Remove(key);
                             }
                             else if (content.Name == "clear")
                             {
@@ -94,287 +106,16 @@ namespace Honoo.Configuration
         #region TryGetValue
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out AddProperty property)
-        {
-            return _properties.TryGetValue(key, out property);
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但指定的类型不符，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out string value)
+        public bool TryGetValue(string key, out AddProperty value)
         {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out bool value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out sbyte value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out byte value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out short value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out ushort value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out int value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out uint value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out long value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out ulong value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out float value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out double value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out decimal value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out char value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out Binaries value)
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue<TEnum>(string key, out TEnum value) where TEnum : struct
-        {
-            if (TryGetValue(key, out AddProperty val))
-            {
-                return val.TryGetValue(out value);
-            }
-            value = default;
-            return false;
+            return _properties.TryGetValue(key, out value);
         }
 
         #endregion TryGetValue
@@ -382,209 +123,45 @@ namespace Honoo.Configuration
         #region GetValue
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，则抛出 <see cref="Exception"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
         public AddProperty GetValue(string key)
         {
-            return TryGetValue(key, out AddProperty value) ? value : null;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public string GetValue(string key, string defaultValue)
-        {
-            return TryGetValue(key, out string value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool GetValue(string key, bool defaultValue)
-        {
-            return TryGetValue(key, out bool value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public sbyte GetValue(string key, sbyte defaultValue)
-        {
-            return TryGetValue(key, out sbyte value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public byte GetValue(string key, byte defaultValue)
-        {
-            return TryGetValue(key, out byte value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public short GetValue(string key, short defaultValue)
-        {
-            return TryGetValue(key, out short value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public ushort GetValue(string key, ushort defaultValue)
-        {
-            return TryGetValue(key, out ushort value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public int GetValue(string key, int defaultValue)
-        {
-            return TryGetValue(key, out int value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public uint GetValue(string key, uint defaultValue)
-        {
-            return TryGetValue(key, out uint value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public long GetValue(string key, long defaultValue)
-        {
-            return TryGetValue(key, out long value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public ulong GetValue(string key, ulong defaultValue)
-        {
-            return TryGetValue(key, out ulong value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public float GetValue(string key, float defaultValue)
-        {
-            return TryGetValue(key, out float value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public double GetValue(string key, double defaultValue)
-        {
-            return TryGetValue(key, out double value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public decimal GetValue(string key, decimal defaultValue)
-        {
-            return TryGetValue(key, out decimal value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public char GetValue(string key, char defaultValue)
-        {
-            return TryGetValue(key, out char value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public Binaries GetValue(string key, Binaries defaultValue)
-        {
-            return TryGetValue(key, out Binaries value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public TEnum GetValue<TEnum>(string key, TEnum defaultValue) where TEnum : struct
-        {
-            return TryGetValue(key, out TEnum value) ? value : defaultValue;
+            return (AddProperty)_properties[key];
         }
 
         #endregion GetValue
+
+        #region GetValueOrDefault
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty GetValue(string key, AddProperty defaultValue)
+        {
+            return TryGetValue(key, out AddProperty value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty GetValue(string key, string defaultValue)
+        {
+            return TryGetValue(key, out AddProperty value) ? value : new AddProperty(defaultValue);
+        }
+
+        #endregion GetValueOrDefault
 
         /// <summary>
         /// 确定配置属性集合是否包含带有指定键的配置属性。
@@ -601,14 +178,14 @@ namespace Honoo.Configuration
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<AddProperty> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, AddProperty>> GetEnumerator()
         {
-            return _properties.Values.GetEnumerator();
+            return _properties.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _properties.Values.GetEnumerator();
+            return _properties.GetEnumerator();
         }
     }
 }

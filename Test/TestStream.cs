@@ -20,7 +20,7 @@ namespace Test
                     //
                     // 取出属性。
                     //
-                    if (manager.AppSettings.Properties.TryGetValue("prop2", out string value))
+                    if (manager.AppSettings.Properties.TryGetValue("prop2", out AddProperty value))
                     {
                     }
                 }

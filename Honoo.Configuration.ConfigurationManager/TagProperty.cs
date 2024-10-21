@@ -3,7 +3,7 @@
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 标签配置属性的基类。<see langword="&lt;add /&gt;"/>、<see langword="&lt;remove /&gt;"/>、<see langword="&lt;clear /&gt;"/> 从此类中继承。
+    /// 配置属性的基类。<see langword="&lt;add /&gt;"/>、<see langword="&lt;remove /&gt;"/>、<see langword="&lt;clear /&gt;"/> 从此类中继承。
     /// </summary>
     public abstract class TagProperty
     {
@@ -26,7 +26,7 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 创建 ConfigurationProperty 的新实例。
+        /// 创建 TagProperty 的新实例。
         /// </summary>
         /// <param name="kind">配置属性的类型。</param>
         /// <param name="content">配置属性的内容节点。</param>

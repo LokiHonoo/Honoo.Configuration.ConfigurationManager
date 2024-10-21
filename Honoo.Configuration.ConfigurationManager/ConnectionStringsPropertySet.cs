@@ -10,7 +10,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 连接属性集合。
     /// </summary>
-    public sealed class ConnectionStringsPropertySet : IEnumerable<ConnectionStringProperty>
+    public sealed class ConnectionStringsPropertySet : IEnumerable<KeyValuePair<string, ConnectionStringProperty>>
     {
         #region Properties
 
@@ -21,6 +21,16 @@ namespace Honoo.Configuration
         /// 获取连接属性集合中包含的元素数。
         /// </summary>
         public int Count => _properties.Count;
+
+        /// <summary>
+        /// 获取连接属性集合的键的集合。
+        /// </summary>
+        public Dictionary<string, ConnectionStringProperty>.KeyCollection Keys => _properties.Keys;
+
+        /// <summary>
+        /// 获取连接属性集合的值的集合。
+        /// </summary>
+        public Dictionary<string, ConnectionStringProperty>.ValueCollection Values => _properties.Values;
 
         /// <summary>
         /// 获取与指定名称关联的连接属性的值。
@@ -54,9 +64,10 @@ namespace Honoo.Configuration
                             XElement content = (XElement)enumerator.Current;
                             if (content.Name == "add")
                             {
-                                ConnectionStringProperty property = new ConnectionStringProperty(content, comment);
-                                _properties.Remove(property.Name);
-                                _properties.Add(property.Name, property);
+                                string name = content.Attribute("name").Value;
+                                ConnectionStringProperty value = new ConnectionStringProperty(content, comment);
+                                _properties.Remove(name);
+                                _properties.Add(name, value);
                             }
                         }
                         comment = null;
@@ -72,22 +83,28 @@ namespace Honoo.Configuration
         /// <summary>
         /// 添加一个连接属性。
         /// </summary>
-        /// <param name="property">连接属性的值。</param>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="value">连接属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConnectionStringProperty Add(ConnectionStringProperty property)
+        public ConnectionStringProperty Add(string name, ConnectionStringProperty value)
         {
-            if (property == null)
+            if (name == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(name));
             }
-            _properties.Add(property.Name, property);
-            if (property.Comment.HasValue)
+            if (value == null)
             {
-                _container.Add(property.Comment.Comment);
+                throw new ArgumentNullException(nameof(value));
             }
-            _container.Add(property.Content);
-            return property;
+            if (value.Comment.HasValue)
+            {
+                _container.Add(value.Comment.Comment);
+            }
+            value.Content.SetAttributeValue("name", name);
+            _container.Add(value.Content);
+            _properties.Add(name, value);
+            return value;
         }
 
         /// <summary>
@@ -99,7 +116,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty Add(string name, DbConnection connection)
         {
-            return Add(new ConnectionStringProperty(name, connection));
+            return Add(name, new ConnectionStringProperty(connection));
         }
 
         /// <summary>
@@ -112,7 +129,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty Add(string name, string connectionString, string providerName)
         {
-            return Add(new ConnectionStringProperty(name, connectionString, providerName));
+            return Add(name, new ConnectionStringProperty(connectionString, providerName));
         }
 
         #endregion Add
@@ -122,30 +139,36 @@ namespace Honoo.Configuration
         /// <summary>
         /// 添加或更新一个连接属性。
         /// </summary>
-        /// <param name="property">连接属性的值。</param>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="value">连接属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConnectionStringProperty AddOrUpdate(ConnectionStringProperty property)
+        public ConnectionStringProperty AddOrUpdate(string name, ConnectionStringProperty value)
         {
-            if (property == null)
+            if (name == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(name));
             }
-            if (TryGetValue(property.Name, out ConnectionStringProperty prop))
+            if (value == null)
             {
-                if (property.Comment.HasValue)
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (TryGetValue(name, out ConnectionStringProperty val))
+            {
+                if (value.Comment.HasValue)
                 {
-                    prop.Content.AddBeforeSelf(property.Comment.Comment);
+                    val.Content.AddBeforeSelf(value.Comment.Comment);
                 }
-                prop.Content.AddBeforeSelf(property.Content);
-                prop.Comment.Remove();
-                prop.Content.Remove();
-                _properties[prop.Name] = property;
-                return property;
+                value.Content.SetAttributeValue("name", name);
+                val.Content.AddBeforeSelf(value.Content);
+                val.Comment.Remove();
+                val.Content.Remove();
+                _properties[name] = value;
+                return value;
             }
             else
             {
-                return Add(property);
+                return Add(name, value);
             }
         }
 
@@ -158,7 +181,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty AddOrUpdate(string name, DbConnection connection)
         {
-            return AddOrUpdate(new ConnectionStringProperty(name, connection));
+            return AddOrUpdate(name, new ConnectionStringProperty(connection));
         }
 
         /// <summary>
@@ -171,7 +194,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty AddOrUpdate(string name, string connectionString, string providerName)
         {
-            return AddOrUpdate(new ConnectionStringProperty(name, connectionString, providerName));
+            return AddOrUpdate(name, new ConnectionStringProperty(connectionString, providerName));
         }
 
         #endregion AddOrUpdate
@@ -182,12 +205,12 @@ namespace Honoo.Configuration
         /// 获取与指定名称关联的连接属性的值。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
-        /// <param name="property">连接属性的值。</param>
+        /// <param name="value">连接属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out ConnectionStringProperty property)
+        public bool TryGetValue(string name, out ConnectionStringProperty value)
         {
-            return _properties.TryGetValue(name, out property);
+            return _properties.TryGetValue(name, out value);
         }
 
         /// <summary>
@@ -264,33 +287,14 @@ namespace Honoo.Configuration
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<ConnectionStringProperty> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, ConnectionStringProperty>> GetEnumerator()
         {
-            return _properties.Values.GetEnumerator();
+            return _properties.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _properties.Values.GetEnumerator();
-        }
-
-        /// <summary>
-        /// 从连接属性集合中移除连接属性。连接属性的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="property">连接属性。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool Remove(ConnectionStringProperty property)
-        {
-            if (property == null)
-            {
-                throw new ArgumentNullException(nameof(property));
-            }
-            bool removed = _properties.Remove(property.Name);
-            property.Comment.Remove();
-            property.Content.Remove();
-            return removed;
+            return _properties.GetEnumerator();
         }
 
         /// <summary>

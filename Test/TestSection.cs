@@ -34,7 +34,7 @@ namespace Test
                 //
                 // SingleTagSection 使用唯一键值。不支持属性值注释。
                 //
-                section1.Properties.AddOrUpdate("prop1", 0.6789d);
+                section1.Properties.AddOrUpdate("prop1", "0.6789");
                 section1.Comment.SetValue("This is \"SingleTagSection\" comment.");
                 section1.Properties.Remove("prop3");
                 section1.Properties.Add("prop3", "Update this.");
@@ -48,8 +48,8 @@ namespace Test
                 // NameValueSection 允许同名键值。
                 //
                 section2.Properties.Clear();
-                section2.Properties.Add("prop1", 155.66d).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
-                section2.Properties.Add("prop1", 7.9992d).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
+                section2.Properties.Add("prop1", "155.66").Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
+                section2.Properties.Add("prop1", "7.9992").Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
                 section2.Comment.SetValue("This is \"NameValueSection\" comment.");
                 //
                 // DictionarySection 使用唯一键值。
@@ -103,7 +103,7 @@ namespace Test
                 //
                 // 取出属性和注释。
                 //
-                Console.WriteLine(section1.Properties.GetValue("prop1", 0d));
+                Console.WriteLine(section1.Properties.GetValue("prop1"));
                 //
                 AddProperty[] value2 = section2.Properties.GetValue("prop1");
                 foreach (AddProperty val in value2)

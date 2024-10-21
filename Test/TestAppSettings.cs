@@ -22,9 +22,9 @@ namespace Test
                 //
                 manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").Comment.SetValue("This is \"appSettings\" prop1 comment.");
                 manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this.");
-                manager.AppSettings.Properties.AddOrUpdate("prop2", 123456789);
-                manager.AppSettings.Properties.AddOrUpdate("prop3", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
-                manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
+                manager.AppSettings.Properties.AddOrUpdate("prop2", new AddProperty("123456789"));
+                manager.AppSettings.Properties.AddOrUpdate("prop3", new AddProperty("F058C"));
+                manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain.ToString());
                 manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
                 //manager.AppSettings.Properties.Add("prop1", "Test unique.");
                 //
@@ -57,22 +57,22 @@ namespace Test
                 {
                     Console.WriteLine(comment1);
                 }
-                Console.WriteLine(value1.Value);
+                Console.WriteLine(value1.GetStringValue());
                 //
-                int value2 = manager.AppSettings.Properties.GetValue("prop2", 55555);
+                int value2 = manager.AppSettings.Properties.GetValue("prop2").GetInt32Value();
                 Console.WriteLine(value2);
                 //
                 AddProperty value3 = manager.AppSettings.Properties["prop3"];
-                Console.WriteLine(value3.GetValue(Binaries.Empty));
+                Console.WriteLine(BitConverter.ToString(value3.GetBytesValue()));
                 //
-                if (manager.AppSettings.Properties.TryGetValue("prop4", out LoaderOptimization value4))
+                if (manager.AppSettings.Properties.TryGetValue("prop4", out AddProperty value4))
                 {
-                    Console.WriteLine(value4);
+                    Console.WriteLine(value4.GetEnumValue<LoaderOptimization>());
                 }
                 // 取出应用控制标签后的属性。
-                foreach (AddProperty property in manager.AppSettings.GetPropertySetControlled())
+                foreach (var property in manager.AppSettings.GetPropertySetControlled())
                 {
-                    Console.WriteLine(property.Value);
+                    Console.WriteLine(property.Value.GetStringValue());
                 }
             }
         }

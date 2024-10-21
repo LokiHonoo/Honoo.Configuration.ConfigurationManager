@@ -3,18 +3,18 @@
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 配置属性。
+    /// 配置属性的基类。<see langword="&lt;dictionary /&gt;"/>、<see langword="&lt;list /&gt;"/>、<see langword="&lt;string /&gt;"/> 从此类中继承。
     /// </summary>
     public abstract class HonooProperty
     {
-        private readonly ConfigComment _comment;
+        private readonly HonooComment _comment;
         private readonly XElement _content;
         private readonly HonooPropertyKind _kind;
 
         /// <summary>
         /// 配置属性的注释。
         /// </summary>
-        public ConfigComment Comment => _comment;
+        public HonooComment Comment => _comment;
 
         /// <summary>
         /// 获取配置属性的类型。
@@ -35,7 +35,7 @@ namespace Honoo.Configuration
         {
             _kind = kind;
             _content = content;
-            _comment = new ConfigComment(comment, content);
+            _comment = new HonooComment(comment, content);
         }
 
         #endregion Construction

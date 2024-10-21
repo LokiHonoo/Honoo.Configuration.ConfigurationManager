@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Xml.Linq;
 
 namespace Honoo.Configuration
@@ -8,19 +9,12 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class SingleTagProperty
     {
-        private readonly string _key;
-        private readonly string _value;
         private XAttribute _content;
-
-        /// <summary>
-        /// 获取配置属性的键。
-        /// </summary>
-        public string Key => _key;
+        private string _value;
 
         /// <summary>
         /// 获取配置属性的值。
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1721:属性名不应与 get 方法匹配", Justification = "<挂起>")]
         public object Value => _value;
 
         internal XAttribute Content => _content;
@@ -30,379 +24,217 @@ namespace Honoo.Configuration
         /// <summary>
         /// 创建 HonooProperty 的新实例。
         /// </summary>
-        /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
-        public SingleTagProperty(string key, string value)
+        public SingleTagProperty(string value)
         {
-            _content = new XAttribute(key, value);
-            _key = key ?? throw new ArgumentNullException(nameof(key));
+            _content = new XAttribute("single_tag_property", value);
             _value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         internal SingleTagProperty(XAttribute content)
         {
             _content = content;
-            _key = content.Name.LocalName;
             _value = content.Value;
         }
 
         #endregion Construction
 
-        #region TryGetValue
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out string value)
-        {
-            value = _value;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out bool value)
-        {
-            return bool.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out sbyte value)
-        {
-            return sbyte.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out byte value)
-        {
-            return byte.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out short value)
-        {
-            return short.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out ushort value)
-        {
-            return ushort.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out int value)
-        {
-            return int.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out uint value)
-        {
-            return uint.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out long value)
-        {
-            return long.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out ulong value)
-        {
-            return ulong.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out float value)
-        {
-            return float.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out double value)
-        {
-            return double.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out decimal value)
-        {
-            return decimal.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out char value)
-        {
-            return char.TryParse(_value, out value);
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue(out Binaries value)
-        {
-            if (XValueHelper.TryParse(_value, out byte[] val))
-            {
-                value = new Binaries(val);
-                return true;
-            }
-            value = null;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        public bool TryGetValue<TEnum>(out TEnum value) where TEnum : struct
-        {
-            if (typeof(TEnum).BaseType.FullName == "System.Enum")
-            {
-                return Enum.TryParse(_value, false, out value);
-            }
-            value = default;
-            return false;
-        }
-
-        #endregion TryGetValue
-
         #region GetValue
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="bool"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string GetValue(string defaultValue)
+        public bool GetBooleanValue()
         {
-            return TryGetValue(out string value) ? value : defaultValue;
+            return bool.Parse(_value);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="byte"/>[] 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool GetValue(bool defaultValue)
+        /// <exception cref="Exception" />
+        public byte[] GetBytesValue()
         {
-            return TryGetValue(out bool value) ? value : defaultValue;
+            return XValueHelper.Parse(_value);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="byte"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public sbyte GetValue(sbyte defaultValue)
+        public byte GetByteValue()
         {
-            return TryGetValue(out sbyte value) ? value : defaultValue;
+            return byte.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="char"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public byte GetValue(byte defaultValue)
+        public char GetCharValue()
         {
-            return TryGetValue(out byte value) ? value : defaultValue;
+            return char.Parse(_value);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="DateTime"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public short GetValue(short defaultValue)
+        public DateTime GetDateTimeValue()
         {
-            return TryGetValue(out short value) ? value : defaultValue;
+            return DateTime.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="decimal"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ushort GetValue(ushort defaultValue)
+        public decimal GetDecimalValue()
         {
-            return TryGetValue(out ushort value) ? value : defaultValue;
+            return decimal.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="double"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public int GetValue(int defaultValue)
+        public double GetDoubleValue()
         {
-            return TryGetValue(out int value) ? value : defaultValue;
+            return double.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="Enum"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public uint GetValue(uint defaultValue)
+        public TEnum GetEnumValue<TEnum>() where TEnum : Enum
         {
-            return TryGetValue(out uint value) ? value : defaultValue;
+            return (TEnum)Enum.Parse(typeof(TEnum), _value, true);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="short"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public long GetValue(long defaultValue)
+        public short GetInt16Value()
         {
-            return TryGetValue(out long value) ? value : defaultValue;
+            return short.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="int"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ulong GetValue(ulong defaultValue)
+        public int GetInt32Value()
         {
-            return TryGetValue(out ulong value) ? value : defaultValue;
+            return int.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="long"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public float GetValue(float defaultValue)
+        public long GetInt64Value()
         {
-            return TryGetValue(out float value) ? value : defaultValue;
+            return long.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="sbyte"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public double GetValue(double defaultValue)
+        public sbyte GetSByteValue()
         {
-            return TryGetValue(out double value) ? value : defaultValue;
+            return sbyte.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="float"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public decimal GetValue(decimal defaultValue)
+        public float GetSingleValue()
         {
-            return TryGetValue(out decimal value) ? value : defaultValue;
+            return float.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取字符串数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public char GetValue(char defaultValue)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
+        public string GetStringValue()
         {
-            return TryGetValue(out char value) ? value : defaultValue;
+            return _value;
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="ushort"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public Binaries GetValue(Binaries defaultValue)
+        public ushort GetUInt16Value()
         {
-            return TryGetValue(out Binaries value) ? value : defaultValue;
+            return ushort.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 获取指定类型的配置属性的值。如果无法转换为指定的类型，则返回 <paramref name="defaultValue"/>。
+        /// 获取转换为 <see cref="uint"/> 格式的数据值。
         /// </summary>
-        /// <param name="defaultValue">无法转换为指定的类型时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public TEnum GetValue<TEnum>(TEnum defaultValue) where TEnum : struct
+        public uint GetUInt32Value()
         {
-            return TryGetValue(out TEnum value) ? value : defaultValue;
+            return uint.Parse(_value, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// 获取转换为 <see cref="ulong"/> 格式的数据值。
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ulong GetUInt64Value()
+        {
+            return ulong.Parse(_value, CultureInfo.InvariantCulture);
         }
 
         #endregion GetValue
+
+        #region SetValue
+
+        /// <summary>
+        /// 设置值。
+        /// </summary>
+        /// <param name="value">文本类型的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public SingleTagProperty SetValue(string value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            value = value.Trim();
+            _content.Value = value;
+            _value = value;
+            return this;
+        }
+
+        #endregion SetValue
 
         /// <summary>
         /// 方法已重写。返回节点的缩进 XML 文本。
@@ -411,6 +243,11 @@ namespace Honoo.Configuration
         public override string ToString()
         {
             return _content.ToString();
+        }
+
+        internal void ResetKey(string key)
+        {
+            _content = new XAttribute(key, _value);
         }
     }
 }

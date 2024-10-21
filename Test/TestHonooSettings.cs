@@ -19,10 +19,10 @@ namespace Test
                 //
                 // 赋值并设置注释。
                 //
-                manager.Default.Properties.AddOrUpdate("prop1", new HonooString("This is \"hoonoo-settings\" prop1 value.")).Comment.SetValue("This is \"hoonoo-settings\" prop1 comment.");
-                manager.Default.Properties.AddOrUpdate("prop7", new HonooString("Update this."));
+                manager.Default.Properties.AddOrUpdate("prop1", StringComparison.Ordinal.ToString()).Comment.SetValue("This is \"hoonoo-settings\" prop1 comment.");
+                manager.Default.Properties.AddOrUpdate("prop7", "Update this.");
                 var prop2 = manager.Default.Properties.AddOrUpdate("prop2", new HonooDictionary());
-                prop2.Properties.AddOrUpdate("prop4", new HonooString("Sub this dictionary prop."));
+                prop2.Properties.AddOrUpdate("prop4", "Sub this dictionary prop.");
                 var prop3 = manager.Default.Properties.AddOrUpdate("prop3", new HonooList());
                 prop3.Properties.Add(new HonooString("Sub this list prop.")).Comment.SetValue("This is \"hoonoo-settings\" list prop comment."); ;
                 HonooDictionary prop5 = prop3.Properties.Add(new HonooDictionary());
@@ -41,7 +41,7 @@ namespace Test
                 // 附加配置容器。
                 //
                 HonooDictionary section = manager.Sections.GetOrAdd("section1");
-                section.Comment.SetValue("\"This is \"hoonoo-settings\" section1");
+                section.Comment.SetValue("This is \"hoonoo-settings\" section1");
                 section.Properties.AddOrUpdate("prop1", new HonooString("123456789"));
                 //
                 // 保存到指定的文件。
@@ -65,14 +65,14 @@ namespace Test
                 {
                     Console.WriteLine(comment1);
                 }
-                Console.WriteLine(value1.GetStringValue());
+                Console.WriteLine(value1.GetEnumValue<StringComparison>());
                 //
                 HonooDictionary value2 = manager.Default.Properties.GetValue<HonooDictionary>("prop2");
                 value2.Properties.TryGetValue("prop4", out HonooString val2);
                 Console.WriteLine(val2.GetStringValue());
                 //
                 HonooList value3 = manager.Default.Properties.GetValue<HonooList>("prop3");
-                Console.WriteLine(value3.Properties[0]);
+                Console.WriteLine(value3.Properties.GetValue(0).GetStringValue());
                 //
                 HonooString value5 = ((HonooDictionary)value3.Properties[1]).Properties.GetValue<HonooString>("prop5");
                 byte[] val5 = value5.GetBytesValue();

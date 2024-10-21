@@ -25,7 +25,7 @@ namespace Test
                 //
                 // 移除属性的方法。
                 //
-                manager.AssemblyBinding.Properties.Remove(0);
+                manager.AssemblyBinding.Properties.RemoveAt(0);
                 //
                 // 保存到指定的文件。
                 //
@@ -50,14 +50,12 @@ namespace Test
                 }
                 Console.WriteLine(value2.Href);
                 //
-                if (manager.AssemblyBinding.Properties.TryGetValue(1, out LinkedConfigurationProperty value3))
+                var a = manager.AssemblyBinding.Properties.GetValue(1);
+                if (a.Comment.TryGetValue(out string comment3))
                 {
-                    if (value3.Comment.TryGetValue(out string comment3))
-                    {
-                        Console.WriteLine(comment3);
-                    }
-                    Console.WriteLine(value3.Href);
+                    Console.WriteLine(comment3);
                 }
+                Console.WriteLine(a.Href);
             }
         }
     }

@@ -42,29 +42,29 @@ namespace Honoo.Configuration
             _container = container;
             if (_container.HasElements)
             {
-                foreach (var element in _container.Elements())
+                foreach (var content in _container.Elements())
                 {
-                    XComment comment_ = null;
-                    XNode pre = element.PreviousNode;
+                    XComment comment = null;
+                    XNode pre = content.PreviousNode;
                     if (pre != null && pre.NodeType == XmlNodeType.Comment)
                     {
-                        comment_ = (XComment)pre;
+                        comment = (XComment)pre;
                     }
-                    if (element.Name == HonooSettingsManager.Namespace + "dictionary")
+                    if (content.Name == HonooSettingsManager.Namespace + "dictionary")
                     {
-                        _properties.Add(new HonooDictionary(element, comment_));
+                        _properties.Add(new HonooDictionary(content, comment));
                     }
-                    else if (element.Name == HonooSettingsManager.Namespace + "list")
+                    else if (content.Name == HonooSettingsManager.Namespace + "list")
                     {
-                        _properties.Add(new HonooList(element, comment_));
+                        _properties.Add(new HonooList(content, comment));
                     }
-                    else if (element.Name == HonooSettingsManager.Namespace + "string")
+                    else if (content.Name == HonooSettingsManager.Namespace + "string")
                     {
-                        _properties.Add(new HonooString(element, comment_));
+                        _properties.Add(new HonooString(content, comment));
                     }
                     else
                     {
-                        throw new ArgumentException($"The incorrect kind \"{element.Name.LocalName}\".");
+                        throw new ArgumentException($"The incorrect kind \"{content.Name.LocalName}\".");
                     }
                 }
             }
@@ -99,7 +99,7 @@ namespace Honoo.Configuration
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="values">配置属性的集合。</param>
         /// <exception cref="Exception"/>
-        public IEnumerable<HonooProperty> AddRange<T>(IEnumerable<HonooProperty> values) where T : HonooProperty
+        public IEnumerable<T> AddRange<T>(IEnumerable<T> values) where T : HonooProperty
         {
             if (values == null)
             {
@@ -159,6 +159,27 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
+        /// 获取与指定索引处的配置属性的值。
+        /// </summary>
+        /// <typeparam name="T">指定配置属性类型。</typeparam>
+        /// <param name="index">配置属性的索引。</param>
+        /// <exception cref="Exception"/>
+        public T GetValue<T>(int index) where T : HonooProperty
+        {
+            return (T)_properties[index];
+        }
+
+        /// <summary>
+        /// 获取与指定索引处的配置属性的值。
+        /// </summary>
+        /// <param name="index">配置属性的索引。</param>
+        /// <exception cref="Exception"/>
+        public HonooString GetValue(int index)
+        {
+            return (HonooString)_properties[index];
+        }
+
+        /// <summary>
         /// 搜索指定对象，并返回第一个匹配项从零开始的索引。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
@@ -207,6 +228,34 @@ namespace Honoo.Configuration
             property?.Comment.Remove();
             property?.Content.Remove();
             _properties.RemoveAt(index);
+        }
+
+        /// <summary>
+        /// 获取与指定索引处的配置属性的值。
+        /// </summary>
+        /// <typeparam name="T">指定配置属性类型。</typeparam>
+        /// <param name="index">配置属性的索引。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public T SetValue<T>(int index, T value) where T : HonooProperty
+        {
+            RemoveAt(index);
+            Insert(index, value);
+            return value;
+        }
+
+        /// <summary>
+        /// 获取与指定索引处的配置属性的值。
+        /// </summary>
+        /// <param name="index">配置属性的索引。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public HonooString SetValue(int index, string value)
+        {
+            RemoveAt(index);
+            HonooString val = new HonooString(value);
+            Insert(index, val);
+            return val;
         }
     }
 }

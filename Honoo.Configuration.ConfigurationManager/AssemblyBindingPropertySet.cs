@@ -17,7 +17,7 @@ namespace Honoo.Configuration
         private readonly List<LinkedConfigurationProperty> _properties = new List<LinkedConfigurationProperty>();
 
         /// <summary>
-        /// 获取配置属性集合中包含的元素数。
+        /// 获取配置文件链接属性集合中包含的元素数。
         /// </summary>
         public int Count => _properties.Count;
 
@@ -65,115 +65,77 @@ namespace Honoo.Configuration
 
         #endregion Construction
 
-        #region Add
-
         /// <summary>
         /// 添加一个配置文件链接属性。
         /// </summary>
-        /// <param name="property">配置文件链接属性的值。</param>
-        /// <returns></returns>
+        /// <param name="value">配置文件链接属性的值。</param>
         /// <exception cref="Exception"/>
-        public LinkedConfigurationProperty Add(LinkedConfigurationProperty property)
+        public LinkedConfigurationProperty Add(LinkedConfigurationProperty value)
         {
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            _properties.Add(property);
-            if (property.Comment.HasValue)
+            if (value.Comment.HasValue)
             {
-                _container.Add(property.Comment.Comment);
+                _container.Add(value.Comment.Comment);
             }
-            _container.Add(property.Content);
-            return property;
+            _container.Add(value.Content);
+            _properties.Add(value);
+            return value;
         }
 
         /// <summary>
         /// 添加一个配置文件链接属性。
         /// </summary>
-        /// <param name="href">要包含的配置文件的 URL。 href 属性支持的唯一格式是 file://。 支持本地文件和 UNC 文件。</param>
-        /// <returns></returns>
+        /// <param name="value">配置文件链接属性的值。</param>
         /// <exception cref="Exception"/>
-        public LinkedConfigurationProperty Add(string href)
+        public LinkedConfigurationProperty Add(string value)
         {
-            return Add(new LinkedConfigurationProperty(href));
+            return Add(new LinkedConfigurationProperty(value));
         }
 
-        #endregion Add
-
-        #region TryGetValue
-
         /// <summary>
-        /// 获取指定索引处的配置属性的值。
-        /// <br/>如果没有找到指定索引，返回 <see langword="false"/>。
+        /// 添加配置文件链接属性集合。
         /// </summary>
-        /// <param name="index">配置属性的索引。</param>
-        /// <param name="property">配置属性的值。</param>
-        /// <returns></returns>
+        /// <param name="values">配置文件链接属性的集合。</param>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(int index, out LinkedConfigurationProperty property)
+        public IEnumerable<LinkedConfigurationProperty> AddRange(IEnumerable<LinkedConfigurationProperty> values)
         {
-            if (index < _properties.Count)
+            if (values == null)
             {
-                property = _properties[index];
-                return true;
+                throw new ArgumentNullException(nameof(values));
             }
-            property = null;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取指定索引处的配置属性的值。
-        /// <br/>如果没有找到指定索引，返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="index">配置属性的索引。</param>
-        /// <param name="href">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(int index, out string href)
-        {
-            if (TryGetValue(index, out LinkedConfigurationProperty value))
+            foreach (var value in values)
             {
-                href = value.Href;
-                return true;
+                Add(value);
             }
-            href = default;
-            return false;
+            return values;
         }
 
-        #endregion TryGetValue
-
-        #region GetValue
-
         /// <summary>
-        /// 获取与指定索引处的配置属性的值。
+        /// 添加配置文件链接属性集合。
         /// </summary>
-        /// <param name="index">配置属性的索引。</param>
-        /// <returns></returns>
+        /// <param name="values">配置文件链接属性的集合。</param>
         /// <exception cref="Exception"/>
-        public LinkedConfigurationProperty GetValue(int index)
+        public IEnumerable<LinkedConfigurationProperty> AddRange(IEnumerable<string> values)
         {
-            return TryGetValue(index, out LinkedConfigurationProperty value) ? value : null;
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<LinkedConfigurationProperty> v = new List<LinkedConfigurationProperty>();
+            foreach (var value in values)
+            {
+                v.Add(Add(new LinkedConfigurationProperty(value)));
+            }
+            return v;
         }
 
         /// <summary>
-        /// 获取与指定索引处的配置属性的值。
-        /// <br/>如果没有找到指定索引，返回 <paramref name="defaultValue"/>。
+        /// 从配置文件链接属性集合中移除所有配置文件链接属性。
         /// </summary>
-        /// <param name="index">配置属性的索引。</param>
-        /// <param name="defaultValue">没有找到指定索引时的配置属性的默认值。</param>
-        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string GetValue(int index, string defaultValue)
-        {
-            return TryGetValue(index, out LinkedConfigurationProperty value) ? value.Href : defaultValue;
-        }
-
-        #endregion GetValue
-
-        /// <summary>
-        /// 从配置属性集合中移除所有配置属性。
-        /// </summary>
         public void Clear()
         {
             _container.RemoveNodes();
@@ -181,7 +143,27 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 返回循环访问集合的枚举数。
+        /// 确定指定配置文件链接属性是否在集合中。
+        /// </summary>
+        /// <param name="value">搜索的指定对象。</param>
+        /// <returns></returns>
+        public bool Contains(LinkedConfigurationProperty value)
+        {
+            return _properties.Contains(value);
+        }
+
+        /// <summary>
+        /// 从指定数组索引开始将值配置文件链接属性复制到到指定数组。
+        /// </summary>
+        /// <param name="array">要复制到的目标数组。</param>
+        /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
+        public void CopyTo(LinkedConfigurationProperty[] array, int arrayIndex)
+        {
+            _properties.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// 支持在泛型集合上进行简单迭代。
         /// </summary>
         /// <returns></returns>
         public IEnumerator<LinkedConfigurationProperty> GetEnumerator()
@@ -195,42 +177,88 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 从配置属性集合中移除配置属性。配置属性的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
+        /// 获取与指定索引处的配置文件链接属性的值。
         /// </summary>
-        /// <param name="property">配置属性。</param>
-        /// <returns></returns>
+        /// <param name="index">配置文件链接属性的索引。</param>
         /// <exception cref="Exception"/>
-        public bool Remove(LinkedConfigurationProperty property)
+        public LinkedConfigurationProperty GetValue(int index)
         {
-            if (property == null)
-            {
-                throw new ArgumentNullException(nameof(property));
-            }
-            bool removed = _properties.Remove(property);
-            property.Comment.Remove();
-            property.Content.Remove();
-            return removed;
+            return _properties[index];
         }
 
         /// <summary>
-        /// 从配置属性集合中移除指定索引处的配置属性。和配置属性相关的注释一并移除。
-        /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
+        /// 搜索指定对象，并返回第一个匹配项从零开始的索引。
         /// </summary>
-        /// <param name="index">配置属性的索引。</param>
+        /// <param name="value">搜索的指定对象。</param>
+        /// <returns></returns>
+        public int IndexOf(LinkedConfigurationProperty value)
+        {
+            return _properties.IndexOf(value);
+        }
+
+        /// <summary>
+        /// 将配置文件链接属性插入指定索引处。
+        /// </summary>
+        /// <param name="index">指定索引。</param>
+        /// <param name="value">要插入的配置文件链接属性。</param>
+        /// <exception cref="Exception"/>
+        public void Insert(int index, LinkedConfigurationProperty value)
+        {
+            _properties.Insert(index, value);
+        }
+
+        /// <summary>
+        /// 从配置文件链接属性集合中移除指定配置文件链接属性。
+        /// </summary>
+        /// <param name="value">要移除的配置文件链接属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool Remove(int index)
+        public bool Remove(LinkedConfigurationProperty value)
         {
-            if (index < _properties.Count)
-            {
-                LinkedConfigurationProperty property = _properties[index];
-                property.Comment.Remove();
-                property.Content.Remove();
-                _properties.RemoveAt(index);
-                return true;
-            }
-            return false;
+            value?.Comment.Remove();
+            value?.Content.Remove();
+            return _properties.Remove(value);
+        }
+
+        /// <summary>
+        /// 从配置文件链接属性集合中移除指定索引处的配置文件链接属性。
+        /// </summary>
+        /// <param name="index">要移除的配置文件链接属性的索引。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public void RemoveAt(int index)
+        {
+            LinkedConfigurationProperty property = _properties[index];
+            property?.Comment.Remove();
+            property?.Content.Remove();
+            _properties.RemoveAt(index);
+        }
+
+        /// <summary>
+        /// 获取与指定索引处的配置文件链接属性的值。
+        /// </summary>
+        /// <param name="index">配置文件链接属性的索引。</param>
+        /// <param name="value">配置文件链接属性的值。</param>
+        /// <exception cref="Exception"/>
+        public LinkedConfigurationProperty SetValue(int index, LinkedConfigurationProperty value)
+        {
+            RemoveAt(index);
+            Insert(index, value);
+            return value;
+        }
+
+        /// <summary>
+        /// 获取与指定索引处的配置文件链接属性的值。
+        /// </summary>
+        /// <param name="index">配置文件链接属性的索引。</param>
+        /// <param name="value">配置文件链接属性的值。</param>
+        /// <exception cref="Exception"/>
+        public LinkedConfigurationProperty SetValue(int index, string value)
+        {
+            RemoveAt(index);
+            LinkedConfigurationProperty val = new LinkedConfigurationProperty(value);
+            Insert(index, val);
+            return val;
         }
     }
 }

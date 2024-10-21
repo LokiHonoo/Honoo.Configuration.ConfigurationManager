@@ -51,30 +51,32 @@ namespace Honoo.Configuration
             _container = container;
             if (_container.HasElements)
             {
-                foreach (var element in _container.Elements())
+                foreach (var content in _container.Elements())
                 {
-                    var key = element.Attribute("key").Value;
-                    XComment comment_ = null;
-                    XNode pre = element.PreviousNode;
+                    var key = content.Attribute("key").Value;
+                    _properties.Remove(key);
+                    //
+                    XComment comment = null;
+                    XNode pre = content.PreviousNode;
                     if (pre != null && pre.NodeType == XmlNodeType.Comment)
                     {
-                        comment_ = (XComment)pre;
+                        comment = (XComment)pre;
                     }
-                    if (element.Name == HonooSettingsManager.Namespace + "dictionary")
+                    if (content.Name == HonooSettingsManager.Namespace + "dictionary")
                     {
-                        _properties.Add(key, new HonooDictionary(element, comment_));
+                        _properties.Add(key, new HonooDictionary(content, comment));
                     }
-                    else if (element.Name == HonooSettingsManager.Namespace + "list")
+                    else if (content.Name == HonooSettingsManager.Namespace + "list")
                     {
-                        _properties.Add(key, new HonooList(element, comment_));
+                        _properties.Add(key, new HonooList(content, comment));
                     }
-                    else if (element.Name == HonooSettingsManager.Namespace + "string")
+                    else if (content.Name == HonooSettingsManager.Namespace + "string")
                     {
-                        _properties.Add(key, new HonooString(element, comment_));
+                        _properties.Add(key, new HonooString(content, comment));
                     }
                     else
                     {
-                        throw new ArgumentException($"The incorrect kind \"{element.Name.LocalName}\".");
+                        throw new ArgumentException($"The incorrect kind \"{content.Name.LocalName}\".");
                     }
                 }
             }
@@ -111,13 +113,24 @@ namespace Honoo.Configuration
             return value;
         }
 
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public HonooString Add(string key, string value)
+        {
+            return Add(key, new HonooString(value));
+        }
+
         #endregion Add
 
         #region GetOrAdd
 
         /// <summary>
         /// 获取与指定名称关联的配置属性。如果不存在，添加一个 <typeparamref name="T"/> 类型的配置属性并返回值。
-        /// <br/>如果配置属性存在但不是指定的类型，方法抛出 <see cref="ArgumentException"/>。
+        /// <br/>如果配置属性存在但不是指定的类型，则抛出 <see cref="InvalidCastException"/>。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="key">配置属性的键。</param>
@@ -134,13 +147,26 @@ namespace Honoo.Configuration
                 }
                 else
                 {
-                    throw new ArgumentException($"The section exists but is not of the specified type - {typeof(T)}.");
+                    throw new InvalidCastException($"The property exists but is not of the specified type - property type:{value.GetType()}.");
                 }
             }
             else
             {
                 return Add(key, valueIfNotExists);
             }
+        }
+
+        /// <summary>
+        /// 获取与指定名称关联的配置属性。如果不存在，添加一个 <see cref="HonooString"/> 类型的配置属性并返回值。
+        /// <br/>如果配置属性存在但不是指定的类型，则抛出 <see cref="InvalidCastException"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="valueIfNotExists">指定名称关联的配置属性不存在时添加此配置属性。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooString GetOrAdd(string key, string valueIfNotExists)
+        {
+            return GetOrAdd(key, new HonooString(valueIfNotExists));
         }
 
         #endregion GetOrAdd
@@ -183,6 +209,17 @@ namespace Honoo.Configuration
             }
         }
 
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public HonooString AddOrUpdate(string key, string value)
+        {
+            return AddOrUpdate(key, new HonooString(value));
+        }
+
         #endregion AddOrUpdate
 
         #region TryGetValue
@@ -214,14 +251,26 @@ namespace Honoo.Configuration
         #region GetValue
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <see langword="null"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，则抛出 <see cref="Exception"/>。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
+        /// <exception cref="Exception"/>
         public T GetValue<T>(string key) where T : HonooProperty
         {
             return (T)_properties[key];
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，则抛出 <see cref="Exception"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public HonooString GetValue(string key)
+        {
+            return (HonooString)_properties[key];
         }
 
         #endregion GetValue
@@ -238,6 +287,17 @@ namespace Honoo.Configuration
         public T GetValue<T>(string key, T defaultValue) where T : HonooProperty
         {
             return TryGetValue(key, out T value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        public HonooString GetValue(string key, string defaultValue)
+        {
+            return TryGetValue(key, out HonooString value) ? value : new HonooString(defaultValue);
         }
 
         #endregion GetValueOrDefault
