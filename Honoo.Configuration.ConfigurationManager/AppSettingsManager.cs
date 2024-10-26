@@ -275,6 +275,7 @@ namespace Honoo.Configuration
             using (XmlWriter writer = XmlWriter.Create(filePath, _writerSettings))
             {
                 root.WriteTo(writer);
+                writer.Flush();
             }
         }
 
@@ -298,6 +299,7 @@ namespace Honoo.Configuration
             using (XmlWriter writer = XmlWriter.Create(stream, _writerSettings))
             {
                 root.WriteTo(writer);
+                writer.Flush();
             }
         }
 
@@ -313,12 +315,17 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void Save(XmlWriter writer, RSACryptoServiceProvider protectionAlgorithm = null)
         {
+            if (writer is null)
+            {
+                throw new ArgumentNullException(nameof(writer));
+            }
             XElement root = _root;
             if (protectionAlgorithm != null)
             {
                 root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
             }
             root.WriteTo(writer);
+            writer.Flush();
         }
 
         #endregion Save
@@ -362,6 +369,7 @@ namespace Honoo.Configuration
             using (XmlWriter writer = XmlWriter.Create(builder, _writerSettings))
             {
                 root.WriteTo(writer);
+                writer.Flush();
                 return builder.ToString();
             }
         }

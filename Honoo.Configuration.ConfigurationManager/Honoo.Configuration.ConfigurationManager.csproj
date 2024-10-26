@@ -5,7 +5,6 @@
     <PackageId>Honoo.Configuration.ConfigurationManager</PackageId>
     <Authors>Loki Honoo</Authors>	  
     <Company>Loki Honoo</Company>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	<Copyright>Copyright (C) Loki Honoo 2020. All rights reserved.</Copyright>
 	<SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Honoo.Configuration.ConfigurationManager.snk</AssemblyOriginatorKeyFile>
@@ -21,7 +20,7 @@ manager.AppSettings.Properties.AddOrUpdate("prop1", "value");</Description>
     <PackageTags>Honoo;Configuration;ConfigurationManager;XConfigManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-	<VersionPrefix>1.5.4</VersionPrefix>
+	<VersionPrefix>1.5.5</VersionPrefix>
     <PackageReadmeFile>Honoo.Configuration.ConfigurationManager.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
@@ -38,6 +37,7 @@ manager.AppSettings.Properties.AddOrUpdate("prop1", "value");</Description>
   </ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageOutputPath>D:\NuGetPackages</PackageOutputPath>
 	</PropertyGroup>
 	
