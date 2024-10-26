@@ -9,7 +9,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConnectionStringProperty
     {
-        private readonly ConfigComment _comment;
+        private readonly XConfigComment _comment;
         private readonly XElement _content;
         private string _connectionString;
         private string _providerName;
@@ -17,7 +17,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 连接属性的注释。
         /// </summary>
-        public ConfigComment Comment => _comment;
+        public XConfigComment Comment => _comment;
 
         /// <summary>
         /// 获取连接字符串。
@@ -46,7 +46,7 @@ namespace Honoo.Configuration
             _connectionString = connection.ConnectionString;
             _providerName = connection.GetType().Namespace;
             _content = GetElement(connection.ConnectionString, connection.GetType().Namespace);
-            _comment = new ConfigComment(null, _content);
+            _comment = new XConfigComment(null, _content);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Honoo.Configuration
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             _providerName = providerName;
             _content = GetElement(connectionString, providerName);
-            _comment = new ConfigComment(null, _content);
+            _comment = new XConfigComment(null, _content);
         }
 
         internal ConnectionStringProperty(XElement content, XComment comment)
@@ -67,7 +67,7 @@ namespace Honoo.Configuration
             _connectionString = content.Attribute("connectionString").Value;
             _providerName = content.Attribute("providerName")?.Value;
             _content = content;
-            _comment = new ConfigComment(comment, content);
+            _comment = new XConfigComment(comment, content);
         }
 
         #endregion Construction

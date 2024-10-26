@@ -7,7 +7,7 @@ namespace Honoo.Configuration
     /// </summary>
     public abstract class ConfigSection
     {
-        private readonly ConfigComment _comment;
+        private readonly XConfigComment _comment;
         private readonly XElement _content;
         private readonly XElement _declaration;
         private readonly ConfigSectionKind _kind;
@@ -15,7 +15,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 配置容器的注释。
         /// </summary>
-        public ConfigComment Comment => _comment;
+        public XConfigComment Comment => _comment;
 
         /// <summary>
         /// 获取此配置容器的类型。
@@ -39,7 +39,7 @@ namespace Honoo.Configuration
             _kind = kind;
             _declaration = declaration;
             _content = content;
-            _comment = new ConfigComment(comment, content);
+            _comment = new XConfigComment(comment, content);
         }
 
         #endregion Construction

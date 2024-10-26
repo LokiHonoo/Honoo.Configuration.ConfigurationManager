@@ -7,7 +7,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConfigSectionGroup
     {
-        private readonly ConfigComment _comment;
+        private readonly XConfigComment _comment;
         private readonly XElement _content;
         private readonly XElement _declaration;
         private readonly ConfigSectionGroupSet _groups;
@@ -16,7 +16,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 配置组的注释。
         /// </summary>
-        public ConfigComment Comment => _comment;
+        public XConfigComment Comment => _comment;
 
         /// <summary>
         /// 获取配置组集合。
@@ -37,7 +37,7 @@ namespace Honoo.Configuration
         {
             _declaration = declaration;
             _content = content;
-            _comment = new ConfigComment(comment, content);
+            _comment = new XConfigComment(comment, content);
             _groups = new ConfigSectionGroupSet(declaration, content);
             _sections = new ConfigSectionSet(declaration, content);
         }

@@ -10,14 +10,14 @@ namespace Test
     {
         internal static void Test()
         {
-            using (HonooSettingsManager manager = new HonooSettingsManager())
+            using (XSettingsManager manager = new XSettingsManager())
             {
                 manager.Default.Comment.SetValue("default comment");
-                manager.Default.Properties.AddOrUpdate("prop1", new HonooString("prop1 value.")).Comment.SetValue("prop1 comment.");
+                manager.Default.Properties.AddOrUpdate("prop1", new XString("prop1 value.")).Comment.SetValue("prop1 comment.");
 
-                HonooDictionary section = manager.Sections.GetOrAdd("section1");
+                XDictionary section = manager.Sections.GetOrAdd("section1");
                 section.Comment.SetValue("section1 comment.");
-                section.Properties.AddOrUpdate("prop1", new HonooString("123456789")).Comment.SetValue("prop1 comment.");
+                section.Properties.AddOrUpdate("prop1", new XString("123456789")).Comment.SetValue("prop1 comment.");
                 //
                 //
                 //

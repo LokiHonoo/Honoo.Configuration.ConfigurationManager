@@ -8,7 +8,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 串行数据类型。
     /// </summary>
-    public class HonooString : HonooProperty, IEquatable<HonooString>, IComparer<HonooString>, IComparable
+    public class XString : XProperty, IEquatable<XString>, IComparer<XString>, IComparable
     {
         private string _value;
 
@@ -20,16 +20,16 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 初始化 HonooString 类的新实例。
+        /// 初始化 XString 类的新实例。
         /// </summary>
         /// <param name="value">文本类型的值。</param>
         /// <exception cref="Exception"/>
-        public HonooString(string value) : base(HonooPropertyKind.HonooString, GetElement(value), null)
+        public XString(string value) : base(XPropertyKind.XString, GetElement(value), null)
         {
             _value = value.Trim();
         }
 
-        internal HonooString(XElement content, XComment comment) : base(HonooPropertyKind.HonooString, content, comment)
+        internal XString(XElement content, XComment comment) : base(XPropertyKind.XString, content, comment)
         {
             _value = content.Value;
         }
@@ -219,7 +219,7 @@ namespace Honoo.Configuration
         /// <param name="value">文本类型的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooString SetValue(string value)
+        public XString SetValue(string value)
         {
             if (value == null)
             {
@@ -240,7 +240,7 @@ namespace Honoo.Configuration
         /// <param name="y">要比较的第二个对象。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public static int Compare(HonooString x, HonooString y)
+        public static int Compare(XString x, XString y)
         {
             if (x is null)
             {
@@ -259,7 +259,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(HonooString left, HonooString right)
+        public static bool operator !=(XString left, XString right)
         {
             return !(left == right);
         }
@@ -270,7 +270,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator <(HonooString left, HonooString right)
+        public static bool operator <(XString left, XString right)
         {
             return (Compare(left, right) < 0);
         }
@@ -281,7 +281,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator <=(HonooString left, HonooString right)
+        public static bool operator <=(XString left, XString right)
         {
             return (Compare(left, right) <= 0);
         }
@@ -292,7 +292,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(HonooString left, HonooString right)
+        public static bool operator ==(XString left, XString right)
         {
             if (left is null)
             {
@@ -307,7 +307,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator >(HonooString left, HonooString right)
+        public static bool operator >(XString left, XString right)
         {
             return (Compare(left, right) > 0);
         }
@@ -318,7 +318,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator >=(HonooString left, HonooString right)
+        public static bool operator >=(XString left, XString right)
         {
             return (Compare(left, right) >= 0);
         }
@@ -329,7 +329,7 @@ namespace Honoo.Configuration
         /// <param name="x">要比较的第一个对象。</param>
         /// <param name="y">要比较的第二个对象。</param>
         /// <returns></returns>
-        int IComparer<HonooString>.Compare(HonooString x, HonooString y)
+        int IComparer<XString>.Compare(XString x, XString y)
         {
             return string.Compare(x._value, y._value, StringComparison.Ordinal);
         }
@@ -342,11 +342,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public int CompareTo(object obj)
         {
-            if (obj is HonooString other)
+            if (obj is XString other)
             {
                 return CompareTo(other);
             }
-            throw new ArgumentException($"{nameof(obj)} is not a HonooString.");
+            throw new ArgumentException($"{nameof(obj)} is not a XString.");
         }
 
         /// <summary>
@@ -355,7 +355,7 @@ namespace Honoo.Configuration
         /// <param name="other">要比较的对象。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public int CompareTo(HonooString other)
+        public int CompareTo(XString other)
         {
             if (other is null)
             {
@@ -369,9 +369,9 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="other">比较的对象。</param>
         /// <returns></returns>
-        public bool Equals(HonooString other)
+        public bool Equals(XString other)
         {
-            return other is HonooString && other._value == _value;
+            return other is XString && other._value == _value;
         }
 
         /// <summary>
@@ -381,7 +381,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is HonooString other && other._value == _value;
+            return obj is XString other && other._value == _value;
         }
 
         /// <summary>
@@ -399,7 +399,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            XElement element = new XElement(HonooSettingsManager.Namespace + "string")
+            XElement element = new XElement(XSettingsManager.Namespace + "string")
             {
                 Value = value
             };

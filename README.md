@@ -15,11 +15,10 @@
     - [sectionGroup/section](#sectiongroupsection)
     - [Auto save](#auto-save)
     - [Protection](#protection)
-    - [HonooSettingsManager](#honoosettingsmanager)
+    - [XSettingsManager](#xsettingsmanager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
     - [1.5.2](#152)
-    - [1.5.1](#151)
     - [1.4.19-final](#1419-final)
     - [1.4.18](#1418)
     - [1.4.17](#1417)
@@ -46,7 +45,7 @@
 
 提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
 
-提供 HonooSettingsManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
+提供 XSettingsManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
 
 ## GUIDE
 
@@ -376,9 +375,9 @@ internal static void Create()
 
 ```
 
-### HonooSettingsManager
+### XSettingsManager
 
-提供 HonooSettingsManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
+提供 XSettingsManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
 
 ```c#
 
@@ -387,21 +386,21 @@ internal static void Create(string filePath)
     //
     // 使用自定义配置文件。
     //
-    using (HonooSettingsManager manager = File.Exists(filePath) ? new HonooSettingsManager(filePath) : new HonooSettingsManager())
+    using (XSettingsManager manager = File.Exists(filePath) ? new XSettingsManager(filePath) : new XSettingsManager())
     {
         //
         // 赋值并设置注释。
         //
-        manager.Default.Properties.AddOrUpdate("prop1", new HonooString("This is \"hoonoo-settings\" prop1 value.")).Comment.SetValue("This is \"hoonoo-settings\" prop1 comment.");
+        manager.Default.Properties.AddOrUpdate("prop1", StringComparison.Ordinal.ToString()).Comment.SetValue("This is \"hoonoo-settings\" prop1 comment.");
         manager.Default.Properties.AddOrUpdate("prop7", "Update this.");
-        var prop2 = manager.Default.Properties.AddOrUpdate("prop2", new HonooDictionary());
+        var prop2 = manager.Default.Properties.AddOrUpdate("prop2", new XDictionary());
         prop2.Properties.AddOrUpdate("prop4", "Sub this dictionary prop.");
-        var prop3 = manager.Default.Properties.AddOrUpdate("prop3", new HonooList());
-        prop3.Properties.Add(new HonooString("Sub this list prop.")).Comment.SetValue("This is \"hoonoo-settings\" list prop comment."); ;
-        HonooDictionary prop5 = prop3.Properties.Add(new HonooDictionary());
-        prop5.Properties.Add("prop5", new HonooString("F024AC4"));
-        manager.Default.Properties.AddOrUpdate("prop6", new HonooString("Remove this."));
-        // manager.Default.Properties.Add("prop1", new HonooString("Test unique."));
+        var prop3 = manager.Default.Properties.AddOrUpdate("prop3", new XList());
+        prop3.Properties.Add(new XString("Sub this list prop.")).Comment.SetValue("This is \"hoonoo-settings\" list prop comment."); ;
+        XDictionary prop5 = prop3.Properties.Add(new XDictionary());
+        prop5.Properties.Add("prop5", new XString("F024AC4"));
+        manager.Default.Properties.AddOrUpdate("prop6", new XString("Remove this."));
+        // manager.Default.Properties.Add("prop1", new XString("Test unique."));
         //
         // 移除属性的方法。移除属性时相关注释一并移除。
         //
@@ -409,13 +408,13 @@ internal static void Create(string filePath)
         //
         // 更新。
         //
-        manager.Default.Properties.AddOrUpdate("prop7", new HonooString("Update this successful."));
+        manager.Default.Properties.AddOrUpdate("prop7", new XString("Update this successful."));
         //
         // 附加配置容器。
         //
-        HonooDictionary section = manager.Sections.GetOrAdd("section1");
-        section.Comment.SetValue("\"This is \"hoonoo-settings\" section1");
-        section.Properties.AddOrUpdate("prop1", new HonooString("123456789"));
+        XDictionary section = manager.Sections.GetOrAdd("section1");
+        section.Comment.SetValue("This is \"hoonoo-settings\" section1");
+        section.Properties.AddOrUpdate("prop1", new XString("123456789"));
         //
         // 保存到指定的文件。
         //
@@ -432,32 +431,32 @@ internal static void Load(string filePath)
     //
     // 使用自定义配置文件。
     //
-    using (HonooSettingsManager manager = new HonooSettingsManager(filePath))
+    using (XSettingsManager manager = new XSettingsManager(filePath))
     {
         //
         // 取出属性和注释。
         //
-        HonooString value1 = manager.Default.Properties.GetValue<HonooString>("prop1");
+        XString value1 = manager.Default.Properties.GetValue<XString>("prop1");
         if (value1.Comment.TryGetValue(out string comment1))
         {
             Console.WriteLine(comment1);
         }
-        Console.WriteLine(value1.ToString());
+        Console.WriteLine(value1.GetEnumValue<StringComparison>());
         //
-        HonooDictionary value2 = manager.Default.Properties.GetValue<HonooDictionary>("prop2");
-        value2.Properties.TryGetValue("prop4", out HonooString val2);
-        Console.WriteLine(val2.ToString());
+        XDictionary value2 = manager.Default.Properties.GetValue<XDictionary>("prop2");
+        value2.Properties.TryGetValue("prop4", out XString val2);
+        Console.WriteLine(val2.GetStringValue());
         //
-        HonooList value3 = manager.Default.Properties.GetValue<HonooList>("prop3");
-        Console.WriteLine(value3.Properties[0]);
+        XList value3 = manager.Default.Properties.GetValue<XList>("prop3");
+        Console.WriteLine(value3.Properties.GetValue(0).GetStringValue());
         //
-        HonooString value5 = ((HonooDictionary)value3.Properties[1]).Properties.GetValue<HonooString>("prop5");
-        byte[] val5 = value5.ToBytes();
+        XString value5 = ((XDictionary)value3.Properties[1]).Properties.GetValue<XString>("prop5");
+        byte[] val5 = value5.GetBytesValue();
         Console.WriteLine(BitConverter.ToString(val5));
         //
-        HonooDictionary section = manager.Sections.GetValue("section1");
+        XDictionary section = manager.Sections.GetValue("section1");
         Console.WriteLine(section.Comment.GetValue());
-        Console.WriteLine(section.Properties.GetValue<HonooString>("prop1").ToInt64());
+        Console.WriteLine(section.Properties.GetValue<XString>("prop1").GetInt64Value());
     }
 }
 
@@ -488,10 +487,7 @@ public static async void Test()
 ### 1.5.2
 
 **Features* 提供针对字符串的方法的重载。
-
-### 1.5.1
-
-**Features* 重写 HonooSettingsManager。取消数组支持，更改为类型嵌套。支持 Dictionary、List 类型无限嵌套。
+**Features* 重写 XSettingsManager。取消数组支持，更改为类型嵌套。支持 Dictionary、List 类型无限嵌套。
 
 ### 1.4.19-final
 
@@ -503,7 +499,7 @@ public static async void Test()
 
 ### 1.4.17
 
-**Features* 注释操作提取到单独的 ConfigComment 类中。
+**Features* 注释操作提取到单独的 XConfigComment 类中。
 
 ### 1.4.16
 
@@ -511,7 +507,7 @@ public static async void Test()
 
 ### 1.4.11
 
-**Features* HonooSettingsManager 增加 2 维数组和 3 维数组支持。
+**Features* XSettingsManager 增加 2 维数组和 3 维数组支持。
 
 ### 1.4.10
 
@@ -527,7 +523,7 @@ public static async void Test()
 
 **Features* 提供 AppSettingsManager 用于读写 appSettings 节点的 file 属性指定的附加配置文件。
 
-**Features* 提供一个额外的精简的配置属性文件，以字典类型保存，支持分组，支持加密，支持单一属性值和数组属性值。使用 HonooSettingsManager 类读写此文件。
+**Features* 提供一个额外的精简的配置属性文件，以字典类型保存，支持分组，支持加密，支持单一属性值和数组属性值。使用 XSettingsManager 类读写此文件。
 
 ### 1.3.4
 

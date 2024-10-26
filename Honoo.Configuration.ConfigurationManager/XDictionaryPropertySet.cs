@@ -9,12 +9,12 @@ namespace Honoo.Configuration
     /// <summary>
     /// 字典类型的配置属性集合。
     /// </summary>
-    public class HonooDictionaryPropertySet : IEnumerable<KeyValuePair<string, HonooProperty>>
+    public class XDictionaryPropertySet : IEnumerable<KeyValuePair<string, XProperty>>
     {
         #region Properties
 
         private readonly XElement _container;
-        private readonly Dictionary<string, HonooProperty> _properties = new Dictionary<string, HonooProperty>();
+        private readonly Dictionary<string, XProperty> _properties = new Dictionary<string, XProperty>();
 
         /// <summary>
         /// 获取配置属性集合中包含的元素数。
@@ -24,21 +24,21 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置属性集合的键的集合。
         /// </summary>
-        public Dictionary<string, HonooProperty>.KeyCollection Keys => _properties.Keys;
+        public Dictionary<string, XProperty>.KeyCollection Keys => _properties.Keys;
 
         /// <summary>
         /// 获取配置属性集合的值的集合。
         /// </summary>
-        public Dictionary<string, HonooProperty>.ValueCollection Values => _properties.Values;
+        public Dictionary<string, XProperty>.ValueCollection Values => _properties.Values;
 
         /// <summary>
         /// 获取或设置具有指定键的配置属性的值。直接赋值等同于 AddOrUpdate 方法。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
-        public HonooProperty this[string key]
+        public XProperty this[string key]
         {
-            get { return GetValue<HonooProperty>(key); }
+            get { return GetValue<XProperty>(key); }
             set { AddOrUpdate(key, value); }
         }
 
@@ -46,7 +46,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal HonooDictionaryPropertySet(XElement container)
+        internal XDictionaryPropertySet(XElement container)
         {
             _container = container;
             if (_container.HasElements)
@@ -62,17 +62,17 @@ namespace Honoo.Configuration
                     {
                         comment = (XComment)pre;
                     }
-                    if (content.Name == HonooSettingsManager.Namespace + "dictionary")
+                    if (content.Name == XSettingsManager.Namespace + "dictionary")
                     {
-                        _properties.Add(key, new HonooDictionary(content, comment));
+                        _properties.Add(key, new XDictionary(content, comment));
                     }
-                    else if (content.Name == HonooSettingsManager.Namespace + "list")
+                    else if (content.Name == XSettingsManager.Namespace + "list")
                     {
-                        _properties.Add(key, new HonooList(content, comment));
+                        _properties.Add(key, new XList(content, comment));
                     }
-                    else if (content.Name == HonooSettingsManager.Namespace + "string")
+                    else if (content.Name == XSettingsManager.Namespace + "string")
                     {
-                        _properties.Add(key, new HonooString(content, comment));
+                        _properties.Add(key, new XString(content, comment));
                     }
                     else
                     {
@@ -93,7 +93,7 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public T Add<T>(string key, T value) where T : HonooProperty
+        public T Add<T>(string key, T value) where T : XProperty
         {
             if (key == null)
             {
@@ -119,9 +119,9 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public HonooString Add(string key, string value)
+        public XString Add(string key, string value)
         {
-            return Add(key, new HonooString(value));
+            return Add(key, new XString(value));
         }
 
         #endregion Add
@@ -137,9 +137,9 @@ namespace Honoo.Configuration
         /// <param name="valueIfNotExists">指定名称关联的配置属性不存在时添加此配置属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public T GetOrAdd<T>(string key, T valueIfNotExists) where T : HonooProperty
+        public T GetOrAdd<T>(string key, T valueIfNotExists) where T : XProperty
         {
-            if (TryGetValue(key, out HonooProperty value))
+            if (TryGetValue(key, out XProperty value))
             {
                 if (value is T val)
                 {
@@ -157,16 +157,16 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定名称关联的配置属性。如果不存在，添加一个 <see cref="HonooString"/> 类型的配置属性并返回值。
+        /// 获取与指定名称关联的配置属性。如果不存在，添加一个 <see cref="XString"/> 类型的配置属性并返回值。
         /// <br/>如果配置属性存在但不是指定的类型，则抛出 <see cref="InvalidCastException"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <param name="valueIfNotExists">指定名称关联的配置属性不存在时添加此配置属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooString GetOrAdd(string key, string valueIfNotExists)
+        public XString GetOrAdd(string key, string valueIfNotExists)
         {
-            return GetOrAdd(key, new HonooString(valueIfNotExists));
+            return GetOrAdd(key, new XString(valueIfNotExists));
         }
 
         #endregion GetOrAdd
@@ -180,7 +180,7 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public T AddOrUpdate<T>(string key, T value) where T : HonooProperty
+        public T AddOrUpdate<T>(string key, T value) where T : XProperty
         {
             if (key == null)
             {
@@ -190,7 +190,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            if (TryGetValue(key, out HonooProperty prop))
+            if (TryGetValue(key, out XProperty prop))
             {
                 if (value.Comment.HasValue)
                 {
@@ -215,9 +215,9 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public HonooString AddOrUpdate(string key, string value)
+        public XString AddOrUpdate(string key, string value)
         {
-            return AddOrUpdate(key, new HonooString(value));
+            return AddOrUpdate(key, new XString(value));
         }
 
         #endregion AddOrUpdate
@@ -232,9 +232,9 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
-        public bool TryGetValue<T>(string key, out T value) where T : HonooProperty
+        public bool TryGetValue<T>(string key, out T value) where T : XProperty
         {
-            if (_properties.TryGetValue(key, out HonooProperty val))
+            if (_properties.TryGetValue(key, out XProperty val))
             {
                 if (val is T v)
                 {
@@ -257,7 +257,7 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public T GetValue<T>(string key) where T : HonooProperty
+        public T GetValue<T>(string key) where T : XProperty
         {
             return (T)_properties[key];
         }
@@ -268,9 +268,9 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooString GetValue(string key)
+        public XString GetValue(string key)
         {
-            return (HonooString)_properties[key];
+            return (XString)_properties[key];
         }
 
         #endregion GetValue
@@ -284,7 +284,7 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
-        public T GetValue<T>(string key, T defaultValue) where T : HonooProperty
+        public T GetValue<T>(string key, T defaultValue) where T : XProperty
         {
             return TryGetValue(key, out T value) ? value : defaultValue;
         }
@@ -295,9 +295,9 @@ namespace Honoo.Configuration
         /// <param name="key">配置属性的键。</param>
         /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
-        public HonooString GetValue(string key, string defaultValue)
+        public XString GetValue(string key, string defaultValue)
         {
-            return TryGetValue(key, out HonooString value) ? value : new HonooString(defaultValue);
+            return TryGetValue(key, out XString value) ? value : new XString(defaultValue);
         }
 
         #endregion GetValueOrDefault
@@ -325,7 +325,7 @@ namespace Honoo.Configuration
         /// 支持在泛型集合上进行简单迭代。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, HonooProperty>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, XProperty>> GetEnumerator()
         {
             return _properties.GetEnumerator();
         }
@@ -344,7 +344,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(string key)
         {
-            if (_properties.TryGetValue(key, out HonooProperty value))
+            if (_properties.TryGetValue(key, out XProperty value))
             {
                 value.Comment.Remove();
                 value.Content.Remove();

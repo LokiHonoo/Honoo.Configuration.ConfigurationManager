@@ -10,28 +10,28 @@ namespace Honoo.Configuration
     /// <summary>
     /// 简单配置属性管理器。提供一个精简的配置属性文件，以字典类型保存，支持加密，支持单一属性值和数组属性值。
     /// </summary>
-    public sealed class HonooSettingsManager : IDisposable
+    public sealed class XSettingsManager : IDisposable
     {
         #region Properties
 
         private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
-        private HonooDictionary _default;
+        private XDictionary _default;
         private bool _disposed;
         private XElement _root;
-        private HonooSectionSet _sections;
+        private XSectionSet _sections;
 
         /// <summary>
         /// 映射到 &lt;default /&gt; 配置容器节点。
         /// </summary>
-        public HonooDictionary Default
+        public XDictionary Default
         {
             get
             {
                 if (!_disposed && _default == null)
                 {
                     GetDefault(out XElement content, out XComment comment);
-                    _default = new HonooDictionary(content, comment);
+                    _default = new XDictionary(content, comment);
                 }
                 return _default;
             }
@@ -40,13 +40,13 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置容器集合。
         /// </summary>
-        public HonooSectionSet Sections
+        public XSectionSet Sections
         {
             get
             {
                 if (!_disposed && _sections == null)
                 {
-                    _sections = new HonooSectionSet(_root);
+                    _sections = new XSectionSet(_root);
                 }
                 return _sections;
             }
@@ -59,43 +59,43 @@ namespace Honoo.Configuration
         #region Delegate
 
         /// <summary>
-        /// 在 HonooSettingsManager 实例内容改变时执行。
+        /// 在 XSettingsManager 实例内容改变时执行。
         /// </summary>
-        /// <param name="manager">HonooSettingsManager 实例。</param>
+        /// <param name="manager">XSettingsManager 实例。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
-        public delegate void ChangedEventHandler(HonooSettingsManager manager);
+        public delegate void ChangedEventHandler(XSettingsManager manager);
 
         /// <summary>
-        /// 在 HonooSettingsManager 实例释放后执行。
+        /// 在 XSettingsManager 实例释放后执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
         public delegate void DisposedEventHandler();
 
         /// <summary>
-        /// 在 HonooSettingsManager 实例正在释放时执行。
+        /// 在 XSettingsManager 实例正在释放时执行。
         /// </summary>
-        /// <param name="manager">HonooSettingsManager 实例。</param>
+        /// <param name="manager">XSettingsManager 实例。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
-        public delegate void DisposingEventHandler(HonooSettingsManager manager);
+        public delegate void DisposingEventHandler(XSettingsManager manager);
 
         #endregion Delegate
 
         #region Event
 
         /// <summary>
-        /// 在 HonooSettingsManager 实例内容改变时执行。
+        /// 在 XSettingsManager 实例内容改变时执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event ChangedEventHandler Changed;
 
         /// <summary>
-        /// 在 HonooSettingsManager 实例释放后执行。
+        /// 在 XSettingsManager 实例释放后执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event DisposedEventHandler Disposed;
 
         /// <summary>
-        /// 在 HonooSettingsManager 实例准备释放时执行。
+        /// 在 XSettingsManager 实例准备释放时执行。
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1003:使用泛型事件处理程序实例", Justification = "<挂起>")]
         public event DisposingEventHandler Disposing;
@@ -120,16 +120,16 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 创建 HonooSettingsManager 的新实例。
+        /// 创建 XSettingsManager 的新实例。
         /// </summary>
-        public HonooSettingsManager()
+        public XSettingsManager()
         {
             _root = new XElement(_namespace + "settings");
             _root.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
-        /// 创建 HonooSettingsManager 的新实例。
+        /// 创建 XSettingsManager 的新实例。
         /// </summary>
         /// <param name="filePath">指定配置文件的路径。</param>
         /// <param name="protectionAlgorithm">
@@ -138,7 +138,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public HonooSettingsManager(string filePath, RSACryptoServiceProvider protectionAlgorithm = null)
+        public XSettingsManager(string filePath, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -150,7 +150,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 创建 HonooSettingsManager 的新实例。
+        /// 创建 XSettingsManager 的新实例。
         /// </summary>
         /// <param name="stream">指定配置文件的流。</param>
         /// <param name="protectionAlgorithm">
@@ -159,7 +159,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public HonooSettingsManager(Stream stream, RSACryptoServiceProvider protectionAlgorithm = null)
+        public XSettingsManager(Stream stream, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (stream == null)
             {
@@ -171,7 +171,7 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 创建 HonooSettingsManager 的新实例。
+        /// 创建 XSettingsManager 的新实例。
         /// </summary>
         /// <param name="reader">指定配置文件的读取器。</param>
         /// <param name="protectionAlgorithm">
@@ -180,7 +180,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public HonooSettingsManager(XmlReader reader, RSACryptoServiceProvider protectionAlgorithm = null)
+        public XSettingsManager(XmlReader reader, RSACryptoServiceProvider protectionAlgorithm = null)
         {
             if (reader == null)
             {
@@ -192,15 +192,15 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 释放由 <see cref="HonooSettingsManager"/> 使用的所有资源。
+        /// 释放由 <see cref="XSettingsManager"/> 使用的所有资源。
         /// </summary>
-        ~HonooSettingsManager()
+        ~XSettingsManager()
         {
             Dispose(false);
         }
 
         /// <summary>
-        /// 释放由 <see cref="HonooSettingsManager"/> 使用的所有资源。
+        /// 释放由 <see cref="XSettingsManager"/> 使用的所有资源。
         /// </summary>
         public void Dispose()
         {
@@ -301,7 +301,7 @@ namespace Honoo.Configuration
         #endregion Save
 
         /// <summary>
-        /// 清除所有节点，没有被 <see cref="HonooSettingsManager"/> 管理的节点和内容也会全部删除。
+        /// 清除所有节点，没有被 <see cref="XSettingsManager"/> 管理的节点和内容也会全部删除。
         /// </summary>
         /// <returns></returns>
         public void Clear()

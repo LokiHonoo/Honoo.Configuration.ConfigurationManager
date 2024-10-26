@@ -13,7 +13,7 @@ namespace Honoo.Configuration
     public sealed class ConfigurationManager : IDisposable
     {
         #region Properties
-
+        private static readonly XNamespace _assemblyBindingNamespace = "urn:schemas-microsoft-com:asm.v1";
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
         private AppSettings _appSettings;
         private AssemblyBinding _assemblyBinding;
@@ -21,7 +21,7 @@ namespace Honoo.Configuration
         private ConnectionStrings _connectionStrings;
         private bool _disposed;
         private XElement _root;
-
+        internal static XNamespace AssemblyBindingNamespace => _assemblyBindingNamespace;
         /// <summary>
         /// 映射到标准格式的 &lt;appSettings /&gt; 节点。
         /// </summary>
@@ -396,7 +396,6 @@ namespace Honoo.Configuration
 
         private XElement Clean(XElement root)
         {
-            XNamespace ns = "urn:schemas-microsoft-com:asm.v1";
             XElement result = XElement.Parse(root.ToString());
             if (_appSettings != null && _appSettings.Properties.Count == 0)
             {
@@ -404,7 +403,7 @@ namespace Honoo.Configuration
             }
             if (_assemblyBinding != null && _assemblyBinding.Properties.Count == 0)
             {
-                result.Element(ns + "assemblyBinding").Remove();
+                result.Element(_assemblyBindingNamespace + "assemblyBinding").Remove();
             }
             if (_connectionStrings != null && _connectionStrings.Properties.Count == 0)
             {

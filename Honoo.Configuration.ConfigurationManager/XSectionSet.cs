@@ -9,12 +9,12 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置容器集合。
     /// </summary>
-    public sealed class HonooSectionSet : IEnumerable<HonooDictionary>
+    public sealed class XSectionSet : IEnumerable<XDictionary>
     {
         #region Properties
 
         private readonly XElement _container;
-        private readonly Dictionary<string, HonooDictionary> _sections = new Dictionary<string, HonooDictionary>();
+        private readonly Dictionary<string, XDictionary> _sections = new Dictionary<string, XDictionary>();
 
         /// <summary>
         /// 获取配置容器集合中包含的元素数。
@@ -27,18 +27,18 @@ namespace Honoo.Configuration
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooDictionary this[string name] => GetValue(name);
+        public XDictionary this[string name] => GetValue(name);
 
         #endregion Properties
 
         #region Construction
 
-        internal HonooSectionSet(XElement container)
+        internal XSectionSet(XElement container)
         {
             _container = container;
             if (container.HasElements)
             {
-                foreach (XElement content in container.Elements(HonooSettingsManager.Namespace + "section"))
+                foreach (XElement content in container.Elements(XSettingsManager.Namespace + "section"))
                 {
                     string name = content.Attribute("name").Value;
                     XComment comment = null;
@@ -47,7 +47,7 @@ namespace Honoo.Configuration
                     {
                         comment = (XComment)pre;
                     }
-                    HonooDictionary section = new HonooDictionary(content, comment);
+                    XDictionary section = new XDictionary(content, comment);
                     _sections.Add(name, section);
                 }
             }
@@ -63,11 +63,11 @@ namespace Honoo.Configuration
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooDictionary Add(string name)
+        public XDictionary Add(string name)
         {
-            XElement content = new XElement(HonooSettingsManager.Namespace + "section");
+            XElement content = new XElement(XSettingsManager.Namespace + "section");
             content.SetAttributeValue("name", name);
-            HonooDictionary section = new HonooDictionary(content, null);
+            XDictionary section = new XDictionary(content, null);
             _sections.Add(name, section);
             _container.Add(content);
             return section;
@@ -82,9 +82,9 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="name">配置容器的名称。</param>
         /// <exception cref="Exception"/>
-        public HonooDictionary GetOrAdd(string name)
+        public XDictionary GetOrAdd(string name)
         {
-            if (_sections.TryGetValue(name, out HonooDictionary value))
+            if (_sections.TryGetValue(name, out XDictionary value))
             {
                 return value;
             }
@@ -105,7 +105,7 @@ namespace Honoo.Configuration
         /// <param name="section">配置容器的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out HonooDictionary section)
+        public bool TryGetValue(string name, out XDictionary section)
         {
             return _sections.TryGetValue(name, out section);
         }
@@ -120,9 +120,9 @@ namespace Honoo.Configuration
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooDictionary GetValue(string name)
+        public XDictionary GetValue(string name)
         {
-            return TryGetValue(name, out HonooDictionary section) ? section : null;
+            return TryGetValue(name, out XDictionary section) ? section : null;
         }
 
         #endregion GetValue
@@ -153,7 +153,7 @@ namespace Honoo.Configuration
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<HonooDictionary> GetEnumerator()
+        public IEnumerator<XDictionary> GetEnumerator()
         {
             return _sections.Values.GetEnumerator();
         }
@@ -172,7 +172,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool Remove(string name)
         {
-            if (_sections.TryGetValue(name, out HonooDictionary value))
+            if (_sections.TryGetValue(name, out XDictionary value))
             {
                 value.Comment.Remove();
                 value.Content.Remove();

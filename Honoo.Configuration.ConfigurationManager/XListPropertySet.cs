@@ -9,10 +9,10 @@ namespace Honoo.Configuration
     /// <summary>
     /// 列表类型的配置属性集合。
     /// </summary>
-    public class HonooListPropertySet : IEnumerable<HonooProperty>
+    public class XListPropertySet : IEnumerable<XProperty>
     {
         private readonly XElement _container;
-        private readonly List<HonooProperty> _properties = new List<HonooProperty>();
+        private readonly List<XProperty> _properties = new List<XProperty>();
 
         /// <summary>
         /// 获取配置属性集合中包含的元素数。
@@ -25,7 +25,7 @@ namespace Honoo.Configuration
         /// <param name="index">配置属性的索引。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public HonooProperty this[int index]
+        public XProperty this[int index]
         {
             get => _properties[index];
             set
@@ -37,7 +37,7 @@ namespace Honoo.Configuration
 
         #region Construction
 
-        internal HonooListPropertySet(XElement container)
+        internal XListPropertySet(XElement container)
         {
             _container = container;
             if (_container.HasElements)
@@ -50,17 +50,17 @@ namespace Honoo.Configuration
                     {
                         comment = (XComment)pre;
                     }
-                    if (content.Name == HonooSettingsManager.Namespace + "dictionary")
+                    if (content.Name == XSettingsManager.Namespace + "dictionary")
                     {
-                        _properties.Add(new HonooDictionary(content, comment));
+                        _properties.Add(new XDictionary(content, comment));
                     }
-                    else if (content.Name == HonooSettingsManager.Namespace + "list")
+                    else if (content.Name == XSettingsManager.Namespace + "list")
                     {
-                        _properties.Add(new HonooList(content, comment));
+                        _properties.Add(new XList(content, comment));
                     }
-                    else if (content.Name == HonooSettingsManager.Namespace + "string")
+                    else if (content.Name == XSettingsManager.Namespace + "string")
                     {
-                        _properties.Add(new HonooString(content, comment));
+                        _properties.Add(new XString(content, comment));
                     }
                     else
                     {
@@ -78,7 +78,7 @@ namespace Honoo.Configuration
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public T Add<T>(T value) where T : HonooProperty
+        public T Add<T>(T value) where T : XProperty
         {
             if (value == null)
             {
@@ -99,7 +99,7 @@ namespace Honoo.Configuration
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="values">配置属性的集合。</param>
         /// <exception cref="Exception"/>
-        public IEnumerable<T> AddRange<T>(IEnumerable<T> values) where T : HonooProperty
+        public IEnumerable<T> AddRange<T>(IEnumerable<T> values) where T : XProperty
         {
             if (values == null)
             {
@@ -128,7 +128,7 @@ namespace Honoo.Configuration
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="value">搜索的指定对象。</param>
         /// <returns></returns>
-        public bool Contains<T>(T value) where T : HonooProperty
+        public bool Contains<T>(T value) where T : XProperty
         {
             return _properties.Contains(value);
         }
@@ -139,7 +139,7 @@ namespace Honoo.Configuration
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="array">要复制到的目标数组。</param>
         /// <param name="arrayIndex">目标数组中从零开始的索引，从此处开始复制。</param>
-        public void CopyTo<T>(T[] array, int arrayIndex) where T : HonooProperty
+        public void CopyTo<T>(T[] array, int arrayIndex) where T : XProperty
         {
             _properties.CopyTo(array, arrayIndex);
         }
@@ -148,7 +148,7 @@ namespace Honoo.Configuration
         /// 支持在泛型集合上进行简单迭代。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<HonooProperty> GetEnumerator()
+        public IEnumerator<XProperty> GetEnumerator()
         {
             return _properties.GetEnumerator();
         }
@@ -164,7 +164,7 @@ namespace Honoo.Configuration
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="index">配置属性的索引。</param>
         /// <exception cref="Exception"/>
-        public T GetValue<T>(int index) where T : HonooProperty
+        public T GetValue<T>(int index) where T : XProperty
         {
             return (T)_properties[index];
         }
@@ -174,9 +174,9 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="index">配置属性的索引。</param>
         /// <exception cref="Exception"/>
-        public HonooString GetValue(int index)
+        public XString GetValue(int index)
         {
-            return (HonooString)_properties[index];
+            return (XString)_properties[index];
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace Honoo.Configuration
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="value">搜索的指定对象。</param>
         /// <returns></returns>
-        public int IndexOf<T>(T value) where T : HonooProperty
+        public int IndexOf<T>(T value) where T : XProperty
         {
             return _properties.IndexOf(value);
         }
@@ -197,7 +197,7 @@ namespace Honoo.Configuration
         /// <param name="index">指定索引。</param>
         /// <param name="value">要插入的配置属性。</param>
         /// <exception cref="Exception"/>
-        public void Insert<T>(int index, T value) where T : HonooProperty
+        public void Insert<T>(int index, T value) where T : XProperty
         {
             _properties.Insert(index, value);
         }
@@ -209,7 +209,7 @@ namespace Honoo.Configuration
         /// <param name="value">要移除的配置属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool Remove<T>(T value) where T : HonooProperty
+        public bool Remove<T>(T value) where T : XProperty
         {
             value?.Comment.Remove();
             value?.Content.Remove();
@@ -224,7 +224,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void RemoveAt(int index)
         {
-            HonooProperty property = _properties[index];
+            XProperty property = _properties[index];
             property?.Comment.Remove();
             property?.Content.Remove();
             _properties.RemoveAt(index);
@@ -237,7 +237,7 @@ namespace Honoo.Configuration
         /// <param name="index">配置属性的索引。</param>
         /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public T SetValue<T>(int index, T value) where T : HonooProperty
+        public T SetValue<T>(int index, T value) where T : XProperty
         {
             RemoveAt(index);
             Insert(index, value);
@@ -250,10 +250,10 @@ namespace Honoo.Configuration
         /// <param name="index">配置属性的索引。</param>
         /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public HonooString SetValue(int index, string value)
+        public XString SetValue(int index, string value)
         {
             RemoveAt(index);
-            HonooString val = new HonooString(value);
+            XString val = new XString(value);
             Insert(index, val);
             return val;
         }

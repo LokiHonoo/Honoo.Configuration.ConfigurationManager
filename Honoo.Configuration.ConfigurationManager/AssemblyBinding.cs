@@ -20,8 +20,7 @@ namespace Honoo.Configuration
 
         internal AssemblyBinding(XElement root)
         {
-            XNamespace ns = "urn:schemas-microsoft-com:asm.v1";
-            XName name = ns + "assemblyBinding";
+            XName name = ConfigurationManager.AssemblyBindingNamespace + "assemblyBinding";
             _content = root.Element(name);
             if (_content == null)
             {

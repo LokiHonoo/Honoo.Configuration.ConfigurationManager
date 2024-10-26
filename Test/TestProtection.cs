@@ -66,9 +66,9 @@ namespace Test
             sb = new StringBuilder();
             using (XmlWriter writer = XmlWriter.Create(sb, writerSettings))
             {
-                using (HonooSettingsManager manager = new HonooSettingsManager())
+                using (XSettingsManager manager = new XSettingsManager())
                 {
-                    manager.Default.Properties.AddOrUpdate("prop1", new HonooString("This is \"protection\" test.")).Comment.SetValue("This is \"protection\" test.");
+                    manager.Default.Properties.AddOrUpdate("prop1", new XString("This is \"protection\" test.")).Comment.SetValue("This is \"protection\" test.");
                     //
                     // 加密方式保存到指定的文件。
                     //
@@ -83,7 +83,7 @@ namespace Test
             //
             using (XmlReader reader = XmlReader.Create(new StringReader(sb.ToString())))
             {
-                using (HonooSettingsManager manager = new HonooSettingsManager(reader, rsa))
+                using (XSettingsManager manager = new XSettingsManager(reader, rsa))
                 {
                     Console.WriteLine(manager.GetXmlString());
                 }

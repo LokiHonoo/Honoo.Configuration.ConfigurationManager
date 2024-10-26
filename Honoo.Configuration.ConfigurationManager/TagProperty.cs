@@ -7,14 +7,14 @@ namespace Honoo.Configuration
     /// </summary>
     public abstract class TagProperty
     {
-        private readonly ConfigComment _comment;
+        private readonly XConfigComment _comment;
         private readonly XElement _content;
         private readonly TagPropertyKind _kind;
 
         /// <summary>
         /// 配置属性的注释。
         /// </summary>
-        public ConfigComment Comment => _comment;
+        public XConfigComment Comment => _comment;
 
         /// <summary>
         /// 获取配置属性的类型。
@@ -35,7 +35,7 @@ namespace Honoo.Configuration
         {
             _kind = kind;
             _content = content;
-            _comment = new ConfigComment(comment, content);
+            _comment = new XConfigComment(comment, content);
         }
 
         #endregion Construction

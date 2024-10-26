@@ -51,7 +51,7 @@ namespace Honoo.Configuration
                         if (enumerator.Current.NodeType == XmlNodeType.Element)
                         {
                             XElement content = (XElement)enumerator.Current;
-                            if (content.Name == ((XNamespace)"urn:schemas-microsoft-com:asm.v1") + "linkedConfiguration")
+                            if (content.Name == (ConfigurationManager.AssemblyBindingNamespace + "linkedConfiguration"))
                             {
                                 LinkedConfigurationProperty property = new LinkedConfigurationProperty(content, comment);
                                 _properties.Add(property);

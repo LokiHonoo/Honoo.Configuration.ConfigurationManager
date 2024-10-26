@@ -8,15 +8,14 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class LinkedConfigurationProperty
     {
-        private static readonly XNamespace _namespace = "urn:schemas-microsoft-com:asm.v1";
-        private readonly ConfigComment _comment;
+        private readonly XConfigComment _comment;
         private readonly XElement _content;
         private readonly string _href;
 
         /// <summary>
         /// 配置文件链接属性的注释。
         /// </summary>
-        public ConfigComment Comment => _comment;
+        public XConfigComment Comment => _comment;
 
         /// <summary>
         /// 获取配置文件的 URL。 href 属性支持的唯一格式是 file://。 支持本地文件和 UNC 文件。
@@ -35,14 +34,14 @@ namespace Honoo.Configuration
         {
             _href = href ?? throw new ArgumentNullException(nameof(href));
             _content = GetElement(href);
-            _comment = new ConfigComment(null, _content);
+            _comment = new XConfigComment(null, _content);
         }
 
         internal LinkedConfigurationProperty(XElement content, XComment comment)
         {
             _href = content.Attribute("href").Value;
             _content = content;
-            _comment = new ConfigComment(comment, content);
+            _comment = new XConfigComment(comment, content);
         }
 
         #endregion Construction
@@ -58,7 +57,7 @@ namespace Honoo.Configuration
 
         private static XElement GetElement(string href)
         {
-            XElement content = new XElement(_namespace + "linkedConfiguration");
+            XElement content = new XElement(ConfigurationManager.AssemblyBindingNamespace + "linkedConfiguration");
             content.SetAttributeValue("href", href);
             return content;
         }

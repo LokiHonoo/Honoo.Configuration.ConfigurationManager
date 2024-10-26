@@ -6,7 +6,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 注释。
     /// </summary>
-    public sealed class ConfigComment
+    public sealed class XConfigComment
     {
         private readonly XElement _leader;
         private XComment _comment;
@@ -21,11 +21,11 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 创建 ConfigComment 的新实例。
+        /// 创建 XConfigComment 的新实例。
         /// </summary>
         /// <param name="comment">注释节点。</param>
         /// <param name="leader">内容节点。</param>
-        internal ConfigComment(XComment comment, XElement leader)
+        internal XConfigComment(XComment comment, XElement leader)
         {
             _comment = comment;
             _leader = leader;
