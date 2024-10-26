@@ -15,10 +15,10 @@
     - [sectionGroup/section](#sectiongroupsection)
     - [Auto save](#auto-save)
     - [Protection](#protection)
-    - [XSettingsManager](#xsettingsmanager)
+    - [XConfigManager](#XConfigManager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.5.2](#152)
+    - [1.5.3](#153)
     - [1.4.19-final](#1419-final)
     - [1.4.18](#1418)
     - [1.4.17](#1417)
@@ -45,7 +45,7 @@
 
 提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
 
-提供 XSettingsManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
+提供 XConfigManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
 
 ## GUIDE
 
@@ -375,9 +375,9 @@ internal static void Create()
 
 ```
 
-### XSettingsManager
+### XConfigManager
 
-提供 XSettingsManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
+提供 XConfigManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
 
 ```c#
 
@@ -386,7 +386,7 @@ internal static void Create(string filePath)
     //
     // 使用自定义配置文件。
     //
-    using (XSettingsManager manager = File.Exists(filePath) ? new XSettingsManager(filePath) : new XSettingsManager())
+    using (XConfigManager manager = File.Exists(filePath) ? new XConfigManager(filePath) : new XConfigManager())
     {
         //
         // 赋值并设置注释。
@@ -431,7 +431,7 @@ internal static void Load(string filePath)
     //
     // 使用自定义配置文件。
     //
-    using (XSettingsManager manager = new XSettingsManager(filePath))
+    using (XConfigManager manager = new XConfigManager(filePath))
     {
         //
         // 取出属性和注释。
@@ -484,10 +484,10 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.5.2
+### 1.5.3
 
 **Features* 提供针对字符串的方法的重载。
-**Features* 重写 XSettingsManager。取消数组支持，更改为类型嵌套。支持 Dictionary、List 类型无限嵌套。
+**Features* 重写 XConfigManager。取消数组支持，更改为类型嵌套。支持 Dictionary、List 类型无限嵌套。
 
 ### 1.4.19-final
 
@@ -507,7 +507,7 @@ public static async void Test()
 
 ### 1.4.11
 
-**Features* XSettingsManager 增加 2 维数组和 3 维数组支持。
+**Features* XConfigManager 增加 2 维数组和 3 维数组支持。
 
 ### 1.4.10
 
@@ -523,7 +523,7 @@ public static async void Test()
 
 **Features* 提供 AppSettingsManager 用于读写 appSettings 节点的 file 属性指定的附加配置文件。
 
-**Features* 提供一个额外的精简的配置属性文件，以字典类型保存，支持分组，支持加密，支持单一属性值和数组属性值。使用 XSettingsManager 类读写此文件。
+**Features* 提供一个额外的精简的配置属性文件，以字典类型保存，支持分组，支持加密，支持单一属性值和数组属性值。使用 XConfigManager 类读写此文件。
 
 ### 1.3.4
 

@@ -23,7 +23,7 @@ Provides an method to encrypt the configuration file (not a ASP.NET encryption).
 
 Waring: The encryption method is different from ASP.NET, and the generated encryption file can only using by this project tool.
 
-Provides another "XSettingsManager" class to read/write a concise configuration file, encryption supported, dictionary/list nesting supported.
+Provides another "XConfigManager" class to read/write a concise configuration file, encryption supported, dictionary/list nesting supported.
 
 ## GUIDE
 

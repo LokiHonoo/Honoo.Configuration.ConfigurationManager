@@ -50,15 +50,15 @@ namespace Honoo.Configuration
                     {
                         comment = (XComment)pre;
                     }
-                    if (content.Name == XSettingsManager.Namespace + "dictionary")
+                    if (content.Name == XConfigManager.Namespace + "dictionary")
                     {
                         _properties.Add(new XDictionary(content, comment));
                     }
-                    else if (content.Name == XSettingsManager.Namespace + "list")
+                    else if (content.Name == XConfigManager.Namespace + "list")
                     {
                         _properties.Add(new XList(content, comment));
                     }
-                    else if (content.Name == XSettingsManager.Namespace + "string")
+                    else if (content.Name == XConfigManager.Namespace + "string")
                     {
                         _properties.Add(new XString(content, comment));
                     }

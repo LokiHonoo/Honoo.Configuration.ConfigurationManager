@@ -10,7 +10,7 @@ namespace Test
     {
         internal static void Test()
         {
-            using (XSettingsManager manager = new XSettingsManager())
+            using (XConfigManager manager = new XConfigManager())
             {
                 manager.Default.Comment.SetValue("default comment");
                 manager.Default.Properties.AddOrUpdate("prop1", new XString("prop1 value.")).Comment.SetValue("prop1 comment.");

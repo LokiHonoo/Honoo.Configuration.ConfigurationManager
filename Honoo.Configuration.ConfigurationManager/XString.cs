@@ -399,7 +399,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            XElement element = new XElement(XSettingsManager.Namespace + "string")
+            XElement element = new XElement(XConfigManager.Namespace + "string")
             {
                 Value = value
             };

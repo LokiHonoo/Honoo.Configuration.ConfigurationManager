@@ -20,7 +20,7 @@ namespace Test
                     manager.Clear();
                     manager.Save(filePath1);
                 }
-                using (Honoo.Configuration.XSettingsManager manager = new Honoo.Configuration.XSettingsManager(filePath5))
+                using (Honoo.Configuration.XConfigManager manager = new Honoo.Configuration.XConfigManager(filePath5))
                 {
                     manager.Clear();
                     manager.Save(filePath5);
@@ -48,8 +48,8 @@ namespace Test
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
-            TestXSettings.Create(filePath5);
-            TestXSettings.Load(filePath5);
+            TestX.Create(filePath5);
+            TestX.Load(filePath5);
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine(File.ReadAllText(filePath5));

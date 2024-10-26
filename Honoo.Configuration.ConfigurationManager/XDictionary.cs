@@ -24,7 +24,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 初始化 XDictionary 类的新实例。
         /// </summary>
-        public XDictionary() : base(XPropertyKind.XDictionary, new XElement(XSettingsManager.Namespace + "dictionary"), null)
+        public XDictionary() : base(XPropertyKind.XDictionary, new XElement(XConfigManager.Namespace + "dictionary"), null)
         {
             _properties = new XDictionaryPropertySet(base.Content);
         }

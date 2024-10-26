@@ -66,7 +66,7 @@ namespace Test
             sb = new StringBuilder();
             using (XmlWriter writer = XmlWriter.Create(sb, writerSettings))
             {
-                using (XSettingsManager manager = new XSettingsManager())
+                using (XConfigManager manager = new XConfigManager())
                 {
                     manager.Default.Properties.AddOrUpdate("prop1", new XString("This is \"protection\" test.")).Comment.SetValue("This is \"protection\" test.");
                     //
@@ -83,7 +83,7 @@ namespace Test
             //
             using (XmlReader reader = XmlReader.Create(new StringReader(sb.ToString())))
             {
-                using (XSettingsManager manager = new XSettingsManager(reader, rsa))
+                using (XConfigManager manager = new XConfigManager(reader, rsa))
                 {
                     Console.WriteLine(manager.GetXmlString());
                 }

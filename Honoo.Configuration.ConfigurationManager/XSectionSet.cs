@@ -38,7 +38,7 @@ namespace Honoo.Configuration
             _container = container;
             if (container.HasElements)
             {
-                foreach (XElement content in container.Elements(XSettingsManager.Namespace + "section"))
+                foreach (XElement content in container.Elements(XConfigManager.Namespace + "section"))
                 {
                     string name = content.Attribute("name").Value;
                     XComment comment = null;
@@ -65,7 +65,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public XDictionary Add(string name)
         {
-            XElement content = new XElement(XSettingsManager.Namespace + "section");
+            XElement content = new XElement(XConfigManager.Namespace + "section");
             content.SetAttributeValue("name", name);
             XDictionary section = new XDictionary(content, null);
             _sections.Add(name, section);

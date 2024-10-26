@@ -23,7 +23,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 初始化 XList 类的新实例。
         /// </summary>
-        public XList() : base(XPropertyKind.XList, new XElement(XSettingsManager.Namespace + "list"), null)
+        public XList() : base(XPropertyKind.XList, new XElement(XConfigManager.Namespace + "list"), null)
         {
             _properties = new XListPropertySet(base.Content);
         }

@@ -5,26 +5,26 @@ using System.IO;
 namespace Test
 {
     /// <summary>
-    /// XSettings。
+    ///
     /// </summary>
-    internal static class TestXSettings
+    internal static class TestX
     {
         internal static void Create(string filePath)
         {
             //
             // 使用自定义配置文件。
             //
-            using (XSettingsManager manager = File.Exists(filePath) ? new XSettingsManager(filePath) : new XSettingsManager())
+            using (XConfigManager manager = File.Exists(filePath) ? new XConfigManager(filePath) : new XConfigManager())
             {
                 //
                 // 赋值并设置注释。
                 //
-                manager.Default.Properties.AddOrUpdate("prop1", StringComparison.Ordinal.ToString()).Comment.SetValue("This is \"hoonoo-settings\" prop1 comment.");
+                manager.Default.Properties.AddOrUpdate("prop1", StringComparison.Ordinal.ToString()).Comment.SetValue("This is \"XCconfig\" prop1 comment.");
                 manager.Default.Properties.AddOrUpdate("prop7", "Update this.");
                 var prop2 = manager.Default.Properties.AddOrUpdate("prop2", new XDictionary());
                 prop2.Properties.AddOrUpdate("prop4", "Sub this dictionary prop.");
                 var prop3 = manager.Default.Properties.AddOrUpdate("prop3", new XList());
-                prop3.Properties.Add(new XString("Sub this list prop.")).Comment.SetValue("This is \"hoonoo-settings\" list prop comment."); ;
+                prop3.Properties.Add(new XString("Sub this list prop.")).Comment.SetValue("This is \"XCconfig\" list prop comment."); ;
                 XDictionary prop5 = prop3.Properties.Add(new XDictionary());
                 prop5.Properties.Add("prop5", new XString("F024AC4"));
                 manager.Default.Properties.AddOrUpdate("prop6", new XString("Remove this."));
@@ -41,7 +41,7 @@ namespace Test
                 // 附加配置容器。
                 //
                 XDictionary section = manager.Sections.GetOrAdd("section1");
-                section.Comment.SetValue("This is \"hoonoo-settings\" section1");
+                section.Comment.SetValue("This is \"XCconfig\" section1");
                 section.Properties.AddOrUpdate("prop1", new XString("123456789"));
                 //
                 // 保存到指定的文件。
@@ -55,7 +55,7 @@ namespace Test
             //
             // 使用自定义配置文件。
             //
-            using (XSettingsManager manager = new XSettingsManager(filePath))
+            using (XConfigManager manager = new XConfigManager(filePath))
             {
                 //
                 // 取出属性和注释。
