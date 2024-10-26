@@ -403,6 +403,7 @@ namespace Honoo.Configuration
             {
                 result.Element("appSettings").Remove();
             }
+            else { }
             if (_assemblyBinding != null && _assemblyBinding.Properties.Count == 0)
             {
                 result.Element(_assemblyBindingNamespace + "assemblyBinding").Remove();
@@ -411,9 +412,17 @@ namespace Honoo.Configuration
             {
                 result.Element("connectionStrings").Remove();
             }
+            else
+            {
+
+            }
             if (_configSections != null && _configSections.Sections.Count == 0 && _configSections.Groups.Count == 0)
             {
                 result.Element("configSections").Remove();
+            }
+            else
+            {
+
             }
             return result;
         }

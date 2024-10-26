@@ -18,7 +18,7 @@
     - [XConfigManager](#XConfigManager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-    - [1.5.3](#153)
+    - [1.5.4](#154)
     - [1.4.19-final](#1419-final)
     - [1.4.18](#1418)
     - [1.4.17](#1417)
@@ -484,10 +484,11 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.5.3
+### 1.5.4
 
 **Features* 提供针对字符串的方法的重载。
 **Features* 重写 XConfigManager。取消数组支持，更改为类型嵌套。支持 Dictionary、List 类型无限嵌套。
+**Fix* 修复 BUG。
 
 ### 1.4.19-final
 

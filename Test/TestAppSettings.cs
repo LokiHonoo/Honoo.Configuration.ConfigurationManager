@@ -22,10 +22,12 @@ namespace Test
                 //
                 manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").Comment.SetValue("This is \"appSettings\" prop1 comment.");
                 manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this.");
+                //manager.AppSettings.Properties.Add(new ClearProperty());
                 manager.AppSettings.Properties.AddOrUpdate("prop2", new AddProperty("123456789"));
                 manager.AppSettings.Properties.AddOrUpdate("prop3", new AddProperty("F058C"));
                 manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain.ToString());
                 manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
+                //manager.AppSettings.Properties.Add("prop4", new RemoveProperty());
                 //manager.AppSettings.Properties.Add("prop1", "Test unique.");
                 //
                 // 移除属性的方法。移除属性时相关注释一并移除。
@@ -70,10 +72,12 @@ namespace Test
                     Console.WriteLine(value4.GetEnumValue<LoaderOptimization>());
                 }
                 // 取出应用控制标签后的属性。
-                foreach (var property in manager.AppSettings.GetPropertySetControlled())
+                var properties = manager.AppSettings.GetPropertySetControlled();
+                foreach (var property in properties)
                 {
                     Console.WriteLine(property.Value.GetStringValue());
                 }
+                var a = 111;
             }
         }
     }

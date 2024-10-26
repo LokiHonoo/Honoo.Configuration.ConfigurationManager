@@ -139,9 +139,9 @@ namespace Honoo.Configuration
             {
                 _container.Add(value.Comment.Comment);
             }
-            value.Content.SetAttributeValue("key", "{remove_" + Guid.NewGuid().ToString("N") + "}" + key);
+            value.Content.SetAttributeValue("key", key);
             _container.Add(value.Content);
-            _properties.Add(key, value);
+            _properties.Add("{remove_" + Guid.NewGuid().ToString("N") + "}" + key, value);
             return value;
         }
 
