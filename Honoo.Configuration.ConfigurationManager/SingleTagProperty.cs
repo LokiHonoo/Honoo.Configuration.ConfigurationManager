@@ -22,7 +22,7 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 创建 HonooProperty 的新实例。
+        /// 创建 SingleTagProperty 的新实例。
         /// </summary>
         /// <param name="value">配置属性的值。</param>
         public SingleTagProperty(string value)
