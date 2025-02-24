@@ -18,7 +18,7 @@
     - [XConfigManager](#XConfigManager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-  - - [1.5.5](#155)
+  - - [1.5.6](#156)
     - [1.5.4](#154)
     - [1.4.19-final](#1419-final)
     - [1.4.18](#1418)
@@ -485,7 +485,7 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.5.5
+### 1.5.6
 
 **Fix* 修复 GetXmlString() 方法没有刷新写入器的 BUG。
 

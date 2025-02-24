@@ -94,6 +94,16 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public XString Add(string value)
+        {
+            return Add(new XString(value));
+        }
+
+        /// <summary>
         /// 添加配置属性集合。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
@@ -110,6 +120,25 @@ namespace Honoo.Configuration
                 Add(value);
             }
             return values;
+        }
+
+        /// <summary>
+        /// 添加配置属性集合。
+        /// </summary>
+        /// <param name="values">配置属性的集合。</param>
+        /// <exception cref="Exception"/>
+        public IEnumerable<XString> AddRange(IEnumerable<string> values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            List<XString> results = new List<XString>();
+            foreach (var value in values)
+            {
+                results.Add(Add(value));
+            }
+            return results;
         }
 
         /// <summary>
