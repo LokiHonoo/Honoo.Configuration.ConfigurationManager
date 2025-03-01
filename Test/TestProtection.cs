@@ -18,7 +18,7 @@ namespace Test
             Console.WriteLine();
             Console.WriteLine();
             XmlWriterSettings writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            RSA rsa = RSA.Create();
             rsa.FromXmlString("<RSAKeyValue>" +
                 "<Modulus>01KVE1o0XhPBx1RWTKtg2upDlX9BWemOr3smbevwwJP30vu9W7HRTiGnMG5mzn5/c8UxJnxLvHOajgga6qjR5gLKuGTezW2J4vz6Yd62gUp4CHfyUAGlP7Yz03jykeeImlpMe9DcCRNLu6SvxZZtr5y/zfAQS4m59vdb7EQtyNE=</Modulus>" +
                 "<Exponent>AQAB</Exponent>" +
@@ -37,7 +37,7 @@ namespace Test
                 //
                 using (ConfigurationManager manager = new ConfigurationManager())
                 {
-                    manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"protection\" test.").Comment.SetValue("This is \"protection\" test.");
+                    manager.AppSettings.Properties.AddOrUpdate("prop1", new AddProperty("This is \"protection\" test.")).Comment.SetValue("This is \"protection\" test.");
                     //
                     // 加密方式保存到指定的文件。
                     //

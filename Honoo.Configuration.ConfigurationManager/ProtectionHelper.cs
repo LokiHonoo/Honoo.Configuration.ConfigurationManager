@@ -8,7 +8,7 @@ namespace Honoo.Configuration
     internal static class ProtectionHelper
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5350:不要使用弱加密算法", Justification = "<挂起>")]
-        internal static XElement Decrypt(XElement root, RSACryptoServiceProvider rsa)
+        internal static XElement Decrypt(XElement root, RSA rsa)
         {
             XName name = root.Name;
             XNamespace ns = name.Namespace;
@@ -22,8 +22,15 @@ namespace Honoo.Configuration
             byte[] data;
             switch (keyAlgorithm)
             {
-                case "http://www.w3.org/2001/04/xmlenc#rsa-1_5": pms = rsa.Decrypt(keyEncrypted, false); break;
-                case "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p": pms = rsa.Decrypt(keyEncrypted, true); break;
+                case "http://www.w3.org/2001/04/xmlenc#rsa-1_5":
+#if NET40
+                    pms = rsa.DecryptValue(keyEncrypted);
+#else
+                    pms = rsa.Decrypt(keyEncrypted, RSAEncryptionPadding.Pkcs1);
+#endif
+                    break;
+
+                case "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p":
                 default: throw new CryptographicException($"Unknown encryption identifier -\"{keyAlgorithm}\".");
             }
             switch (dataAlgorithm)
@@ -81,7 +88,7 @@ namespace Honoo.Configuration
             return XElement.Parse(Encoding.UTF8.GetString(data));
         }
 
-        internal static XElement Encrypt(XElement root, RSACryptoServiceProvider rsa)
+        internal static XElement Encrypt(XElement root, RSA rsa)
         {
             XName name = root.Name;
             XNamespace ns = name.Namespace;
@@ -96,7 +103,11 @@ namespace Honoo.Configuration
                 byte[] pms = new byte[16 + 16];
                 Buffer.BlockCopy(algorithm.Key, 0, pms, 0, 16);
                 Buffer.BlockCopy(algorithm.IV, 0, pms, 16, 16);
-                keyEncrypted = rsa.Encrypt(pms, false);
+#if NET40
+                keyEncrypted = rsa.EncryptValue(pms);
+#else
+                keyEncrypted = rsa.Encrypt(pms, RSAEncryptionPadding.Pkcs1);
+#endif
                 dataEncrypted = Encrypt(algorithm, data);
             }
             //

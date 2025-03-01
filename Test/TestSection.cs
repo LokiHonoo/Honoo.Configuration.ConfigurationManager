@@ -34,27 +34,27 @@ namespace Test
                 //
                 // SingleTagSection 使用唯一键值。不支持属性值注释。
                 //
-                section1.Properties.AddOrUpdate("prop1", "0.6789");
+                section1.Properties.AddOrUpdate("prop1", new SingleTagProperty("0.6789"));
                 section1.Comment.SetValue("This is \"SingleTagSection\" comment.");
                 section1.Properties.Remove("prop3");
-                section1.Properties.Add("prop3", "Update this.");
-                section1.Properties.AddOrUpdate("prop2", "abc");
-                //section1.Properties.Add("prop1", "Test unique.");
+                section1.Properties.Add("prop3", new SingleTagProperty("Update this."));
+                section1.Properties.AddOrUpdate("prop2", new SingleTagProperty("abc"));
+                //section1.Properties.Add("prop1", new SingleTagProperty("Test unique."));
                 //
                 // 更新。
                 //
-                section1.Properties.AddOrUpdate("prop3", "Update this successful.");
+                section1.Properties.AddOrUpdate("prop3", new SingleTagProperty("Update this successful."));
                 //
                 // NameValueSection 允许同名键值。
                 //
                 section2.Properties.Clear();
-                section2.Properties.Add("prop1", "155.66").Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
-                section2.Properties.Add("prop1", "7.9992").Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
+                section2.Properties.Add("prop1", new AddProperty("155.66")).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
+                section2.Properties.Add("prop1", new AddProperty("7.9992")).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
                 section2.Comment.SetValue("This is \"NameValueSection\" comment.");
                 //
                 // DictionarySection 使用唯一键值。
                 //
-                section3.Properties.AddOrUpdate("prop1", "DictionarySection prop.").Comment.SetValue("This is \"DictionarySection\" prop1 comment.");
+                section3.Properties.AddOrUpdate("prop1", new AddProperty("DictionarySection prop.")).Comment.SetValue("This is \"DictionarySection\" prop1 comment.");
                 section3.Comment.SetValue("This is \"DictionarySection\" comment.");
 
                 //
@@ -110,7 +110,7 @@ namespace Test
                 {
                     Console.WriteLine(val.Value);
                 }
-                Console.WriteLine(section3.Properties.GetValue("prop1", string.Empty));
+                Console.WriteLine(section3.Properties.GetValue("prop1", new AddProperty(string.Empty)));
                 //
                 // 以文本方式取出节点内容。
                 //

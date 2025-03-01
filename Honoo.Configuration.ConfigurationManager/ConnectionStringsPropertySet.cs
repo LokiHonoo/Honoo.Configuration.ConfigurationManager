@@ -84,27 +84,27 @@ namespace Honoo.Configuration
         /// 添加一个连接属性。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
-        /// <param name="value">连接属性的值。</param>
+        /// <param name="property">连接属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConnectionStringProperty Add(string name, ConnectionStringProperty value)
+        public ConnectionStringProperty Add(string name, ConnectionStringProperty property)
         {
             if (name == null)
             {
                 throw new ArgumentNullException(nameof(name));
             }
-            if (value == null)
+            if (property == null)
             {
-                throw new ArgumentNullException(nameof(value));
+                throw new ArgumentNullException(nameof(property));
             }
-            if (value.Comment.HasValue)
+            if (property.Comment.HasValue)
             {
-                _container.Add(value.Comment.Comment);
+                _container.Add(property.Comment.Comment);
             }
-            value.Content.SetAttributeValue("name", name);
-            _container.Add(value.Content);
-            _properties.Add(name, value);
-            return value;
+            property.Content.SetAttributeValue("name", name);
+            _container.Add(property.Content);
+            _properties.Add(name, property);
+            return property;
         }
 
         /// <summary>
@@ -140,35 +140,35 @@ namespace Honoo.Configuration
         /// 添加或更新一个连接属性。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
-        /// <param name="value">连接属性的值。</param>
+        /// <param name="property">连接属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConnectionStringProperty AddOrUpdate(string name, ConnectionStringProperty value)
+        public ConnectionStringProperty AddOrUpdate(string name, ConnectionStringProperty property)
         {
             if (name == null)
             {
                 throw new ArgumentNullException(nameof(name));
             }
-            if (value == null)
+            if (property == null)
             {
-                throw new ArgumentNullException(nameof(value));
+                throw new ArgumentNullException(nameof(property));
             }
-            if (TryGetValue(name, out ConnectionStringProperty val))
+            if (TryGetValue(name, out ConnectionStringProperty value))
             {
-                if (value.Comment.HasValue)
+                property.Content.SetAttributeValue("name", name);
+                if (property.Comment.HasValue)
                 {
-                    val.Content.AddBeforeSelf(value.Comment.Comment);
+                    value.Content.AddBeforeSelf(property.Comment.Comment);
                 }
-                value.Content.SetAttributeValue("name", name);
-                val.Content.AddBeforeSelf(value.Content);
-                val.Comment.Remove();
-                val.Content.Remove();
-                _properties[name] = value;
-                return value;
+                value.Content.AddBeforeSelf(property.Content);
+                value.Comment.Remove();
+                value.Content.Remove();
+                _properties[name] = property;
+                return property;
             }
             else
             {
-                return Add(name, value);
+                return Add(name, property);
             }
         }
 
@@ -205,12 +205,12 @@ namespace Honoo.Configuration
         /// 获取与指定名称关联的连接属性的值。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
-        /// <param name="value">连接属性的值。</param>
+        /// <param name="property">连接属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out ConnectionStringProperty value)
+        public bool TryGetValue(string name, out ConnectionStringProperty property)
         {
-            return _properties.TryGetValue(name, out value);
+            return _properties.TryGetValue(name, out property);
         }
 
         /// <summary>
@@ -250,15 +250,15 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取与指定名称关联的连接属性的值。如果没有找到指定名称，返回 <paramref name="defaultValue"/>。
+        /// 获取与指定名称关联的连接属性的值。如果没有找到指定名称，返回 <paramref name="defaultProperty"/>。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
-        /// <param name="defaultValue">没有找到指定名称时的连接属性的默认值。</param>
+        /// <param name="defaultProperty">没有找到指定名称时的连接属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConnectionStringProperty GetValue(string name, ConnectionStringProperty defaultValue)
+        public ConnectionStringProperty GetValue(string name, ConnectionStringProperty defaultProperty)
         {
-            return TryGetValue(name, out ConnectionStringProperty value) ? value : defaultValue;
+            return TryGetValue(name, out ConnectionStringProperty value) ? value : defaultProperty;
         }
 
         #endregion GetValue

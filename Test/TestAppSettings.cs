@@ -20,15 +20,15 @@ namespace Test
                 //
                 // 赋值并设置注释。
                 //
-                manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").Comment.SetValue("This is \"appSettings\" prop1 comment.");
-                manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this.");
+                manager.AppSettings.Properties.AddOrUpdate("prop1", new AddProperty("This is \"appSettings\" prop1 value.")).Comment.SetValue("This is \"appSettings\" prop1 comment.");
+                manager.AppSettings.Properties.AddOrUpdate("prop6", new AddProperty("Update this."));
                 //manager.AppSettings.Properties.Add(new ClearProperty());
                 manager.AppSettings.Properties.AddOrUpdate("prop2", new AddProperty("123456789"));
                 manager.AppSettings.Properties.AddOrUpdate("prop3", new AddProperty("F058C"));
-                manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain.ToString());
-                manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
+                manager.AppSettings.Properties.AddOrUpdate("prop4", new AddProperty(LoaderOptimization.SingleDomain.ToString()));
+                manager.AppSettings.Properties.AddOrUpdate("prop5", new AddProperty("Remove this."));
                 //manager.AppSettings.Properties.Add("prop4", new RemoveProperty());
-                //manager.AppSettings.Properties.Add("prop1", "Test unique.");
+                //manager.AppSettings.Properties.Add("prop1", new AddProperty("Test unique."));
                 //
                 // 移除属性的方法。移除属性时相关注释一并移除。
                 //
@@ -36,7 +36,7 @@ namespace Test
                 //
                 // 更新。
                 //
-                manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this successful.");
+                manager.AppSettings.Properties.AddOrUpdate("prop6", new AddProperty("Update this successful."));
                 //
                 // 保存到指定的文件。
                 //
@@ -77,7 +77,6 @@ namespace Test
                 {
                     Console.WriteLine(property.Value.GetStringValue());
                 }
-                var a = 111;
             }
         }
     }

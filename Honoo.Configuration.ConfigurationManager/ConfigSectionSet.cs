@@ -117,6 +117,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 添加一个配置容器。
         /// </summary>
+        /// <typeparam name="T">添加配置容器时使用的类型。</typeparam>
         /// <param name="name">配置容器的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
@@ -195,15 +196,16 @@ namespace Honoo.Configuration
         /// 获取与指定名称关联的配置容器的值。
         /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <see langword="false"/>。
         /// </summary>
+        /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="name">配置容器的名称。</param>
         /// <param name="section">配置容器的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out TextSection section)
+        public bool TryGetValue<T>(string name, out T section) where T : ConfigSection
         {
-            if (TryGetValue(name, out ConfigSection value))
+            if (_sections.TryGetValue(name, out ConfigSection value))
             {
-                if (value is TextSection val)
+                if (value is T val)
                 {
                     section = val;
                     return true;
@@ -211,84 +213,6 @@ namespace Honoo.Configuration
             }
             section = null;
             return false;
-        }
-
-        /// <summary>
-        /// 获取与指定名称关联的配置容器的值。
-        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="name">配置容器的名称。</param>
-        /// <param name="section">配置容器的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out DictionarySection section)
-        {
-            if (TryGetValue(name, out ConfigSection value))
-            {
-                if (value is DictionarySection val)
-                {
-                    section = val;
-                    return true;
-                }
-            }
-            section = null;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定名称关联的配置容器的值。
-        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="name">配置容器的名称。</param>
-        /// <param name="section">配置容器的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out NameValueSection section)
-        {
-            if (TryGetValue(name, out ConfigSection value))
-            {
-                if (value is NameValueSection val)
-                {
-                    section = val;
-                    return true;
-                }
-            }
-            section = null;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定名称关联的配置容器的值。
-        /// <br/>如果没有找到指定名称，返回 <see langword="false"/>。如果找到了指定名称但指定的类型不符，则仍返回 <see langword="false"/>。
-        /// </summary>
-        /// <param name="name">配置容器的名称。</param>
-        /// <param name="section">配置容器的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out SingleTagSection section)
-        {
-            if (TryGetValue(name, out ConfigSection value))
-            {
-                if (value is SingleTagSection val)
-                {
-                    section = val;
-                    return true;
-                }
-            }
-            section = null;
-            return false;
-        }
-
-        /// <summary>
-        /// 获取与指定名称关联的配置容器的值。
-        /// </summary>
-        /// <param name="name">配置容器的名称。</param>
-        /// <param name="section">配置容器的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out ConfigSection section)
-        {
-            return _sections.TryGetValue(name, out section);
         }
 
         #endregion TryGetValue

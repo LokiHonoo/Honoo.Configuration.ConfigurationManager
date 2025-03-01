@@ -20,7 +20,7 @@ namespace Test
                 //
                 while (manager.AssemblyBinding.Properties.Count < 3)
                 {
-                    manager.AssemblyBinding.Properties.Add("file://c:\\aa.tt").Comment.SetValue("This is \"linkedConfiguration\" comment.");
+                    manager.AssemblyBinding.Properties.Add(new LinkedConfigurationProperty("file://c:\\aa.tt")).Comment.SetValue("This is \"linkedConfiguration\" comment.");
                 }
                 //
                 // 移除属性的方法。

@@ -109,7 +109,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public AppSettingsManager(string filePath, RSACryptoServiceProvider protectionAlgorithm = null)
+        public AppSettingsManager(string filePath, RSA protectionAlgorithm = null)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -132,7 +132,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public AppSettingsManager(Stream stream, bool closeStream = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public AppSettingsManager(Stream stream, bool closeStream = true, RSA protectionAlgorithm = null)
         {
             if (stream == null)
             {
@@ -159,7 +159,7 @@ namespace Honoo.Configuration
         /// <br/>算法必须拥有私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public AppSettingsManager(XmlReader reader, bool closeReader = true, RSACryptoServiceProvider protectionAlgorithm = null)
+        public AppSettingsManager(XmlReader reader, bool closeReader = true, RSA protectionAlgorithm = null)
         {
             if (reader == null)
             {
@@ -261,7 +261,7 @@ namespace Honoo.Configuration
         /// <br/>算法可以是公钥或私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public void Save(string filePath, RSACryptoServiceProvider protectionAlgorithm = null)
+        public void Save(string filePath, RSA protectionAlgorithm = null)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -289,7 +289,7 @@ namespace Honoo.Configuration
         /// <br/>算法可以是公钥或私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public void Save(Stream stream, RSACryptoServiceProvider protectionAlgorithm = null)
+        public void Save(Stream stream, RSA protectionAlgorithm = null)
         {
             XElement root = _root;
             if (protectionAlgorithm != null)
@@ -313,7 +313,7 @@ namespace Honoo.Configuration
         /// <br/>算法可以是公钥或私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public void Save(XmlWriter writer, RSACryptoServiceProvider protectionAlgorithm = null)
+        public void Save(XmlWriter writer, RSA protectionAlgorithm = null)
         {
             if (writer is null)
             {
@@ -358,7 +358,7 @@ namespace Honoo.Configuration
         /// <br/>算法可以是公钥或私钥。
         /// </param>
         /// <exception cref="Exception"/>
-        public string GetXmlString(RSACryptoServiceProvider protectionAlgorithm = null)
+        public string GetXmlString(RSA protectionAlgorithm = null)
         {
             XElement root = _root;
             if (protectionAlgorithm != null)
@@ -383,7 +383,7 @@ namespace Honoo.Configuration
             return _root.ToString();
         }
 
-        private static XElement Coerce(XElement root, RSACryptoServiceProvider protectionAlgorithm)
+        private static XElement Coerce(XElement root, RSA protectionAlgorithm)
         {
             if (root.Name != "appSettings")
             {

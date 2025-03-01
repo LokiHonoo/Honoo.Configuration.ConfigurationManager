@@ -90,46 +90,34 @@ namespace Honoo.Configuration
         /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
+        /// <param name="property">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty Add(string key, AddProperty value)
+        public AddProperty Add(string key, AddProperty property)
         {
             if (key == null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (value == null)
+            if (property == null)
             {
-                throw new ArgumentNullException(nameof(value));
+                throw new ArgumentNullException(nameof(property));
             }
-            if (value.Comment.HasValue)
+            property.Content.SetAttributeValue("key", key);
+            if (property.Comment.HasValue)
             {
-                _container.Add(value.Comment.Comment);
+                _container.Add(property.Comment.Comment);
             }
-            value.Content.SetAttributeValue("key", key);
-            _container.Add(value.Content);
-            if (_properties.TryGetValue(key, out AddProperty[] val))
+            _container.Add(property.Content);
+            if (_properties.TryGetValue(key, out AddProperty[] values))
             {
-                _properties[key] = new List<AddProperty>(val) { value }.ToArray();
+                _properties[key] = new List<AddProperty>(values) { property }.ToArray();
             }
             else
             {
-                _properties.Add(key, new AddProperty[] { value });
+                _properties.Add(key, new AddProperty[] { property });
             }
-            return value;
-        }
-
-        /// <summary>
-        /// 添加一个配置属性。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty Add(string key, string value)
-        {
-            return Add(key, new AddProperty(value));
+            return property;
         }
 
         #endregion Add
@@ -140,12 +128,12 @@ namespace Honoo.Configuration
         /// 获取与指定键关联的配置属性的值。如果没有找到指定键，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="value">配置属性的值。</param>
+        /// <param name="properties">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out AddProperty[] value)
+        public bool TryGetValue(string key, out AddProperty[] properties)
         {
-            return _properties.TryGetValue(key, out value);
+            return _properties.TryGetValue(key, out properties);
         }
 
         #endregion TryGetValue
@@ -168,40 +156,15 @@ namespace Honoo.Configuration
         #region GetValueOrDefault
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultProperties"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="defaultProperties">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty[] GetValue(string key, AddProperty[] defaultValue)
+        public AddProperty[] GetValue(string key, AddProperty[] defaultProperties)
         {
-            return TryGetValue(key, out AddProperty[] value) ? value : defaultValue;
-        }
-
-        /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
-        /// </summary>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty[] GetValue(string key, string[] defaultValue)
-        {
-            if (defaultValue is null)
-            {
-                throw new ArgumentNullException(nameof(defaultValue));
-            }
-            if (TryGetValue(key, out AddProperty[] value))
-            {
-                return value;
-            }
-            var val = new List<AddProperty>();
-            foreach (string d in defaultValue)
-            {
-                val.Add(new AddProperty(d));
-            }
-            return val.ToArray();
+            return TryGetValue(key, out AddProperty[] value) ? value : defaultProperties;
         }
 
         #endregion GetValueOrDefault

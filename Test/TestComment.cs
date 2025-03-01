@@ -28,7 +28,7 @@ namespace Test
 
             using (AppSettingsManager manager = new AppSettingsManager())
             {
-                manager.Properties.AddOrUpdate("prop1", "prop1 value.").Comment.SetValue("prop1 comment.");
+                manager.Properties.AddOrUpdate("prop1", new AddProperty("prop1 value.")).Comment.SetValue("prop1 comment.");
                 //
                 //
                 //
@@ -37,20 +37,20 @@ namespace Test
 
             using (ConfigurationManager manager = new ConfigurationManager())
             {
-                manager.AppSettings.Properties.AddOrUpdate("prop1", "prop1 value.").Comment.SetValue("prop1 comment.");
+                manager.AppSettings.Properties.AddOrUpdate("prop1", new AddProperty("prop1 value.")).Comment.SetValue("prop1 comment.");
                 manager.ConnectionStrings.Properties.AddOrUpdate("prop2", "prop2 value.", "").Comment.SetValue("prop2 comment.");
-                manager.AssemblyBinding.Properties.Add("prop3").Comment.SetValue("prop3 comment.");
+                manager.AssemblyBinding.Properties.Add(new LinkedConfigurationProperty("prop3")).Comment.SetValue("prop3 comment.");
                 var group = manager.ConfigSections.Groups.GetOrAdd("group1");
                 group.Comment.SetValue("group1 comment.");
                 var section1 = group.Sections.GetOrAdd<SingleTagSection>("section1");
                 section1.Comment.SetValue("section1 comment.");
-                section1.Properties.AddOrUpdate("prop3", "prop3");
+                section1.Properties.AddOrUpdate("prop3", new SingleTagProperty("prop3"));
                 var section2 = group.Sections.GetOrAdd<NameValueSection>("section2");
                 section2.Comment.SetValue("section2 comment.");
-                section2.Properties.Add("prop4", "prop4").Comment.SetValue("prop4 comment.");
+                section2.Properties.Add("prop4", new AddProperty("prop4")).Comment.SetValue("prop4 comment.");
                 var section3 = group.Sections.GetOrAdd<DictionarySection>("section3");
                 section3.Comment.SetValue("section3 comment.");
-                section3.Properties.Add("prop5", "prop5").Comment.SetValue("prop5 comment.");
+                section3.Properties.Add("prop5", new AddProperty("prop5")).Comment.SetValue("prop5 comment.");
                 //
                 //
                 //

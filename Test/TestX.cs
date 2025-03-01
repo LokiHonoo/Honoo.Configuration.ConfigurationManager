@@ -19,12 +19,12 @@ namespace Test
                 //
                 // 赋值并设置注释。
                 //
-                manager.Default.Properties.AddOrUpdate("prop1", StringComparison.Ordinal.ToString()).Comment.SetValue("This is \"XCconfig\" prop1 comment.");
-                manager.Default.Properties.AddOrUpdate("prop7", "Update this.");
+                manager.Default.Properties.AddOrUpdate("prop1", new XString(StringComparison.Ordinal.ToString())).Comment.SetValue("This is \"XCconfig\" prop1 comment.");
+                manager.Default.Properties.AddOrUpdate("prop7", new XString("Update this."));
                 var prop2 = manager.Default.Properties.AddOrUpdate("prop2", new XDictionary());
-                prop2.Properties.AddOrUpdate("prop4", "Sub this dictionary prop.");
+                prop2.Properties.AddOrUpdate("prop4", new XString("Sub this dictionary prop."));
                 var prop3 = manager.Default.Properties.AddOrUpdate("prop3", new XList());
-                prop3.Properties.Add(new XString("Sub this list prop.")).Comment.SetValue("This is \"XCconfig\" list prop comment."); ;
+                prop3.Properties.Add(new XString("Sub this list prop.")).Comment.SetValue("This is \"XCconfig\" list prop comment.");
                 XDictionary prop5 = prop3.Properties.Add(new XDictionary());
                 prop5.Properties.Add("prop5", new XString("F024AC4"));
                 manager.Default.Properties.AddOrUpdate("prop6", new XString("Remove this."));
@@ -72,7 +72,7 @@ namespace Test
                 Console.WriteLine(val2.GetStringValue());
                 //
                 XList value3 = manager.Default.Properties.GetValue<XList>("prop3");
-                Console.WriteLine(value3.Properties.GetValue(0).GetStringValue());
+                Console.WriteLine(value3.Properties.GetValue<XString>(0).GetStringValue());
                 //
                 XString value5 = ((XDictionary)value3.Properties[1]).Properties.GetValue<XString>("prop5");
                 byte[] val5 = value5.GetBytesValue();

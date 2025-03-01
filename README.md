@@ -18,7 +18,7 @@
     - [XConfigManager](#XConfigManager)
     - [UWP](#uwp)
   - [CHANGELOG](#changelog)
-  - - [1.5.6](#156)
+  - - [1.5.7](#157)
     - [1.5.4](#154)
     - [1.4.19-final](#1419-final)
     - [1.4.18](#1418)
@@ -79,13 +79,15 @@ internal static void Create(string filePath)
         //
         // 赋值并设置注释。
         //
-        manager.AppSettings.Properties.AddOrUpdate("prop1", "This is \"appSettings\" prop1 value.").Comment.SetValue("This is \"appSettings\" prop1 comment.");
-        manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this.");
-        manager.AppSettings.Properties.AddOrUpdate("prop2", 123456789);
-        manager.AppSettings.Properties.AddOrUpdate("prop3", new Binaries(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
-        manager.AppSettings.Properties.AddOrUpdate("prop4", LoaderOptimization.SingleDomain);
-        manager.AppSettings.Properties.AddOrUpdate("prop5", "Remove this.");
-        //manager.AppSettings.Properties.Add("prop1", "Test unique.");
+        manager.AppSettings.Properties.AddOrUpdate("prop1", new AddProperty("This is \"appSettings\" prop1 value.")).Comment.SetValue("This is \"appSettings\" prop1 comment.");
+        manager.AppSettings.Properties.AddOrUpdate("prop6", new AddProperty("Update this."));
+        //manager.AppSettings.Properties.Add(new ClearProperty());
+        manager.AppSettings.Properties.AddOrUpdate("prop2", new AddProperty("123456789"));
+        manager.AppSettings.Properties.AddOrUpdate("prop3", new AddProperty("F058C"));
+        manager.AppSettings.Properties.AddOrUpdate("prop4", new AddProperty(LoaderOptimization.SingleDomain.ToString()));
+        manager.AppSettings.Properties.AddOrUpdate("prop5", new AddProperty("Remove this."));
+        //manager.AppSettings.Properties.Add("prop4", new RemoveProperty());
+        //manager.AppSettings.Properties.Add("prop1", new AddProperty("Test unique."));
         //
         // 移除属性的方法。移除属性时相关注释一并移除。
         //
@@ -93,7 +95,7 @@ internal static void Create(string filePath)
         //
         // 更新。
         //
-        manager.AppSettings.Properties.AddOrUpdate("prop6", "Update this successful.");
+        manager.AppSettings.Properties.AddOrUpdate("prop6", new AddProperty("Update this successful."));
         //
         // 保存到指定的文件。
         //
@@ -237,27 +239,27 @@ internal static void Create(string filePath)
         //
         // SingleTagSection 使用唯一键值。不支持属性值注释。
         //
-        section1.Properties.AddOrUpdate("prop1", 0.6789d);
+        section1.Properties.AddOrUpdate("prop1", new SingleTagProperty("0.6789"));
         section1.Comment.SetValue("This is \"SingleTagSection\" comment.");
         section1.Properties.Remove("prop3");
-        section1.Properties.Add("prop3", "Update this.");
-        section1.Properties.AddOrUpdate("prop2", "abc");
-        //section1.Properties.Add("prop1", "Test unique.");
+        section1.Properties.Add("prop3", new SingleTagProperty("Update this."));
+        section1.Properties.AddOrUpdate("prop2", new SingleTagProperty("abc"));
+        //section1.Properties.Add("prop1", new SingleTagProperty("Test unique."));
         //
         // 更新。
         //
-        section1.Properties.AddOrUpdate("prop3", "Update this successful.");
+        section1.Properties.AddOrUpdate("prop3", new SingleTagProperty("Update this successful."));
         //
         // NameValueSection 允许同名键值。
         //
         section2.Properties.Clear();
-        section2.Properties.Add("prop1", 155.66d).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
-        section2.Properties.Add("prop1", 7.9992d).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
+        section2.Properties.Add("prop1", new AddProperty("155.66")).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
+        section2.Properties.Add("prop1", new AddProperty("7.9992")).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
         section2.Comment.SetValue("This is \"NameValueSection\" comment.");
         //
         // DictionarySection 使用唯一键值。
         //
-        section3.Properties.AddOrUpdate("prop1", "DictionarySection prop.").Comment.SetValue("This is \"DictionarySection\" prop1 comment.");
+        section3.Properties.AddOrUpdate("prop1", new AddProperty("DictionarySection prop.")).Comment.SetValue("This is \"DictionarySection\" prop1 comment.");
         section3.Comment.SetValue("This is \"DictionarySection\" comment.");
 
         //
@@ -306,14 +308,14 @@ internal static void Load(string filePath)
         //
         // 取出属性和注释。
         //
-        Console.WriteLine(section1.Properties.GetValue("prop1", 0d));
+        Console.WriteLine(section1.Properties.GetValue("prop1"));
         //
         AddProperty[] value2 = section2.Properties.GetValue("prop1");
         foreach (AddProperty val in value2)
         {
             Console.WriteLine(val.Value);
         }
-        Console.WriteLine(section3.Properties.GetValue("prop1", string.Empty));
+        Console.WriteLine(section3.Properties.GetValue("prop1", new AddProperty(string.Empty)));
         //
         // 以文本方式取出节点内容。
         //
@@ -360,7 +362,7 @@ private static void Manager_Disposing(ConfigurationManager manager)
 
 internal static void Create()
 {
-    RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+    RSA rsa = RSA.Create();
     rsa.FromXmlString(keyStored);
     //
     // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
@@ -392,12 +394,12 @@ internal static void Create(string filePath)
         //
         // 赋值并设置注释。
         //
-        manager.Default.Properties.AddOrUpdate("prop1", StringComparison.Ordinal.ToString()).Comment.SetValue("This is \"hoonoo-settings\" prop1 comment.");
-        manager.Default.Properties.AddOrUpdate("prop7", "Update this.");
+        manager.Default.Properties.AddOrUpdate("prop1", new XString(StringComparison.Ordinal.ToString())).Comment.SetValue("This is \"XCconfig\" prop1 comment.");
+        manager.Default.Properties.AddOrUpdate("prop7", new XString("Update this."));
         var prop2 = manager.Default.Properties.AddOrUpdate("prop2", new XDictionary());
-        prop2.Properties.AddOrUpdate("prop4", "Sub this dictionary prop.");
+        prop2.Properties.AddOrUpdate("prop4", new XString("Sub this dictionary prop."));
         var prop3 = manager.Default.Properties.AddOrUpdate("prop3", new XList());
-        prop3.Properties.Add(new XString("Sub this list prop.")).Comment.SetValue("This is \"hoonoo-settings\" list prop comment."); ;
+        prop3.Properties.Add(new XString("Sub this list prop.")).Comment.SetValue("This is \"XCconfig\" list prop comment.");
         XDictionary prop5 = prop3.Properties.Add(new XDictionary());
         prop5.Properties.Add("prop5", new XString("F024AC4"));
         manager.Default.Properties.AddOrUpdate("prop6", new XString("Remove this."));
@@ -414,7 +416,7 @@ internal static void Create(string filePath)
         // 附加配置容器。
         //
         XDictionary section = manager.Sections.GetOrAdd("section1");
-        section.Comment.SetValue("This is \"hoonoo-settings\" section1");
+        section.Comment.SetValue("This is \"XCconfig\" section1");
         section.Properties.AddOrUpdate("prop1", new XString("123456789"));
         //
         // 保存到指定的文件。
@@ -449,7 +451,7 @@ internal static void Load(string filePath)
         Console.WriteLine(val2.GetStringValue());
         //
         XList value3 = manager.Default.Properties.GetValue<XList>("prop3");
-        Console.WriteLine(value3.Properties.GetValue(0).GetStringValue());
+        Console.WriteLine(value3.Properties.GetValue<XString>(0).GetStringValue());
         //
         XString value5 = ((XDictionary)value3.Properties[1]).Properties.GetValue<XString>("prop5");
         byte[] val5 = value5.GetBytesValue();
@@ -485,14 +487,20 @@ public static async void Test()
 
 ## CHANGELOG
 
-### 1.5.6
+### 1.5.7
 
 **Fix* 修复 GetXmlString() 方法没有刷新写入器的 BUG。
+
+**Changed* 移除了部分方法，以使 IDE 中的智能提示指向更加明确。
+
+**Changed* 更改加密选项。
 
 ### 1.5.4
 
 **Features* 提供针对字符串的方法的重载。
+
 **Features* 重写 XConfigManager。取消数组支持，更改为类型嵌套。支持 Dictionary、List 类型无限嵌套。
+
 **Fix* 修复 BUG。
 
 ### 1.4.19-final
