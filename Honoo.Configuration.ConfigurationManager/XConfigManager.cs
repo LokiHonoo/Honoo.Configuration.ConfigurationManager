@@ -12,7 +12,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class XConfigManager : IDisposable
     {
-        #region Properties
+        #region Members
 
         private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
@@ -54,7 +54,7 @@ namespace Honoo.Configuration
 
         internal static XNamespace Namespace => _namespace;
 
-        #endregion Properties
+        #endregion Members
 
         #region Delegate
 

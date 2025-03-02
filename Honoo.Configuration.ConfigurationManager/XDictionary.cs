@@ -8,7 +8,7 @@ namespace Honoo.Configuration
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
     public class XDictionary : XProperty
     {
-        #region Properties
+        #region Members
 
         private readonly XDictionaryPropertySet _properties;
 
@@ -17,7 +17,7 @@ namespace Honoo.Configuration
         /// </summary>
         public XDictionaryPropertySet Properties => _properties;
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

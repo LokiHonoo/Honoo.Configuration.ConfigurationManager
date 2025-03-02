@@ -11,7 +11,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class XSectionSet : IEnumerable<XDictionary>
     {
-        #region Properties
+        #region Members
 
         private readonly XElement _container;
         private readonly Dictionary<string, XDictionary> _sections = new Dictionary<string, XDictionary>();
@@ -29,7 +29,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public XDictionary this[string name] => GetValue(name);
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

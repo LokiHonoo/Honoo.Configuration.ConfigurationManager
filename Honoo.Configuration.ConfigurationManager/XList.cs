@@ -7,7 +7,7 @@ namespace Honoo.Configuration
     /// </summary>
     public class XList : XProperty
     {
-        #region Properties
+        #region Members
 
         private readonly XListPropertySet _properties;
 
@@ -16,7 +16,7 @@ namespace Honoo.Configuration
         /// </summary>
         public XListPropertySet Properties => _properties;
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

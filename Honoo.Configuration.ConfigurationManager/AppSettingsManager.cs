@@ -12,7 +12,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class AppSettingsManager : IDisposable
     {
-        #region Properties
+        #region Members
 
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
         private bool _disposed;
@@ -24,7 +24,7 @@ namespace Honoo.Configuration
         /// </summary>
         public DictionaryPropertySet Properties => _properties;
 
-        #endregion Properties
+        #endregion Members
 
         #region Delegate
 

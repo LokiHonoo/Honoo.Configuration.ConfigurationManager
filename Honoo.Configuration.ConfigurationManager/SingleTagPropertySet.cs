@@ -10,7 +10,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class SingleTagPropertySet : IEnumerable<KeyValuePair<string, SingleTagProperty>>
     {
-        #region Properties
+        #region Members
 
         private readonly XElement _container;
         private readonly Dictionary<string, SingleTagProperty> _properties = new Dictionary<string, SingleTagProperty>();
@@ -38,7 +38,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public SingleTagProperty this[string key] => GetValue(key);
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

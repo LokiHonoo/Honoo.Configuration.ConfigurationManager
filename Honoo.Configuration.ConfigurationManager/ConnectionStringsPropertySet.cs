@@ -12,7 +12,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConnectionStringsPropertySet : IEnumerable<KeyValuePair<string, ConnectionStringProperty>>
     {
-        #region Properties
+        #region Members
 
         private readonly XElement _container;
         private readonly Dictionary<string, ConnectionStringProperty> _properties = new Dictionary<string, ConnectionStringProperty>();
@@ -40,7 +40,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConnectionStringProperty this[string name] => GetValue(name);
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

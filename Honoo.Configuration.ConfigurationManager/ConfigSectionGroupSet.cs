@@ -11,7 +11,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConfigSectionGroupSet : IEnumerable<KeyValuePair<string, ConfigSectionGroup>>
     {
-        #region Properties
+        #region Members
 
         private readonly XElement _contentContainer;
         private readonly XElement _declarationContainer;
@@ -40,7 +40,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigSectionGroup this[string name] => GetValue(name);
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

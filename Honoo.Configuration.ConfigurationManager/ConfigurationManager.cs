@@ -12,7 +12,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConfigurationManager : IDisposable
     {
-        #region Properties
+        #region Members
 
         private static readonly XNamespace _assemblyBindingNamespace = "urn:schemas-microsoft-com:asm.v1";
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
@@ -84,7 +84,7 @@ namespace Honoo.Configuration
             }
         }
 
-        #endregion Properties
+        #endregion Members
 
         #region Delegate
 

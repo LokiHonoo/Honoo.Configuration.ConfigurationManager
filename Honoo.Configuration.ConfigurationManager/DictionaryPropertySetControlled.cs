@@ -12,7 +12,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class DictionaryPropertySetControlled : IEnumerable<KeyValuePair<string, AddProperty>>
     {
-        #region Properties
+        #region Members
 
         private readonly Dictionary<string, AddProperty> _properties = new Dictionary<string, AddProperty>();
 
@@ -39,7 +39,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public AddProperty this[string key] => GetValue(key);
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

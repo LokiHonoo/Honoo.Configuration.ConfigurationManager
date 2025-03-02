@@ -11,7 +11,7 @@ namespace Honoo.Configuration
     /// </summary>
     public class XDictionaryPropertySet : IEnumerable<KeyValuePair<string, XProperty>>
     {
-        #region Properties
+        #region Members
 
         private readonly XElement _container;
         private readonly Dictionary<string, XProperty> _properties = new Dictionary<string, XProperty>();
@@ -42,7 +42,7 @@ namespace Honoo.Configuration
             set { AddOrUpdate(key, value); }
         }
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

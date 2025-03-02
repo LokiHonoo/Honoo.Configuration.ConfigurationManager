@@ -11,7 +11,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class NameValuePropertySet : IEnumerable<KeyValuePair<string, AddProperty[]>>
     {
-        #region Properties
+        #region Members
 
         private readonly XElement _container;
         private readonly Dictionary<string, AddProperty[]> _properties = new Dictionary<string, AddProperty[]>();
@@ -40,7 +40,7 @@ namespace Honoo.Configuration
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public AddProperty[] this[string key] => GetValue(key);
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

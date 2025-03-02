@@ -12,7 +12,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class ConfigSectionSet : IEnumerable<KeyValuePair<string, ConfigSection>>
     {
-        #region Properties
+        #region Members
 
         private static readonly Dictionary<Type, ConfigSectionKind> _kind = new Dictionary<Type, ConfigSectionKind>()
         {
@@ -49,7 +49,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigSection this[string name] => GetValue(name);
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 

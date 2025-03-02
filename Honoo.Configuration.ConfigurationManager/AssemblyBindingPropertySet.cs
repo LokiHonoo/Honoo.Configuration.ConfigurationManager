@@ -11,7 +11,7 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class AssemblyBindingPropertySet : IEnumerable<LinkedConfigurationProperty>
     {
-        #region Properties
+        #region Members
 
         private readonly XElement _container;
         private readonly List<LinkedConfigurationProperty> _properties = new List<LinkedConfigurationProperty>();
@@ -29,7 +29,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public LinkedConfigurationProperty this[int index] => GetValue(index);
 
-        #endregion Properties
+        #endregion Members
 
         #region Construction
 
