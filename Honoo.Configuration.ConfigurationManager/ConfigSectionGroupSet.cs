@@ -120,12 +120,12 @@ namespace Honoo.Configuration
         /// 获取与指定名称关联的配置组的值。
         /// </summary>
         /// <param name="name">配置组的名称。</param>
-        /// <param name="group">配置组的值。</param>
+        /// <param name="value">配置组的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out ConfigSectionGroup group)
+        public bool TryGetValue(string name, out ConfigSectionGroup value)
         {
-            return _groups.TryGetValue(name, out group);
+            return _groups.TryGetValue(name, out value);
         }
 
         #endregion TryGetValue
@@ -140,7 +140,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigSectionGroup GetValue(string name)
         {
-            return TryGetValue(name, out ConfigSectionGroup group) ? group : null;
+            return TryGetValue(name, out ConfigSectionGroup value) ? value : null;
         }
 
         #endregion GetValue

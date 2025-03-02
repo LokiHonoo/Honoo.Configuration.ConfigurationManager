@@ -43,10 +43,10 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            _connectionString = connection.ConnectionString;
-            _providerName = connection.GetType().Namespace;
             _content = GetElement(connection.ConnectionString, connection.GetType().Namespace);
             _comment = new XConfigComment(null, _content);
+            _connectionString = _content.Attribute("connectionString").Value;
+            _providerName = _content.Attribute("providerName")?.Value;
         }
 
         /// <summary>
@@ -56,18 +56,18 @@ namespace Honoo.Configuration
         /// <param name="providerName">数据库引擎的文本名称。</param>
         public ConnectionStringProperty(string connectionString, string providerName)
         {
-            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-            _providerName = providerName;
             _content = GetElement(connectionString, providerName);
             _comment = new XConfigComment(null, _content);
+            _connectionString = _content.Attribute("connectionString").Value;
+            _providerName = _content.Attribute("providerName")?.Value;
         }
 
         internal ConnectionStringProperty(XElement content, XComment comment)
         {
-            _connectionString = content.Attribute("connectionString").Value;
-            _providerName = content.Attribute("providerName")?.Value;
             _content = content;
             _comment = new XConfigComment(comment, content);
+            _connectionString = content.Attribute("connectionString").Value;
+            _providerName = content.Attribute("providerName")?.Value;
         }
 
         #endregion Construction
@@ -134,9 +134,13 @@ namespace Honoo.Configuration
 
         private static XElement GetElement(string connectionString, string providerName)
         {
+            if (connectionString is null)
+            {
+                throw new ArgumentNullException(nameof(connectionString));
+            }
             XElement element = new XElement("add");
             element.SetAttributeValue("name", "connection_string_property");
-            element.SetAttributeValue("connectionString", connectionString);
+            element.SetAttributeValue("connectionString", connectionString.Trim());
             element.SetAttributeValue("providerName", providerName);
             return element;
         }

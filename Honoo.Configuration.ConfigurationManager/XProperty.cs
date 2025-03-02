@@ -7,12 +7,18 @@ namespace Honoo.Configuration
     /// </summary>
     public abstract class XProperty
     {
+        private readonly XConfigAttributeSet _attributes;
         private readonly XConfigComment _comment;
         private readonly XElement _content;
         private readonly XPropertyKind _kind;
 
         /// <summary>
-        /// 配置属性的注释。
+        /// 获取配置属性集合。
+        /// </summary>
+        public XConfigAttributeSet Attributes => _attributes;
+
+        /// <summary>
+        /// 获取配置属性的注释。
         /// </summary>
         public XConfigComment Comment => _comment;
 
@@ -35,6 +41,7 @@ namespace Honoo.Configuration
         {
             _kind = kind;
             _content = content;
+            _attributes = new XConfigAttributeSet(content);
             _comment = new XConfigComment(comment, content);
         }
 

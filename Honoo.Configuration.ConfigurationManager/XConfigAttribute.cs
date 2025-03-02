@@ -6,31 +6,41 @@ using System.Xml.Linq;
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 配置属性。
+    /// 附加属性。
     /// </summary>
-    public sealed class AddProperty : TagProperty, IEquatable<AddProperty>, IComparer<AddProperty>, IComparable
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:标识符应采用正确的后缀", Justification = "<挂起>")]
+    public class XConfigAttribute : IEquatable<XConfigAttribute>, IComparer<XConfigAttribute>, IComparable
     {
+        private XAttribute _content;
         private string _value;
 
         /// <summary>
-        /// 获取配置属性的值。
+        /// 获取原始格式的数据值。
         /// </summary>
         public string Value => _value;
+
+        internal XAttribute Content => _content;
 
         #region Construction
 
         /// <summary>
-        /// 创建 AddProperty 的新实例。
+        /// 初始化 XString 类的新实例。
         /// </summary>
-        /// <param name="value">配置属性的值。</param>
-        public AddProperty(string value) : base(TagPropertyKind.AddProperty, GetElement(value), null)
+        /// <param name="value">文本类型的值。</param>
+        /// <exception cref="Exception"/>
+        public XConfigAttribute(string value)
         {
-            _value = base.Content.Attribute("value").Value;
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            _value = value.Trim();
         }
 
-        internal AddProperty(XElement content, XComment comment) : base(TagPropertyKind.AddProperty, content, comment)
+        internal XConfigAttribute(XAttribute attribute)
         {
-            _value = base.Content.Attribute("value").Value;
+            _content = attribute;
+            _value = attribute.Value;
         }
 
         #endregion Construction
@@ -218,14 +228,14 @@ namespace Honoo.Configuration
         /// <param name="value">文本类型的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty SetValue(string value)
+        public XConfigAttribute SetValue(string value)
         {
             if (value == null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
             value = value.Trim();
-            base.Content.SetAttributeValue("value", value);
+            _content.Value = value;
             _value = value;
             return this;
         }
@@ -239,7 +249,7 @@ namespace Honoo.Configuration
         /// <param name="y">要比较的第二个对象。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public static int Compare(AddProperty x, AddProperty y)
+        public static int Compare(XConfigAttribute x, XConfigAttribute y)
         {
             if (x is null)
             {
@@ -258,7 +268,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(AddProperty left, AddProperty right)
+        public static bool operator !=(XConfigAttribute left, XConfigAttribute right)
         {
             return !(left == right);
         }
@@ -269,7 +279,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator <(AddProperty left, AddProperty right)
+        public static bool operator <(XConfigAttribute left, XConfigAttribute right)
         {
             return (Compare(left, right) < 0);
         }
@@ -280,7 +290,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator <=(AddProperty left, AddProperty right)
+        public static bool operator <=(XConfigAttribute left, XConfigAttribute right)
         {
             return (Compare(left, right) <= 0);
         }
@@ -291,7 +301,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(AddProperty left, AddProperty right)
+        public static bool operator ==(XConfigAttribute left, XConfigAttribute right)
         {
             if (left is null)
             {
@@ -306,7 +316,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator >(AddProperty left, AddProperty right)
+        public static bool operator >(XConfigAttribute left, XConfigAttribute right)
         {
             return (Compare(left, right) > 0);
         }
@@ -317,7 +327,7 @@ namespace Honoo.Configuration
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator >=(AddProperty left, AddProperty right)
+        public static bool operator >=(XConfigAttribute left, XConfigAttribute right)
         {
             return (Compare(left, right) >= 0);
         }
@@ -328,7 +338,7 @@ namespace Honoo.Configuration
         /// <param name="x">要比较的第一个对象。</param>
         /// <param name="y">要比较的第二个对象。</param>
         /// <returns></returns>
-        int IComparer<AddProperty>.Compare(AddProperty x, AddProperty y)
+        int IComparer<XConfigAttribute>.Compare(XConfigAttribute x, XConfigAttribute y)
         {
             return string.Compare(x._value, y._value, StringComparison.Ordinal);
         }
@@ -341,11 +351,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public int CompareTo(object obj)
         {
-            if (obj is AddProperty other)
+            if (obj is XString other)
             {
                 return CompareTo(other);
             }
-            throw new ArgumentException($"{nameof(obj)} is not a AddProperty.");
+            throw new ArgumentException($"{nameof(obj)} is not a XString.");
         }
 
         /// <summary>
@@ -354,7 +364,7 @@ namespace Honoo.Configuration
         /// <param name="other">要比较的对象。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public int CompareTo(AddProperty other)
+        public int CompareTo(XConfigAttribute other)
         {
             if (other is null)
             {
@@ -368,9 +378,9 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="other">比较的对象。</param>
         /// <returns></returns>
-        public bool Equals(AddProperty other)
+        public bool Equals(XConfigAttribute other)
         {
-            return other is AddProperty && other._value == _value;
+            return other is XConfigAttribute && other._value == _value;
         }
 
         /// <summary>
@@ -380,7 +390,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is AddProperty other && other._value == _value;
+            return obj is XConfigAttribute other && other._value == _value;
         }
 
         /// <summary>
@@ -389,19 +399,27 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return -689372227 + EqualityComparer<string>.Default.GetHashCode(_value);
+            return -310275952 + EqualityComparer<string>.Default.GetHashCode(_value);
         }
 
-        private static XElement GetElement(string value)
+        /// <summary>
+        /// 方法已重写。返回节点的缩进 XML 文本。
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
         {
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-            XElement element = new XElement("add");
-            element.SetAttributeValue("key", "add_property");
-            element.SetAttributeValue("value", value.Trim());
-            return element;
+            return _content.ToString();
+        }
+
+        internal void CreateContent(string key)
+        {
+            _content = new XAttribute(key, _value);
+        }
+
+        internal void RemoveContent()
+        {
+            _content.Remove();
+            _content = null;
         }
     }
 }

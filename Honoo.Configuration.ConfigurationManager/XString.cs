@@ -26,12 +26,12 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public XString(string value) : base(XPropertyKind.XString, GetElement(value), null)
         {
-            _value = value.Trim();
+            _value = base.Content.Value;
         }
 
         internal XString(XElement content, XComment comment) : base(XPropertyKind.XString, content, comment)
         {
-            _value = content.Value;
+            _value = base.Content.Value;
         }
 
         #endregion Construction
@@ -401,7 +401,7 @@ namespace Honoo.Configuration
             }
             XElement element = new XElement(XConfigManager.Namespace + "string")
             {
-                Value = value
+                Value = value.Trim()
             };
             return element;
         }

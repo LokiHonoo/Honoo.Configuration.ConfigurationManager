@@ -76,40 +76,40 @@ namespace Honoo.Configuration
         /// 添加一个配置属性。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public T Add<T>(T property) where T : XProperty
+        public T Add<T>(T value) where T : XProperty
         {
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            if (property.Comment.HasValue)
+            if (value.Comment.HasValue)
             {
-                _container.Add(property.Comment.Comment);
+                _container.Add(value.Comment.Comment);
             }
-            _container.Add(property.Content);
-            _properties.Add(property);
-            return property;
+            _container.Add(value.Content);
+            _properties.Add(value);
+            return value;
         }
 
         /// <summary>
         /// 添加配置属性集合。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
-        /// <param name="properties">配置属性的集合。</param>
+        /// <param name="values">配置属性的集合。</param>
         /// <exception cref="Exception"/>
-        public IEnumerable<T> AddRange<T>(IEnumerable<T> properties) where T : XProperty
+        public IEnumerable<T> AddRange<T>(IEnumerable<T> values) where T : XProperty
         {
-            if (properties == null)
+            if (values == null)
             {
-                throw new ArgumentNullException(nameof(properties));
+                throw new ArgumentNullException(nameof(values));
             }
-            foreach (var value in properties)
+            foreach (var value in values)
             {
                 Add(value);
             }
-            return properties;
+            return values;
         }
 
         /// <summary>
@@ -126,11 +126,11 @@ namespace Honoo.Configuration
         /// 确定指定配置属性是否在集合中。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
-        /// <param name="property">搜索的指定对象。</param>
+        /// <param name="value">搜索的指定对象。</param>
         /// <returns></returns>
-        public bool Contains<T>(T property) where T : XProperty
+        public bool Contains<T>(T value) where T : XProperty
         {
-            return _properties.Contains(property);
+            return _properties.Contains(value);
         }
 
         /// <summary>
@@ -173,11 +173,11 @@ namespace Honoo.Configuration
         /// 搜索指定对象，并返回第一个匹配项从零开始的索引。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
-        /// <param name="property">搜索的指定对象。</param>
+        /// <param name="value">搜索的指定对象。</param>
         /// <returns></returns>
-        public int IndexOf<T>(T property) where T : XProperty
+        public int IndexOf<T>(T value) where T : XProperty
         {
-            return _properties.IndexOf(property);
+            return _properties.IndexOf(value);
         }
 
         /// <summary>
@@ -185,25 +185,25 @@ namespace Honoo.Configuration
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="index">指定索引。</param>
-        /// <param name="property">要插入的配置属性。</param>
+        /// <param name="value">要插入的配置属性。</param>
         /// <exception cref="Exception"/>
-        public void Insert<T>(int index, T property) where T : XProperty
+        public void Insert<T>(int index, T value) where T : XProperty
         {
-            _properties.Insert(index, property);
+            _properties.Insert(index, value);
         }
 
         /// <summary>
         /// 从配置属性集合中移除指定配置属性。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
-        /// <param name="property">要移除的配置属性。</param>
+        /// <param name="value">要移除的配置属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool Remove<T>(T property) where T : XProperty
+        public bool Remove<T>(T value) where T : XProperty
         {
-            property?.Comment.Remove();
-            property?.Content.Remove();
-            return _properties.Remove(property);
+            value?.Comment.Remove();
+            value?.Content.Remove();
+            return _properties.Remove(value);
         }
 
         /// <summary>
@@ -225,13 +225,13 @@ namespace Honoo.Configuration
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="index">配置属性的索引。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public T SetValue<T>(int index, T property) where T : XProperty
+        public T SetValue<T>(int index, T value) where T : XProperty
         {
             RemoveAt(index);
-            Insert(index, property);
-            return property;
+            Insert(index, value);
+            return value;
         }
     }
 }

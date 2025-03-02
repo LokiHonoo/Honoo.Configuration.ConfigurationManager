@@ -198,20 +198,20 @@ namespace Honoo.Configuration
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="name">配置容器的名称。</param>
-        /// <param name="section">配置容器的值。</param>
+        /// <param name="value">配置容器的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue<T>(string name, out T section) where T : ConfigSection
+        public bool TryGetValue<T>(string name, out T value) where T : ConfigSection
         {
-            if (_sections.TryGetValue(name, out ConfigSection value))
+            if (_sections.TryGetValue(name, out ConfigSection val))
             {
-                if (value is T val)
+                if (val is T va)
                 {
-                    section = val;
+                    value = va;
                     return true;
                 }
             }
-            section = null;
+            value = null;
             return false;
         }
 
@@ -227,7 +227,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public ConfigSection GetValue(string name)
         {
-            return TryGetValue(name, out ConfigSection section) ? section : null;
+            return TryGetValue(name, out ConfigSection value) ? value : null;
         }
 
         #endregion GetValue

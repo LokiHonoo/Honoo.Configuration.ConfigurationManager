@@ -91,42 +91,82 @@ namespace Honoo.Configuration
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public T Add<T>(string key, T property) where T : XProperty
+        public T Add<T>(string key, T value) where T : XProperty
         {
             if (key == null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            if (property.Comment.HasValue)
+            if (value.Comment.HasValue)
             {
-                _container.Add(property.Comment.Comment);
+                _container.Add(value.Comment.Comment);
             }
-            property.Content.SetAttributeValue("key", key);
-            _container.Add(property.Content);
-            _properties.Add(key, property);
-            return property;
+            value.Content.SetAttributeValue("key", key);
+            _container.Add(value.Content);
+            _properties.Add(key, value);
+            return value;
         }
 
         #endregion Add
 
+        #region AddOrUpdate
+
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <typeparam name="T">指定配置属性类型。</typeparam>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public T AddOrUpdate<T>(string key, T value) where T : XProperty
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (TryGetValue(key, out XProperty val))
+            {
+                value.Content.SetAttributeValue("key", key);
+                if (value.Comment.HasValue)
+                {
+                    val.Content.AddBeforeSelf(value.Comment.Comment);
+                }
+                val.Content.AddBeforeSelf(value.Content);
+                val.Comment.Remove();
+                val.Content.Remove();
+                _properties[key] = value;
+                return value;
+            }
+            else
+            {
+                return Add(key, value);
+            }
+        }
+
+        #endregion AddOrUpdate
+
         #region GetOrAdd
 
         /// <summary>
-        /// 获取与指定名称关联的配置属性。如果不存在，添加一个 <typeparamref name="T"/> 类型的配置属性并返回值。
+        /// 获取与指定键关联的配置属性。如果不存在，添加一个 <typeparamref name="T"/> 类型的配置属性并返回值。
         /// <br/>如果配置属性存在但不是指定的类型，则抛出 <see cref="InvalidCastException"/>。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="propertyIfNotExists">指定名称关联的配置属性不存在时添加此配置属性。</param>
+        /// <param name="valueIfNotExists">指定键关联的配置属性不存在时添加此配置属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public T GetOrAdd<T>(string key, T propertyIfNotExists) where T : XProperty
+        public T GetOrAdd<T>(string key, T valueIfNotExists) where T : XProperty
         {
             if (TryGetValue(key, out XProperty value))
             {
@@ -141,51 +181,11 @@ namespace Honoo.Configuration
             }
             else
             {
-                return Add(key, propertyIfNotExists);
+                return Add(key, valueIfNotExists);
             }
         }
 
         #endregion GetOrAdd
-
-        #region AddOrUpdate
-
-        /// <summary>
-        /// 添加或更新一个配置属性。
-        /// </summary>
-        /// <typeparam name="T">指定配置属性类型。</typeparam>
-        /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
-        /// <exception cref="Exception"/>
-        public T AddOrUpdate<T>(string key, T property) where T : XProperty
-        {
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
-            if (property == null)
-            {
-                throw new ArgumentNullException(nameof(property));
-            }
-            if (TryGetValue(key, out XProperty value))
-            {
-                property.Content.SetAttributeValue("key", key);
-                if (property.Comment.HasValue)
-                {
-                    value.Content.AddBeforeSelf(property.Comment.Comment);
-                }
-                value.Content.AddBeforeSelf(property.Content);
-                value.Comment.Remove();
-                value.Content.Remove();
-                _properties[key] = property;
-                return property;
-            }
-            else
-            {
-                return Add(key, property);
-            }
-        }
-
-        #endregion AddOrUpdate
 
         #region TryGetValue
 
@@ -195,19 +195,19 @@ namespace Honoo.Configuration
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
-        public bool TryGetValue<T>(string key, out T property) where T : XProperty
+        public bool TryGetValue<T>(string key, out T value) where T : XProperty
         {
-            if (_properties.TryGetValue(key, out XProperty value))
+            if (_properties.TryGetValue(key, out XProperty val))
             {
-                if (value is T val)
+                if (val is T va)
                 {
-                    property = val;
+                    value = va;
                     return true;
                 }
             }
-            property = null;
+            value = null;
             return false;
         }
 
@@ -232,15 +232,15 @@ namespace Honoo.Configuration
         #region GetValueOrDefault
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultProperty"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultProperty">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
-        public T GetValue<T>(string key, T defaultProperty) where T : XProperty
+        public T GetValue<T>(string key, T defaultValue) where T : XProperty
         {
-            return TryGetValue(key, out T value) ? value : defaultProperty;
+            return TryGetValue(key, out T value) ? value : defaultValue;
         }
 
         #endregion GetValueOrDefault

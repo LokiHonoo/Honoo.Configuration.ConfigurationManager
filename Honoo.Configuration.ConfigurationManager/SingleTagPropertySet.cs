@@ -49,8 +49,8 @@ namespace Honoo.Configuration
             {
                 foreach (XAttribute attribute in _container.Attributes())
                 {
-                    SingleTagProperty property = new SingleTagProperty(attribute);
-                    _properties.Add(attribute.Name.LocalName, property);
+                    SingleTagProperty value = new SingleTagProperty(attribute);
+                    _properties.Add(attribute.Name.LocalName, value);
                 }
             }
         }
@@ -63,22 +63,25 @@ namespace Honoo.Configuration
         /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <exception cref="Exception"/>
-        public SingleTagProperty Add(string key, SingleTagProperty property)
+        public SingleTagProperty Add(string key, SingleTagProperty value)
         {
             if (key == null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            property.ResetKey(key);
-            _container.Add(property.Content);
-            _properties.Add(key, property);
-            return property;
+            if (value.Content == null)
+            {
+                value.CreateContent(key);
+            }
+            _container.Add(value.Content);
+            _properties.Add(key, value);
+            return value;
         }
 
         #endregion Add
@@ -89,34 +92,53 @@ namespace Honoo.Configuration
         /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public SingleTagProperty AddOrUpdate(string key, SingleTagProperty property)
+        public SingleTagProperty AddOrUpdate(string key, SingleTagProperty value)
         {
             if (key == null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            if (TryGetValue(key, out SingleTagProperty value))
+            if (TryGetValue(key, out SingleTagProperty val))
             {
-                property.ResetKey(key);
-                value.Content.Remove();
-                _container.Add(property.Content);
-                _properties[key] = property;
-                return property;
+                val.RemoveContent();
+                if (value.Content == null)
+                {
+                    value.CreateContent(key);
+                }
+                _container.Add(value.Content);
+                _properties[key] = value;
+                return value;
             }
             else
             {
-                return Add(key, property);
+                return Add(key, value);
             }
         }
 
         #endregion AddOrUpdate
+
+        #region GetOrAdd
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果不存在，添加一个配置属性并返回值。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="valueIfNotExists">指定键关联的配置属性不存在时添加此配置属性。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public SingleTagProperty GetOrAdd<T>(string key, SingleTagProperty valueIfNotExists)
+        {
+            return TryGetValue(key, out SingleTagProperty value) ? value : Add(key, valueIfNotExists);
+        }
+
+        #endregion GetOrAdd
 
         #region TryGetValue
 
@@ -124,12 +146,12 @@ namespace Honoo.Configuration
         /// 获取与指定键关联的配置属性的值。如果没有找到指定键，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out SingleTagProperty property)
+        public bool TryGetValue(string key, out SingleTagProperty value)
         {
-            return _properties.TryGetValue(key, out property);
+            return _properties.TryGetValue(key, out value);
         }
 
         #endregion TryGetValue
@@ -152,15 +174,15 @@ namespace Honoo.Configuration
         #region GetValueOrDefault
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultProperty"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键，返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultProperty">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public SingleTagProperty GetValue(string key, SingleTagProperty defaultProperty)
+        public SingleTagProperty GetValue(string key, SingleTagProperty defaultValue)
         {
-            return TryGetValue(key, out SingleTagProperty value) ? value : defaultProperty;
+            return TryGetValue(key, out SingleTagProperty value) ? value : defaultValue;
         }
 
         #endregion GetValueOrDefault
@@ -210,7 +232,7 @@ namespace Honoo.Configuration
         {
             if (_properties.TryGetValue(key, out SingleTagProperty value))
             {
-                value.Content.Remove();
+                value.RemoveContent();
                 _properties.Remove(key);
                 return true;
             }

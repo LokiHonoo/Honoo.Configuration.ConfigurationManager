@@ -95,75 +95,75 @@ namespace Honoo.Configuration
         /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty Add(string key, AddProperty property)
+        public AddProperty Add(string key, AddProperty value)
         {
             if (key == null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            if (property.Comment.HasValue)
+            if (value.Comment.HasValue)
             {
-                _container.Add(property.Comment.Comment);
+                _container.Add(value.Comment.Comment);
             }
-            property.Content.SetAttributeValue("key", key);
-            _container.Add(property.Content);
-            _properties.Add(key, property);
-            return property;
+            value.Content.SetAttributeValue("key", key);
+            _container.Add(value.Content);
+            _properties.Add(key, value);
+            return value;
         }
 
         /// <summary>
         /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public RemoveProperty Add(string key, RemoveProperty property)
+        public RemoveProperty Add(string key, RemoveProperty value)
         {
             if (key == null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            if (property.Comment.HasValue)
+            if (value.Comment.HasValue)
             {
-                _container.Add(property.Comment.Comment);
+                _container.Add(value.Comment.Comment);
             }
-            property.Content.SetAttributeValue("key", key);
-            _container.Add(property.Content);
-            _properties.Add("{remove_" + Guid.NewGuid().ToString("N") + "}" + key, property);
-            return property;
+            value.Content.SetAttributeValue("key", key);
+            _container.Add(value.Content);
+            _properties.Add("{remove_" + Guid.NewGuid().ToString("N") + "}" + key, value);
+            return value;
         }
 
         /// <summary>
         /// 添加一个配置属性。
         /// </summary>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ClearProperty Add(ClearProperty property)
+        public ClearProperty Add(ClearProperty value)
         {
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            if (property.Comment.HasValue)
+            if (value.Comment.HasValue)
             {
-                _container.Add(property.Comment.Comment);
+                _container.Add(value.Comment.Comment);
             }
-            _container.Add(property.Content);
-            _properties.Add("{clear_" + Guid.NewGuid().ToString("N") + "}", property);
-            return property;
+            _container.Add(value.Content);
+            _properties.Add("{clear_" + Guid.NewGuid().ToString("N") + "}", value);
+            return value;
         }
 
         #endregion Add
@@ -174,39 +174,55 @@ namespace Honoo.Configuration
         /// 添加或更新一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty AddOrUpdate(string key, AddProperty property)
+        public AddProperty AddOrUpdate(string key, AddProperty value)
         {
             if (key == null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
             if (TryGetValue(key, out AddProperty val))
             {
-                property.Content.SetAttributeValue("key", key);
-                if (property.Comment.HasValue)
+                value.Content.SetAttributeValue("key", key);
+                if (value.Comment.HasValue)
                 {
-                    val.Content.AddBeforeSelf(property.Comment.Comment);
+                    val.Content.AddBeforeSelf(value.Comment.Comment);
                 }
-                val.Content.AddBeforeSelf(property.Content);
+                val.Content.AddBeforeSelf(value.Content);
                 val.Comment.Remove();
                 val.Content.Remove();
-                _properties[key] = property;
-                return property;
+                _properties[key] = value;
+                return value;
             }
             else
             {
-                return Add(key, property);
+                return Add(key, value);
             }
         }
 
         #endregion AddOrUpdate
+
+        #region GetOrAdd
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性。如果不存在，添加一个配置属性并返回值。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="valueIfNotExists">指定键关联的配置属性不存在时添加此配置属性。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public AddProperty GetOrAdd<T>(string key, AddProperty valueIfNotExists)
+        {
+            return TryGetValue(key, out AddProperty value) ? value : Add(key, valueIfNotExists);
+        }
+
+        #endregion GetOrAdd
 
         #region TryGetValue
 
@@ -215,20 +231,20 @@ namespace Honoo.Configuration
         /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但指定的类型不符，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out AddProperty property)
+        public bool TryGetValue(string key, out AddProperty value)
         {
-            if (_properties.TryGetValue(key, out TagProperty value))
+            if (_properties.TryGetValue(key, out TagProperty val))
             {
-                if (value is AddProperty val)
+                if (val is AddProperty va)
                 {
-                    property = val;
+                    value = va;
                     return true;
                 }
             }
-            property = null;
+            value = null;
             return false;
         }
 
@@ -252,15 +268,15 @@ namespace Honoo.Configuration
         #region GetValueOrDefault
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultProperty"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultProperty">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty GetValue(string key, AddProperty defaultProperty)
+        public AddProperty GetValue(string key, AddProperty defaultValue)
         {
-            return TryGetValue(key, out AddProperty value) ? value : defaultProperty;
+            return TryGetValue(key, out AddProperty value) ? value : defaultValue;
         }
 
         #endregion GetValueOrDefault
@@ -303,15 +319,15 @@ namespace Honoo.Configuration
         /// 从配置属性集合中移除配置属性。配置属性的注释一并移除。
         /// <br/>如果该元素成功移除，返回 <see langword="true"/>。如果没有找到指定元素，则返回 <see langword="false"/>。
         /// </summary>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool Remove(TagProperty property)
+        public bool Remove(TagProperty value)
         {
             string key = null;
             foreach (var val in _properties)
             {
-                if (val.Value == property)
+                if (val.Value == value)
                 {
                     key = val.Key;
                 }

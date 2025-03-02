@@ -22,7 +22,6 @@ namespace Honoo.Configuration
         private ConnectionStrings _connectionStrings;
         private bool _disposed;
         private XElement _root;
-        internal static XNamespace AssemblyBindingNamespace => _assemblyBindingNamespace;
 
         /// <summary>
         /// 映射到标准格式的 &lt;appSettings /&gt; 节点。
@@ -83,6 +82,8 @@ namespace Honoo.Configuration
                 return _connectionStrings;
             }
         }
+
+        internal static XNamespace AssemblyBindingNamespace => _assemblyBindingNamespace;
 
         #endregion Members
 

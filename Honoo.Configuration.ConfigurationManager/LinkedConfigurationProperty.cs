@@ -32,16 +32,16 @@ namespace Honoo.Configuration
         /// <param name="href">要包含的配置文件的 URL。 href 属性支持的唯一格式是 file://。 支持本地文件和 UNC 文件。</param>
         public LinkedConfigurationProperty(string href)
         {
-            _href = href ?? throw new ArgumentNullException(nameof(href));
             _content = GetElement(href);
             _comment = new XConfigComment(null, _content);
+            _href = _content.Attribute("href").Value;
         }
 
         internal LinkedConfigurationProperty(XElement content, XComment comment)
         {
-            _href = content.Attribute("href").Value;
             _content = content;
             _comment = new XConfigComment(comment, content);
+            _href = content.Attribute("href").Value;
         }
 
         #endregion Construction
@@ -57,8 +57,12 @@ namespace Honoo.Configuration
 
         private static XElement GetElement(string href)
         {
+            if (href is null)
+            {
+                throw new ArgumentNullException(nameof(href));
+            }
             XElement content = new XElement(ConfigurationManager.AssemblyBindingNamespace + "linkedConfiguration");
-            content.SetAttributeValue("href", href);
+            content.SetAttributeValue("href", href.Trim());
             return content;
         }
     }

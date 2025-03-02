@@ -90,34 +90,34 @@ namespace Honoo.Configuration
         /// 添加一个配置属性。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty Add(string key, AddProperty property)
+        public AddProperty Add(string key, AddProperty value)
         {
             if (key == null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            property.Content.SetAttributeValue("key", key);
-            if (property.Comment.HasValue)
+            value.Content.SetAttributeValue("key", key);
+            if (value.Comment.HasValue)
             {
-                _container.Add(property.Comment.Comment);
+                _container.Add(value.Comment.Comment);
             }
-            _container.Add(property.Content);
+            _container.Add(value.Content);
             if (_properties.TryGetValue(key, out AddProperty[] values))
             {
-                _properties[key] = new List<AddProperty>(values) { property }.ToArray();
+                _properties[key] = new List<AddProperty>(values) { value }.ToArray();
             }
             else
             {
-                _properties.Add(key, new AddProperty[] { property });
+                _properties.Add(key, new AddProperty[] { value });
             }
-            return property;
+            return value;
         }
 
         #endregion Add
@@ -128,12 +128,12 @@ namespace Honoo.Configuration
         /// 获取与指定键关联的配置属性的值。如果没有找到指定键，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="properties">配置属性的值。</param>
+        /// <param name="values">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out AddProperty[] properties)
+        public bool TryGetValue(string key, out AddProperty[] values)
         {
-            return _properties.TryGetValue(key, out properties);
+            return _properties.TryGetValue(key, out values);
         }
 
         #endregion TryGetValue
@@ -156,15 +156,15 @@ namespace Honoo.Configuration
         #region GetValueOrDefault
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultProperties"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValues"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultProperties">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="defaultValues">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty[] GetValue(string key, AddProperty[] defaultProperties)
+        public AddProperty[] GetValue(string key, AddProperty[] defaultValues)
         {
-            return TryGetValue(key, out AddProperty[] value) ? value : defaultProperties;
+            return TryGetValue(key, out AddProperty[] value) ? value : defaultValues;
         }
 
         #endregion GetValueOrDefault

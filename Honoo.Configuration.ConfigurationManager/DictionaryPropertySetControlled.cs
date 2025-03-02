@@ -110,12 +110,12 @@ namespace Honoo.Configuration
         /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但指定的类型不符，则仍返回 <see langword="false"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="property">配置属性的值。</param>
+        /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string key, out AddProperty property)
+        public bool TryGetValue(string key, out AddProperty value)
         {
-            return _properties.TryGetValue(key, out property);
+            return _properties.TryGetValue(key, out value);
         }
 
         #endregion TryGetValue
@@ -138,15 +138,15 @@ namespace Honoo.Configuration
         #region GetValueOrDefault
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultProperty"/>。
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
-        /// <param name="defaultProperty">没有找到指定键时的配置属性的默认值。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty GetValue(string key, AddProperty defaultProperty)
+        public AddProperty GetValue(string key, AddProperty defaultValue)
         {
-            return TryGetValue(key, out AddProperty value) ? value : defaultProperty;
+            return TryGetValue(key, out AddProperty value) ? value : defaultValue;
         }
 
         #endregion GetValueOrDefault

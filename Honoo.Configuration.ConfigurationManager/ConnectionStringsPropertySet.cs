@@ -84,27 +84,27 @@ namespace Honoo.Configuration
         /// 添加一个连接属性。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
-        /// <param name="property">连接属性的值。</param>
+        /// <param name="value">连接属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConnectionStringProperty Add(string name, ConnectionStringProperty property)
+        public ConnectionStringProperty Add(string name, ConnectionStringProperty value)
         {
             if (name == null)
             {
                 throw new ArgumentNullException(nameof(name));
             }
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            if (property.Comment.HasValue)
+            if (value.Comment.HasValue)
             {
-                _container.Add(property.Comment.Comment);
+                _container.Add(value.Comment.Comment);
             }
-            property.Content.SetAttributeValue("name", name);
-            _container.Add(property.Content);
-            _properties.Add(name, property);
-            return property;
+            value.Content.SetAttributeValue("name", name);
+            _container.Add(value.Content);
+            _properties.Add(name, value);
+            return value;
         }
 
         /// <summary>
@@ -140,35 +140,35 @@ namespace Honoo.Configuration
         /// 添加或更新一个连接属性。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
-        /// <param name="property">连接属性的值。</param>
+        /// <param name="value">连接属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConnectionStringProperty AddOrUpdate(string name, ConnectionStringProperty property)
+        public ConnectionStringProperty AddOrUpdate(string name, ConnectionStringProperty value)
         {
             if (name == null)
             {
                 throw new ArgumentNullException(nameof(name));
             }
-            if (property == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(value));
             }
-            if (TryGetValue(name, out ConnectionStringProperty value))
+            if (TryGetValue(name, out ConnectionStringProperty val))
             {
-                property.Content.SetAttributeValue("name", name);
-                if (property.Comment.HasValue)
+                value.Content.SetAttributeValue("name", name);
+                if (value.Comment.HasValue)
                 {
-                    value.Content.AddBeforeSelf(property.Comment.Comment);
+                    val.Content.AddBeforeSelf(value.Comment.Comment);
                 }
-                value.Content.AddBeforeSelf(property.Content);
-                value.Comment.Remove();
-                value.Content.Remove();
-                _properties[name] = property;
-                return property;
+                val.Content.AddBeforeSelf(value.Content);
+                val.Comment.Remove();
+                val.Content.Remove();
+                _properties[name] = value;
+                return value;
             }
             else
             {
-                return Add(name, property);
+                return Add(name, value);
             }
         }
 
@@ -199,18 +199,59 @@ namespace Honoo.Configuration
 
         #endregion AddOrUpdate
 
+        #region GetOrAdd
+
+        /// <summary>
+        /// 获取与指定键关联的连接属性。如果不存在，添加一个连接属性并返回值。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="valueIfNotExists">指定名称关联的连接属性不存在时添加此连接属性。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConnectionStringProperty GetOrAdd(string name, ConnectionStringProperty valueIfNotExists)
+        {
+            return TryGetValue(name, out ConnectionStringProperty value) ? value : Add(name, valueIfNotExists);
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的连接属性。如果不存在，添加一个连接属性并返回值。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="connection">指定名称关联的连接属性不存在时添加此数据库连接实例。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConnectionStringProperty GetOrAdd(string name, DbConnection connection)
+        {
+            return TryGetValue(name, out ConnectionStringProperty value) ? value : Add(name, connection);
+        }
+
+        /// <summary>
+        /// 获取与指定键关联的连接属性。如果不存在，添加一个连接属性并返回值。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="connectionString">指定名称关联的连接属性不存在时添加此连接字符串。</param>
+        /// <param name="providerName">指定名称关联的连接属性不存在时添加此数据库引擎的文本名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConnectionStringProperty GetOrAdd(string name, string connectionString, string providerName)
+        {
+            return TryGetValue(name, out ConnectionStringProperty value) ? value : Add(name, connectionString, providerName);
+        }
+
+        #endregion GetOrAdd
+
         #region TryGetValue
 
         /// <summary>
         /// 获取与指定名称关联的连接属性的值。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
-        /// <param name="property">连接属性的值。</param>
+        /// <param name="value">连接属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool TryGetValue(string name, out ConnectionStringProperty property)
+        public bool TryGetValue(string name, out ConnectionStringProperty value)
         {
-            return _properties.TryGetValue(name, out property);
+            return _properties.TryGetValue(name, out value);
         }
 
         /// <summary>
@@ -249,19 +290,48 @@ namespace Honoo.Configuration
             return TryGetValue(name, out ConnectionStringProperty value) ? value : null;
         }
 
+        #endregion GetValue
+
+        #region GetValueOrDefault
+
         /// <summary>
-        /// 获取与指定名称关联的连接属性的值。如果没有找到指定名称，返回 <paramref name="defaultProperty"/>。
+        /// 获取与指定名称关联的连接属性的值。如果没有找到指定名称，返回 <paramref name="defaultValue"/>。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
-        /// <param name="defaultProperty">没有找到指定名称时的连接属性的默认值。</param>
+        /// <param name="defaultValue">没有找到指定名称时的连接属性的默认值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConnectionStringProperty GetValue(string name, ConnectionStringProperty defaultProperty)
+        public ConnectionStringProperty GetValue(string name, ConnectionStringProperty defaultValue)
         {
-            return TryGetValue(name, out ConnectionStringProperty value) ? value : defaultProperty;
+            return TryGetValue(name, out ConnectionStringProperty value) ? value : defaultValue;
         }
 
-        #endregion GetValue
+        /// <summary>
+        /// 获取与指定名称关联的连接属性的值。如果没有找到指定名称，返回新建的连接属性的值。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="connection">指定名称关联的连接属性不存在时添加此数据库连接实例。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConnectionStringProperty GetValue(string name, DbConnection connection)
+        {
+            return TryGetValue(name, out ConnectionStringProperty value) ? value : new ConnectionStringProperty(connection);
+        }
+
+        /// <summary>
+        /// 获取与指定名称关联的连接属性的值。如果没有找到指定名称，返回新建的连接属性的值。
+        /// </summary>
+        /// <param name="name">连接属性的名称。</param>
+        /// <param name="connectionString">指定名称关联的连接属性不存在时添加此连接字符串。</param>
+        /// <param name="providerName">指定名称关联的连接属性不存在时添加此数据库引擎的文本名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public ConnectionStringProperty GetValue(string name, string connectionString, string providerName)
+        {
+            return TryGetValue(name, out ConnectionStringProperty value) ? value : new ConnectionStringProperty(connectionString, providerName);
+        }
+
+        #endregion GetValueOrDefault
 
         /// <summary>
         /// 从连接属性集合中移除所有连接属性。

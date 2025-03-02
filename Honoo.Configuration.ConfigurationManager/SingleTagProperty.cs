@@ -27,14 +27,17 @@ namespace Honoo.Configuration
         /// <param name="value">配置属性的值。</param>
         public SingleTagProperty(string value)
         {
-            _content = new XAttribute("single_tag_property", value);
-            _value = value ?? throw new ArgumentNullException(nameof(value));
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            _value = value.Trim();
         }
 
-        internal SingleTagProperty(XAttribute content)
+        internal SingleTagProperty(XAttribute attribute)
         {
-            _content = content;
-            _value = content.Value;
+            _content = attribute;
+            _value = attribute.Value;
         }
 
         #endregion Construction
@@ -245,9 +248,15 @@ namespace Honoo.Configuration
             return _content.ToString();
         }
 
-        internal void ResetKey(string key)
+        internal void CreateContent(string key)
         {
             _content = new XAttribute(key, _value);
+        }
+
+        internal void RemoveContent()
+        {
+            _content.Remove();
+            _content = null;
         }
     }
 }
