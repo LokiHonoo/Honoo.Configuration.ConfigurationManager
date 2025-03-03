@@ -36,6 +36,7 @@ namespace Test
                 //
                 //
                 manager.Default.Properties.AddOrUpdate("prop6", new XString("Remove this."));
+                //
                 // manager.Default.Properties.Add("prop1", new XString("Test unique."));
                 //
                 // 移除属性的方法。移除属性时相关注释一并移除。

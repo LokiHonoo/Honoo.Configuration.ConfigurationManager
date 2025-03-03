@@ -403,6 +403,12 @@ internal static void Create(string filePath)
         prop3.Properties.Add(new XString("Sub this list prop.")).Comment.SetValue("This is \"XCconfig\" list prop comment.");
         XDictionary prop5 = prop3.Properties.Add(new XDictionary());
         prop5.Properties.Add("prop5", new XString("F024AC4"));
+        //
+        // 附加属性。
+        //
+        prop5.Attributes.AddOrUpdate("attr1", new XConfigAttribute("add attr"));
+        prop55.Attributes.AddOrUpdate("attr1", new XConfigAttribute("add attr"));
+        //
         manager.Default.Properties.AddOrUpdate("prop6", new XString("Remove this."));
         // manager.Default.Properties.Add("prop1", new XString("Test unique."));
         //
@@ -457,6 +463,7 @@ internal static void Load(string filePath)
         XString value5 = ((XDictionary)value3.Properties[1]).Properties.GetValue<XString>("prop5");
         byte[] val5 = value5.GetBytesValue();
         Console.WriteLine(BitConverter.ToString(val5));
+        Console.WriteLine(value5.Attributes.GetValue("attr1").GetStringValue());
         //
         XDictionary section = manager.Sections.GetValue("section1");
         Console.WriteLine(section.Comment.GetValue());
