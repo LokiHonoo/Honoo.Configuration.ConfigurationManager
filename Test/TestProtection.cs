@@ -33,7 +33,7 @@ namespace Test
             using (XmlWriter writer = XmlWriter.Create(sb, writerSettings))
             {
                 //
-                // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
+                // 读取加密配置文件。加密方式和 ASP.NET 加密不兼容。
                 //
                 using (ConfigurationManager manager = new ConfigurationManager())
                 {
@@ -79,7 +79,7 @@ namespace Test
             Console.WriteLine(sb.ToString());
             Console.WriteLine();
             //
-            // 读取加密配置文件。加密配置文件和 .NET 程序的默认配置文件不兼容。
+            // 读取加密配置文件。加密方式和 ASP.NET 加密不兼容。
             //
             using (XmlReader reader = XmlReader.Create(new StringReader(sb.ToString())))
             {

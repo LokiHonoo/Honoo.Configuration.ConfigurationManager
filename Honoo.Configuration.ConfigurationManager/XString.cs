@@ -51,11 +51,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取转换为 <see cref="byte"/>[] 格式的数据值。
         /// </summary>
+        /// <param name="removes">要移除的字符集合。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public byte[] GetBytesValue()
+        public byte[] GetBytesValue(params string[] removes)
         {
-            return XValueHelper.Parse(_value);
+            return XValueHelper.Parse(_value, removes);
         }
 
         /// <summary>
