@@ -8,7 +8,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 附加属性集合。
     /// </summary>
-    public sealed class XConfigAttributeSet : IEnumerable<XConfigAttribute>
+    public sealed class XConfigAttributeSet : IEnumerable<KeyValuePair<string, XConfigAttribute>>
     {
         #region Members
 
@@ -205,14 +205,14 @@ namespace Honoo.Configuration
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<XConfigAttribute> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, XConfigAttribute>> GetEnumerator()
         {
-            return _attributes.Values.GetEnumerator();
+            return _attributes.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _attributes.Values.GetEnumerator();
+            return _attributes.GetEnumerator();
         }
 
         /// <summary>

@@ -6,7 +6,7 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [CHANGELOG](#changelog)
-    - [1.5.8](#158)
+    - [1.5.9](#159)
     - [1.5.7](#157)
     - [1.5.6](#156)
     - [1.5.4](#154)
@@ -27,7 +27,7 @@
 
 ## CHANGELOG
 
-### 1.5.8
+### 1.5.9
 
 **Features* 属性值转换 Byte[] 时可移除分隔符。
 
