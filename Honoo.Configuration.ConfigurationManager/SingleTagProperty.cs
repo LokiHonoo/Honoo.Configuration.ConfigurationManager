@@ -379,7 +379,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public bool Equals(SingleTagProperty other)
         {
-            return other is SingleTagProperty && other._value == _value;
+            return other != null && GetHashCode() == other.GetHashCode();
         }
 
         /// <summary>
@@ -389,7 +389,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is SingleTagProperty other && other._value == _value;
+            return obj is SingleTagProperty other && Equals(other);
         }
 
         /// <summary>

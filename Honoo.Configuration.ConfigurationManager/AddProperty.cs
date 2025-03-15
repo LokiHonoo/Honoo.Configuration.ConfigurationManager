@@ -371,7 +371,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public bool Equals(AddProperty other)
         {
-            return other is AddProperty && other._value == _value;
+            return other != null && GetHashCode() == other.GetHashCode();
         }
 
         /// <summary>
@@ -381,7 +381,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is AddProperty other && other._value == _value;
+            return obj is AddProperty other && Equals(other);
         }
 
         /// <summary>

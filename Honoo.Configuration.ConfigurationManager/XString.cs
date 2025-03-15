@@ -372,7 +372,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public bool Equals(XString other)
         {
-            return other is XString && other._value == _value;
+            return other != null && GetHashCode() == other.GetHashCode();
         }
 
         /// <summary>
@@ -382,7 +382,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is XString other && other._value == _value;
+            return obj is XString other && Equals(other);
         }
 
         /// <summary>

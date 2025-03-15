@@ -381,7 +381,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public bool Equals(XConfigAttribute other)
         {
-            return other is XConfigAttribute && other._value == _value;
+            return other != null && GetHashCode() == other.GetHashCode();
         }
 
         /// <summary>
@@ -391,7 +391,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is XConfigAttribute other && other._value == _value;
+            return obj is XConfigAttribute other && Equals(other);
         }
 
         /// <summary>
