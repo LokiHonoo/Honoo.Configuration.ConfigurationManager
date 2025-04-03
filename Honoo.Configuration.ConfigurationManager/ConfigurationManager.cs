@@ -183,6 +183,39 @@ namespace Honoo.Configuration
         /// <summary>
         /// 创建 ConfigurationManager 的新实例。
         /// </summary>
+        /// <param name="filePath">指定配置文件的路径。</param>
+        /// <param name="createNewIfFileNotExists">如果文件不存在，创建无内容的 XConfigManager 实例。此时不会写入到文件路径。</param>
+        /// <param name="protectionAlgorithm">
+        /// 指定一个非对称加密算法，用于读取加密配置文件。
+        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
+        /// <br/>算法必须拥有私钥。
+        /// </param>
+        /// <exception cref="Exception"/>
+        public ConfigurationManager(string filePath, bool createNewIfFileNotExists, RSA protectionAlgorithm = null)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
+            }
+            if (File.Exists(filePath))
+            {
+                _root = XElement.Load(filePath);
+                _root = Coerce(_root, protectionAlgorithm);
+            }
+            else if (createNewIfFileNotExists)
+            {
+                _root = new XElement("configuration");
+            }
+            else
+            {
+                throw new FileNotFoundException($"The file \"{filePath}\" is not found.");
+            }
+            _root.Changed += (s, e) => { OnChanged(); };
+        }
+
+        /// <summary>
+        /// 创建 ConfigurationManager 的新实例。
+        /// </summary>
         /// <param name="stream">指定配置文件的流。</param>
         /// <param name="protectionAlgorithm">
         /// 指定一个非对称加密算法，用于读取加密配置文件。
@@ -313,9 +346,9 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 保存到指定的读取器。
+        /// 保存到指定的写入器。
         /// </summary>
-        /// <param name="writer">指定配置文件的读取器。</param>
+        /// <param name="writer">指定配置文件的写入器。</param>
         /// <param name="protectionAlgorithm">
         /// 指定一个非对称加密算法，用于保存加密配置文件。
         /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
@@ -345,32 +378,10 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public void Clear()
         {
+            _appSettings = null;
+            _configSections = null;
+            _connectionStrings = null;
             _root.RemoveAll();
-        }
-
-        /// <summary>
-        /// 返回配置文件的缩进 XML 文档文本。
-        /// </summary>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于保存加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法可以是公钥或私钥。
-        /// </param>
-        /// <exception cref="Exception"/>
-        public string GetXmlString(RSA protectionAlgorithm = null)
-        {
-            XElement root = Clean(_root);
-            if (protectionAlgorithm != null)
-            {
-                root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
-            }
-            StringBuilder builder = new StringBuilder();
-            using (XmlWriter writer = XmlWriter.Create(builder, _writerSettings))
-            {
-                root.WriteTo(writer);
-                writer.Flush();
-                return builder.ToString();
-            }
         }
 
         /// <summary>

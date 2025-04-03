@@ -1,6 +1,5 @@
 ﻿using Honoo.Configuration;
 using System;
-using System.IO;
 
 namespace Test
 {
@@ -14,7 +13,7 @@ namespace Test
             //
             // 使用自定义配置文件。
             //
-            using (XConfigManager manager = File.Exists(filePath) ? new XConfigManager(filePath) : new XConfigManager())
+            using (XConfigManager manager = new XConfigManager(filePath, true))
             {
                 //
                 // 赋值并设置注释。

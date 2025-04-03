@@ -14,7 +14,7 @@ namespace Test
             //
             // 使用 .NET 程序的默认配置文件或自定义配置文件。
             //
-            using (ConfigurationManager manager = File.Exists(filePath) ? new ConfigurationManager(filePath) : new ConfigurationManager())
+            using (ConfigurationManager manager = new ConfigurationManager(filePath, true))
             {
                 manager.AppSettings.SetFileAttribute("config.exrea1.xml");
                 //

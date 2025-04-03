@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace Test
 {
@@ -54,7 +55,7 @@ namespace Test
             {
                 using (ConfigurationManager manager = new ConfigurationManager(reader, rsa))
                 {
-                    Console.WriteLine(manager.GetXmlString());
+                    Console.WriteLine(manager.ToString());
                 }
             }
             Console.WriteLine();
@@ -85,7 +86,7 @@ namespace Test
             {
                 using (XConfigManager manager = new XConfigManager(reader, rsa))
                 {
-                    Console.WriteLine(manager.GetXmlString());
+                    Console.WriteLine(manager.ToString());
                 }
             }
         }
