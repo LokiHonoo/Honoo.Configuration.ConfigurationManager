@@ -1,5 +1,6 @@
 ﻿using Honoo.Configuration;
 using System;
+using System.Xml.Linq;
 
 namespace Test
 {
@@ -55,6 +56,18 @@ namespace Test
                 // 保存到指定的文件。
                 //
                 manager.Save(filePath);
+
+                foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                {
+                    if (node.NodeType == System.Xml.XmlNodeType.Element)
+                    {
+                        Console.WriteLine(node.NodeType + "  " + ((XElement)node).Name.LocalName);
+                    }
+                    else
+                    {
+                        Console.WriteLine(node.NodeType);
+                    }
+                }
             }
         }
 
@@ -65,6 +78,17 @@ namespace Test
             //
             using (XConfigManager manager = new XConfigManager(filePath))
             {
+                foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                {
+                    if (node.NodeType == System.Xml.XmlNodeType.Element)
+                    {
+                        Console.WriteLine(node.NodeType + "  " + ((XElement)node).Name.LocalName);
+                    }
+                    else
+                    {
+                        Console.WriteLine(node.NodeType);
+                    }
+                }
                 //
                 // 取出属性和注释。
                 //

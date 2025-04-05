@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -15,23 +14,24 @@ namespace Honoo.Configuration
         #region Members
 
         private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
+        private static readonly XmlReaderSettings _readerSettings = new XmlReaderSettings() { IgnoreWhitespace = true };
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
-        private XDictionary _default;
+        private XDefault _default;
         private bool _disposed;
-        private XElement _root;
+        private XDocument _document;
         private XSectionSet _sections;
 
         /// <summary>
         /// 映射到 &lt;default /&gt; 配置容器节点。
         /// </summary>
-        public XDictionary Default
+        public XDefault Default
         {
             get
             {
                 if (!_disposed && _default == null)
                 {
                     GetDefault(out XElement content, out XComment comment);
-                    _default = new XDictionary(content, comment);
+                    _default = new XDefault(content, comment);
                 }
                 return _default;
             }
@@ -46,7 +46,7 @@ namespace Honoo.Configuration
             {
                 if (!_disposed && _sections == null)
                 {
-                    _sections = new XSectionSet(_root);
+                    _sections = new XSectionSet(_document.Root);
                 }
                 return _sections;
             }
@@ -124,29 +124,27 @@ namespace Honoo.Configuration
         /// </summary>
         public XConfigManager()
         {
-            _root = new XElement(_namespace + "config");
-            _root.Changed += (s, e) => { OnChanged(); };
+            _document = new XDocument(new XDeclaration("1.0", "utf-8", string.Empty), new XElement(_namespace + "config"));
+            _document.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
         /// 创建 XConfigManager 的新实例。
         /// </summary>
         /// <param name="filePath">指定配置文件的路径。</param>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于读取加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法必须拥有私钥。
-        /// </param>
         /// <exception cref="Exception"/>
-        public XConfigManager(string filePath, RSA protectionAlgorithm = null)
+        public XConfigManager(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
             }
-            _root = XElement.Load(filePath);
-            _root = Coerce(_root, protectionAlgorithm);
-            _root.Changed += (s, e) => { OnChanged(); };
+            using (XmlReader reader = XmlReader.Create(filePath, _readerSettings))
+            {
+                _document = XDocument.Load(reader);
+                _document = Coerce(_document);
+                _document.Changed += (s, e) => { OnChanged(); };
+            }
         }
 
         /// <summary>
@@ -154,13 +152,8 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="filePath">指定配置文件的路径。</param>
         /// <param name="createNewIfFileNotExists">如果文件不存在，创建无内容的 XConfigManager 实例。此时不会写入到文件路径。</param>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于读取加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法必须拥有私钥。
-        /// </param>
         /// <exception cref="Exception"/>
-        public XConfigManager(string filePath, bool createNewIfFileNotExists, RSA protectionAlgorithm = null)
+        public XConfigManager(string filePath, bool createNewIfFileNotExists)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -168,60 +161,60 @@ namespace Honoo.Configuration
             }
             if (File.Exists(filePath))
             {
-                _root = XElement.Load(filePath);
-                _root = Coerce(_root, protectionAlgorithm);
+                using (XmlReader reader = XmlReader.Create(filePath, _readerSettings))
+                {
+                    _document = XDocument.Load(reader);
+                    _document = Coerce(_document);
+                    _document.Changed += (s, e) => { OnChanged(); };
+                }
             }
             else if (createNewIfFileNotExists)
             {
-                _root = new XElement(_namespace + "config");
+                _document = new XDocument(new XDeclaration("1.0", "utf-8", string.Empty), new XElement(_namespace + "config"));
             }
             else
             {
                 throw new FileNotFoundException($"The file \"{filePath}\" is not found.");
             }
-            _root.Changed += (s, e) => { OnChanged(); };
+            _document.Changed += (s, e) => { OnChanged(); };
         }
 
         /// <summary>
         /// 创建 XConfigManager 的新实例。
         /// </summary>
         /// <param name="stream">指定配置文件的流。</param>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于读取加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法必须拥有私钥。
-        /// </param>
         /// <exception cref="Exception"/>
-        public XConfigManager(Stream stream, RSA protectionAlgorithm = null)
+        public XConfigManager(Stream stream)
         {
             if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            _root = XElement.Load(stream);
-            _root = Coerce(_root, protectionAlgorithm);
-            _root.Changed += (s, e) => { OnChanged(); };
+            using (XmlReader reader = XmlReader.Create(stream, _readerSettings))
+            {
+                _document = XDocument.Load(reader);
+                _document = Coerce(_document);
+                _document.Changed += (s, e) => { OnChanged(); };
+            }
         }
 
         /// <summary>
         /// 创建 XConfigManager 的新实例。
         /// </summary>
         /// <param name="reader">指定配置文件的读取器。</param>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于读取加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法必须拥有私钥。
-        /// </param>
         /// <exception cref="Exception"/>
-        public XConfigManager(XmlReader reader, RSA protectionAlgorithm = null)
+        public XConfigManager(XmlReader reader)
         {
             if (reader == null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
-            _root = XElement.Load(reader);
-            _root = Coerce(_root, protectionAlgorithm);
-            _root.Changed += (s, e) => { OnChanged(); };
+            using (XmlReader readerF = XmlReader.Create(reader, _readerSettings))
+            {
+                _document = XDocument.Load(readerF);
+                _document = Coerce(_document);
+                _document.Changed += (s, e) => { OnChanged(); };
+            }
         }
 
         /// <summary>
@@ -250,7 +243,7 @@ namespace Honoo.Configuration
                 {
                     _default = null;
                     _sections = null;
-                    _root = null;
+                    _document = null;
                 }
                 _disposed = true;
                 OnDisposed();
@@ -265,26 +258,17 @@ namespace Honoo.Configuration
         /// 格式化为缩进 XML 文档并保存到指定的文件。如果文件已存在，覆盖旧文件。
         /// </summary>
         /// <param name="filePath">指定配置文件的路径。</param>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于保存加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法可以是公钥或私钥。
-        /// </param>
         /// <exception cref="Exception"/>
-        public void Save(string filePath, RSA protectionAlgorithm = null)
+        public void Save(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
             }
-            XElement root = Clean(_root);
-            if (protectionAlgorithm != null)
-            {
-                root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
-            }
+            XDocument document = Clean();
             using (XmlWriter writer = XmlWriter.Create(filePath, _writerSettings))
             {
-                root.WriteTo(writer);
+                document.WriteTo(writer);
                 writer.Flush();
             }
         }
@@ -293,22 +277,13 @@ namespace Honoo.Configuration
         /// 格式化为缩进 XML 文档并保存到指定的流。
         /// </summary>
         /// <param name="stream">指定配置文件的流。</param>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于保存加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法可以是公钥或私钥。
-        /// </param>
         /// <exception cref="Exception"/>
-        public void Save(Stream stream, RSA protectionAlgorithm = null)
+        public void Save(Stream stream)
         {
-            XElement root = Clean(_root);
-            if (protectionAlgorithm != null)
-            {
-                root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
-            }
+            XDocument document = Clean();
             using (XmlWriter writer = XmlWriter.Create(stream, _writerSettings))
             {
-                root.WriteTo(writer);
+                document.WriteTo(writer);
                 writer.Flush();
             }
         }
@@ -317,24 +292,15 @@ namespace Honoo.Configuration
         /// 保存到指定的写入器。
         /// </summary>
         /// <param name="writer">指定配置文件的写入器。</param>
-        /// <param name="protectionAlgorithm">
-        /// 指定一个非对称加密算法，用于保存加密配置文件。
-        /// <br/>这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-        /// <br/>算法可以是公钥或私钥。
-        /// </param>
         /// <exception cref="Exception"/>
-        public void Save(XmlWriter writer, RSA protectionAlgorithm = null)
+        public void Save(XmlWriter writer)
         {
             if (writer is null)
             {
                 throw new ArgumentNullException(nameof(writer));
             }
-            XElement root = Clean(_root);
-            if (protectionAlgorithm != null)
-            {
-                root = ProtectionHelper.Encrypt(root, protectionAlgorithm);
-            }
-            root.WriteTo(writer);
+            XDocument document = Clean();
+            document.WriteTo(writer);
             writer.Flush();
         }
 
@@ -347,63 +313,41 @@ namespace Honoo.Configuration
         public void Clear()
         {
             _default = null;
-            _root.RemoveAll();
+            _document.Root.RemoveAll();
         }
 
         /// <summary>
-        /// 方法已重写。返回根节点的缩进 XML 文本。不包括文档声明。
+        /// 获取 XML 文档的副本。
+        /// </summary>
+        public XDocument CloneDocument()
+        {
+            return new XDocument(_document);
+        }
+
+        /// <summary>
+        /// 方法已重写。返回 XML 文档的缩进 XML 文本。不包括文档声明。
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return _root.ToString();
+            return _document.ToString();
         }
 
-        private static XElement Coerce(XElement root, RSA protectionAlgorithm)
+        private static XDocument Coerce(XDocument document)
         {
-            if (root.Name != _namespace + "config")
+            if (document.Root.Name != _namespace + "config")
             {
                 throw new FileLoadException("File is not a config(https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/) file.");
             }
-            if (root.Attribute("protected") is XAttribute attribute)
-            {
-                if (bool.TryParse(attribute.Value, out bool isProtected))
-                {
-                    if (isProtected)
-                    {
-                        root = ProtectionHelper.Decrypt(root, protectionAlgorithm);
-                    }
-                }
-                else
-                {
-                    throw new CryptographicException($"Attribute \"protected\" is not a boolean value.");
-                }
-            }
-            return root;
+            return document;
         }
 
-        private XElement Clean(XElement root)
+        private XDocument Clean()
         {
-            XElement result = XElement.Parse(root.ToString());
+            XDocument result = new XDocument(_document);
             if (_default != null && _default.Properties.Count == 0 && !_default.Comment.HasValue)
             {
                 result.Element("default").Remove();
-            }
-            if (_sections != null && _sections.Count > 0)
-            {
-                foreach (XElement section in result.Elements("section"))
-                {
-                    XComment comment = null;
-                    XNode pre = section.PreviousNode;
-                    if (pre != null && pre.NodeType == XmlNodeType.Comment)
-                    {
-                        comment = (XComment)pre;
-                    }
-                    if (!section.HasElements && comment == null)
-                    {
-                        section.Remove();
-                    }
-                }
             }
             return result;
         }
@@ -411,11 +355,11 @@ namespace Honoo.Configuration
         private void GetDefault(out XElement content, out XComment comment)
         {
             comment = null;
-            content = _root.Element(_namespace + "default");
+            content = _document.Root.Element(_namespace + "default");
             if (content == null)
             {
                 content = new XElement(_namespace + "default");
-                _root.AddFirst(content);
+                _document.Root.AddFirst(content);
             }
             else
             {

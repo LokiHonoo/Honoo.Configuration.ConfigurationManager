@@ -1,5 +1,6 @@
 ﻿using Honoo.Configuration;
 using System;
+using System.IO;
 
 namespace Test
 {
@@ -12,18 +13,36 @@ namespace Test
         {
             using (XConfigManager manager = new XConfigManager())
             {
-                manager.Default.Comment.SetValue("default comment");
-                manager.Default.Properties.AddOrUpdate("prop1", new XString("prop1 value.")).Comment.SetValue("prop1 comment.");
+                using (Stream stream = new MemoryStream())
+                {
+                    manager.Default.Comment.SetValue("default comment");
+                    manager.Default.Properties.AddOrUpdate("prop1", new XString("prop1 value.")).Comment.SetValue("prop1 comment.");
+                    manager.Default.Properties.AddOrUpdate("prop1", new XString("prop1 value reset.")).Comment.SetValue("prop1 comment reset.");
 
-                XDictionary section = manager.Sections.GetOrAdd("section1");
-                section.Comment.SetValue("section1 comment.");
-                section.Properties.AddOrUpdate("prop1", new XString("123456789")).Comment.SetValue("prop1 comment.");
-                //
-                //
-                //
-                Console.WriteLine(manager.Default.Comment.GetValue());
-                Console.WriteLine(manager.Sections["section1"].Comment.GetValue());
-                Console.WriteLine(manager.Sections["section1"].Properties["prop1"].Comment.GetValue());
+                    XDictionary section = manager.Sections.GetOrAdd("section1");
+                    section.Comment.SetValue("section1 comment.");
+                    section.Properties.AddOrUpdate("prop1", new XString("123456789")).Comment.SetValue("prop1 comment.");
+
+                    manager.Save(stream);
+                    //
+                    //
+                    //
+                    Console.WriteLine(manager.Default.Comment.GetValue());
+                    Console.WriteLine(manager.Default.Properties["prop1"].Comment.GetValue());
+                    Console.WriteLine(manager.Sections["section1"].Comment.GetValue());
+                    Console.WriteLine(manager.Sections["section1"].Properties["prop1"].Comment.GetValue());
+                    Console.WriteLine();
+
+                    stream.Seek(0, SeekOrigin.Begin);
+                    using (XConfigManager manager2 = new XConfigManager(stream))
+                    {
+                        Console.WriteLine(manager2.Default.Comment.GetValue());
+                        Console.WriteLine(manager2.Default.Properties["prop1"].Comment.GetValue());
+                        Console.WriteLine(manager2.Sections["section1"].Comment.GetValue());
+                        Console.WriteLine(manager2.Sections["section1"].Properties["prop1"].Comment.GetValue());
+                        Console.WriteLine();
+                    }
+                }
             }
 
             using (AppSettingsManager manager = new AppSettingsManager())

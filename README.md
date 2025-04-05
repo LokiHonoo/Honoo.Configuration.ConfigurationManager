@@ -29,9 +29,7 @@
 
 提供对标准节点 appSettings、connectionStrings、configSections assemblyBinding/linkedConfiguration 节点的有限读写支持。
 
-提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-
-提供 XConfigManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
+提供 XConfigManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型嵌套。
 
 ## GUIDE
 
@@ -352,12 +350,16 @@ internal static void Create()
     //
     // 读取加密配置文件。加密方式和 ASP.NET 加密不兼容。
     //
-    using (ConfigurationManager manager = new ConfigurationManager(filePath, rsa))
+    using (XConfigManager manager = new XConfigManager(filePath))
     {
         //
-        // 加密方式保存到指定的文件。
+        // 配置容器加解密。
         //
-        manager.Save(filePath, rsa);
+        manager.Default.Encrypt(rsa);
+        manager.Default.Decrypt(rsa);
+        XSection section1 = manager.Sections.GetOrAdd("section1");
+        section1.Encrypt(rsa);
+        section1.Decrypt(rsa);
     }
 }
 

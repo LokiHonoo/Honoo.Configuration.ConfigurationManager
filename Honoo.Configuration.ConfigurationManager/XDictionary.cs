@@ -1,4 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Security.Cryptography;
+using System.Xml.Linq;
 
 namespace Honoo.Configuration
 {
@@ -10,7 +12,7 @@ namespace Honoo.Configuration
     {
         #region Members
 
-        private readonly XDictionaryPropertySet _properties;
+        private XDictionaryPropertySet _properties;
 
         /// <summary>
         /// 获取配置属性集合。
@@ -34,6 +36,28 @@ namespace Honoo.Configuration
             _properties = new XDictionaryPropertySet(content);
         }
 
+        internal XDictionary(XElement content, XComment comment, bool isProtected) : base(XPropertyKind.XDictionary, content, comment, isProtected)
+        {
+            if (!isProtected)
+            {
+                _properties = new XDictionaryPropertySet(content);
+            }
+        }
+
         #endregion Construction
+
+        /// <summary>
+        /// 加密或解密此配置属性。
+        /// </summary>
+        /// <param name="encrypt">加密或解密此配置属性。</param>
+        /// <param name="protectionAlgorithm">指定一个非对称加密算法。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        protected override XElement Reset(bool encrypt, RSA protectionAlgorithm)
+        {
+            XElement content = base.Reset(encrypt, protectionAlgorithm);
+            _properties = encrypt ? null : new XDictionaryPropertySet(content);
+            return content;
+        }
     }
 }

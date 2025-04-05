@@ -69,24 +69,98 @@ namespace Test
             {
                 using (XConfigManager manager = new XConfigManager())
                 {
-                    manager.Default.Properties.AddOrUpdate("prop1", new XString("This is \"protection\" test.")).Comment.SetValue("This is \"protection\" test.");
-                    //
-                    // 加密方式保存到指定的文件。
-                    //
-                    manager.Save(writer, rsa);
+                    manager.Default.Properties.AddOrUpdate("prop1", new XString("test.")).Comment.SetValue("test.");
+                    XSection section1 = manager.Sections.GetOrAdd("section1");
+                    section1.Comment.SetValue("test.");
+                    section1.Attributes.AddOrUpdate("attr1", new XConfigAttribute("test attr."));
+                    section1.Properties.AddOrUpdate("prop1", new XString("test.")).Comment.SetValue("test.");
+                    section1.Properties.AddOrUpdate("prop2", new XDictionary()).Properties.AddOrUpdate("prop3", new XString("test."));
+
+                    Console.WriteLine("AAA --------------------------------------------------");
+                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                    {
+                        if (node.NodeType == System.Xml.XmlNodeType.Element)
+                        {
+                            Console.WriteLine(node.NodeType + "  " + ((XElement)node).Name.LocalName);
+                        }
+                        else
+                        {
+                            Console.WriteLine(node.NodeType);
+                        }
+                    }
+
+                    section1.Encrypt(rsa);
+                    manager.Save(writer);
                     writer.Close();
+
+                    Console.WriteLine("BBB --------------------------------------------------");
+                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                    {
+                        if (node.NodeType == System.Xml.XmlNodeType.Element)
+                        {
+                            Console.WriteLine(node.NodeType + "  " + ((XElement)node).Name.LocalName);
+                        }
+                        else
+                        {
+                            Console.WriteLine(node.NodeType);
+                        }
+                    }
                 }
             }
             Console.WriteLine(sb.ToString());
             Console.WriteLine();
+            Console.WriteLine("EEE --------------------------------------------------");
+            foreach (XNode node in XDocument.Parse(sb.ToString()).DescendantNodes())
+            {
+                if (node.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    Console.WriteLine(node.NodeType + "  " + ((XElement)node).Name.LocalName);
+                }
+                else
+                {
+                    Console.WriteLine(node.NodeType);
+                }
+            }
             //
             // 读取加密配置文件。加密方式和 ASP.NET 加密不兼容。
             //
             using (XmlReader reader = XmlReader.Create(new StringReader(sb.ToString())))
             {
-                using (XConfigManager manager = new XConfigManager(reader, rsa))
+                using (XConfigManager manager = new XConfigManager(reader))
                 {
+                    Console.WriteLine("CCC --------------------------------------------------");
+                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                    {
+                        if (node.NodeType == System.Xml.XmlNodeType.Element)
+                        {
+                            Console.WriteLine(node.NodeType + "  " + ((XElement)node).Name.LocalName);
+                        }
+                        else
+                        {
+                            Console.WriteLine(node.NodeType);
+                        }
+                    }
+
+                    Console.WriteLine();
+                    XSection section1 = manager.Sections.GetValue("section1");
+                    section1.Decrypt(rsa);
+                    section1.Attributes.GetValue("attr1");
+                    section1.Properties.GetValue<XString>("prop1");
                     Console.WriteLine(manager.ToString());
+                    Console.WriteLine();
+
+                    Console.WriteLine("DDD --------------------------------------------------");
+                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                    {
+                        if (node.NodeType == System.Xml.XmlNodeType.Element)
+                        {
+                            Console.WriteLine(node.NodeType + "  " + ((XElement)node).Name.LocalName);
+                        }
+                        else
+                        {
+                            Console.WriteLine(node.NodeType);
+                        }
+                    }
                 }
             }
         }
