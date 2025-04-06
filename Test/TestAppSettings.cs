@@ -1,6 +1,5 @@
 ﻿using Honoo.Configuration;
 using System;
-using System.IO;
 
 namespace Test
 {
@@ -65,7 +64,7 @@ namespace Test
                 Console.WriteLine(value2);
                 //
                 AddProperty value3 = manager.AppSettings.Properties["prop3"];
-                Console.WriteLine(BitConverter.ToString(value3.GetBytesValue()));
+                Console.WriteLine(BitConverter.ToString(value3.GetBytesValue(XStringFormat.Hex)));
                 //
                 if (manager.AppSettings.Properties.TryGetValue("prop4", out AddProperty value4))
                 {

@@ -52,15 +52,15 @@ namespace Honoo.Configuration
                     }
                     if (content.Name == XConfigManager.Namespace + "dictionary")
                     {
-                        _properties.Add(new XDictionary(content, comment));
+                        _properties.Add(new XDictionary(content, comment, ProtectionHelper.QueryProtected(content)));
                     }
                     else if (content.Name == XConfigManager.Namespace + "list")
                     {
-                        _properties.Add(new XList(content, comment));
+                        _properties.Add(new XList(content, comment, ProtectionHelper.QueryProtected(content)));
                     }
                     else if (content.Name == XConfigManager.Namespace + "string")
                     {
-                        _properties.Add(new XString(content, comment));
+                        _properties.Add(new XString(content, comment, ProtectionHelper.QueryProtected(content)));
                     }
                     else
                     {

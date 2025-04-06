@@ -8,14 +8,14 @@ namespace Honoo.Configuration
     internal static class ProtectionHelper
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5350:不要使用弱加密算法", Justification = "<挂起>")]
-        internal static XElement Decrypt(XElement root, RSA rsa)
+        internal static XElement Decrypt(XElement element, RSA rsa)
         {
-            XName name = root.Name;
+            XName name = element.Name;
             XNamespace ns = name.Namespace;
-            XElement keyElement = root.Element(ns + "EncryptedKey");
+            XElement keyElement = element.Element(ns + "EncryptedKey");
             string keyAlgorithm = keyElement.Attribute("Algorithm").Value;
             byte[] keyEncrypted = Convert.FromBase64String(keyElement.Element(ns + "CipherData").Value.Trim());
-            XElement dataElement = root.Element(ns + "EncryptedData");
+            XElement dataElement = element.Element(ns + "EncryptedData");
             string dataAlgorithm = dataElement.Attribute("Algorithm").Value;
             byte[] dataEncrypted = Convert.FromBase64String(dataElement.Element(ns + "CipherData").Value.Trim());
             byte[] pms;
@@ -85,14 +85,39 @@ namespace Honoo.Configuration
 
                 default: throw new CryptographicException($"Unknown encryption identifier -\"{dataAlgorithm}\".");
             }
-            return XElement.Parse(Encoding.UTF8.GetString(data));
+            XElement result = XElement.Parse(Encoding.UTF8.GetString(data));
+            result.Name = ns + result.Name.LocalName;
+            foreach (XElement ele in result.Descendants())
+            {
+                ele.Name = ns + ele.Name.LocalName;
+            }
+            return result;
         }
 
-        internal static XElement Encrypt(XElement root, RSA rsa)
+        internal static XElement Encrypt(XElement element, RSA rsa)
         {
-            XName name = root.Name;
+            XName name = element.Name;
+            XAttribute idAttribute;
+            if (element.Name == XConfigManager.Namespace + "default")
+            {
+                idAttribute = null;
+            }
+            else if (element.Name == XConfigManager.Namespace + "section")
+            {
+                idAttribute = element.Attribute("name");
+            }
+            else
+            {
+                idAttribute = element.Attribute("key");
+            }
             XNamespace ns = name.Namespace;
-            byte[] data = Encoding.UTF8.GetBytes(root.ToString());
+            XElement elementR = new XElement(element);
+            elementR.Name = elementR.Name.LocalName;
+            foreach (XElement ele in elementR.Descendants())
+            {
+                ele.Name = ele.Name.LocalName;
+            }
+            byte[] data = Encoding.UTF8.GetBytes(elementR.ToString());
             byte[] dataEncrypted;
             byte[] keyEncrypted;
             string dataAlgorithm = "http://www.w3.org/2001/04/xmlenc#aes128-cbc";
@@ -120,10 +145,30 @@ namespace Honoo.Configuration
             dataElement.Add(new XElement(ns + "CipherData", Convert.ToBase64String(dataEncrypted)));
 
             XElement result = new XElement(name);
+            if (idAttribute != null)
+            {
+                result.Add(new XAttribute(idAttribute.Name.LocalName, idAttribute.Value));
+            }
             result.Add(new XAttribute("protected", true));
             result.Add(keyElement);
             result.Add(dataElement);
             return result;
+        }
+
+        internal static bool QueryProtected(XElement content)
+        {
+            if (content.Attribute("protected") is XAttribute attribute)
+            {
+                if (bool.TryParse(attribute.Value, out bool isProtected))
+                {
+                    return isProtected;
+                }
+                else
+                {
+                    throw new CryptographicException($"Attribute \"protected\" is not a boolean value.");
+                }
+            }
+            return false;
         }
 
         private static byte[] Decrypt(SymmetricAlgorithm algorithm, byte[] key, byte[] iv, byte[] data)

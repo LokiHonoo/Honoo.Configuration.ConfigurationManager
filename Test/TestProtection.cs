@@ -33,43 +33,12 @@ namespace Test
             StringBuilder sb = new StringBuilder();
             using (XmlWriter writer = XmlWriter.Create(sb, writerSettings))
             {
-                //
-                // 读取加密配置文件。加密方式和 ASP.NET 加密不兼容。
-                //
-                using (ConfigurationManager manager = new ConfigurationManager())
-                {
-                    manager.AppSettings.Properties.AddOrUpdate("prop1", new AddProperty("This is \"protection\" test.")).Comment.SetValue("This is \"protection\" test.");
-                    //
-                    // 加密方式保存到指定的文件。
-                    //
-                    manager.Save(writer, rsa);
-                    writer.Close();
-                }
-            }
-            Console.WriteLine(sb.ToString());
-            Console.WriteLine();
-            //
-            //
-            //
-            using (XmlReader reader = XmlReader.Create(new StringReader(sb.ToString())))
-            {
-                using (ConfigurationManager manager = new ConfigurationManager(reader, rsa))
-                {
-                    Console.WriteLine(manager.ToString());
-                }
-            }
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            //
-            //
-            //
-            sb = new StringBuilder();
-            using (XmlWriter writer = XmlWriter.Create(sb, writerSettings))
-            {
                 using (XConfigManager manager = new XConfigManager())
                 {
                     manager.Default.Properties.AddOrUpdate("prop1", new XString("test.")).Comment.SetValue("test.");
+                    manager.Default.Properties.AddOrUpdate("prop2", new XString("test.")).Encrypt(rsa);
+                    manager.Default.Properties.AddOrUpdate("prop3", new XList()).Encrypt(rsa);
+                    manager.Default.Properties.AddOrUpdate("prop4", new XDictionary()).Encrypt(rsa);
                     XSection section1 = manager.Sections.GetOrAdd("section1");
                     section1.Comment.SetValue("test.");
                     section1.Attributes.AddOrUpdate("attr1", new XConfigAttribute("test attr."));
@@ -77,7 +46,7 @@ namespace Test
                     section1.Properties.AddOrUpdate("prop2", new XDictionary()).Properties.AddOrUpdate("prop3", new XString("test."));
 
                     Console.WriteLine("AAA --------------------------------------------------");
-                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                    foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
                     {
                         if (node.NodeType == System.Xml.XmlNodeType.Element)
                         {
@@ -94,7 +63,7 @@ namespace Test
                     writer.Close();
 
                     Console.WriteLine("BBB --------------------------------------------------");
-                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                    foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
                     {
                         if (node.NodeType == System.Xml.XmlNodeType.Element)
                         {
@@ -109,7 +78,7 @@ namespace Test
             }
             Console.WriteLine(sb.ToString());
             Console.WriteLine();
-            Console.WriteLine("EEE --------------------------------------------------");
+            Console.WriteLine("CCC --------------------------------------------------");
             foreach (XNode node in XDocument.Parse(sb.ToString()).DescendantNodes())
             {
                 if (node.NodeType == System.Xml.XmlNodeType.Element)
@@ -128,8 +97,8 @@ namespace Test
             {
                 using (XConfigManager manager = new XConfigManager(reader))
                 {
-                    Console.WriteLine("CCC --------------------------------------------------");
-                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                    Console.WriteLine("DDD --------------------------------------------------");
+                    foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
                     {
                         if (node.NodeType == System.Xml.XmlNodeType.Element)
                         {
@@ -142,6 +111,9 @@ namespace Test
                     }
 
                     Console.WriteLine();
+                    manager.Default.Properties.GetValue<XString>("prop2").Decrypt(rsa);
+                    manager.Default.Properties.GetValue<XList>("prop3").Decrypt(rsa);
+                    manager.Default.Properties.GetValue<XProperty>("prop4").Decrypt(rsa);
                     XSection section1 = manager.Sections.GetValue("section1");
                     section1.Decrypt(rsa);
                     section1.Attributes.GetValue("attr1");
@@ -149,8 +121,8 @@ namespace Test
                     Console.WriteLine(manager.ToString());
                     Console.WriteLine();
 
-                    Console.WriteLine("DDD --------------------------------------------------");
-                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                    Console.WriteLine("EEE --------------------------------------------------");
+                    foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
                     {
                         if (node.NodeType == System.Xml.XmlNodeType.Element)
                         {

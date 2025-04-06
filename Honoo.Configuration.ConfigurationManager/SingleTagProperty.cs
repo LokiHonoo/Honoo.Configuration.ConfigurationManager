@@ -58,12 +58,18 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取转换为 <see cref="byte"/>[] 格式的数据值。
         /// </summary>
-        /// <param name="removes">要移除的字符集合。</param>
+        /// <param name="sourceFormat">指定要转换为 <see cref="byte"/>[] 类型的字符串的源格式。</param>
+        /// <param name="removes">移除指定的字符后再转换。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public byte[] GetBytesValue(params string[] removes)
+        public byte[] GetBytesValue(XStringFormat sourceFormat, params string[] removes)
         {
-            return XValueHelper.Parse(_value, removes);
+            switch (sourceFormat)
+            {
+                case XStringFormat.Binary: return XValueHelper.BinaryToBytes(_value, removes);
+                case XStringFormat.Hex: default: return XValueHelper.HexToBytes(_value, removes);
+                case XStringFormat.Base64: return Convert.FromBase64String(_value);
+            }
         }
 
         /// <summary>

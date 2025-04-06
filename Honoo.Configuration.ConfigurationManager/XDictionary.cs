@@ -26,14 +26,9 @@ namespace Honoo.Configuration
         /// <summary>
         /// 初始化 XDictionary 类的新实例。
         /// </summary>
-        public XDictionary() : base(XPropertyKind.XDictionary, new XElement(XConfigManager.Namespace + "dictionary"), null)
+        public XDictionary() : base(XPropertyKind.XDictionary, new XElement(XConfigManager.Namespace + "dictionary"), null, false)
         {
             _properties = new XDictionaryPropertySet(base.Content);
-        }
-
-        internal XDictionary(XElement content, XComment comment) : base(XPropertyKind.XDictionary, content, comment)
-        {
-            _properties = new XDictionaryPropertySet(content);
         }
 
         internal XDictionary(XElement content, XComment comment, bool isProtected) : base(XPropertyKind.XDictionary, content, comment, isProtected)
@@ -47,16 +42,26 @@ namespace Honoo.Configuration
         #endregion Construction
 
         /// <summary>
-        /// 加密或解密此配置属性。
+        /// 解密此配置属性。
         /// </summary>
-        /// <param name="encrypt">加密或解密此配置属性。</param>
-        /// <param name="protectionAlgorithm">指定一个非对称加密算法。</param>
-        /// <returns></returns>
+        /// <param name="protectionAlgorithm">指定一个非对称加密算法，算法必须拥有私钥。</param>
         /// <exception cref="Exception"></exception>
-        protected override XElement Reset(bool encrypt, RSA protectionAlgorithm)
+        protected override XElement DecryptInternal(RSA protectionAlgorithm)
         {
-            XElement content = base.Reset(encrypt, protectionAlgorithm);
-            _properties = encrypt ? null : new XDictionaryPropertySet(content);
+            XElement content = base.DecryptInternal(protectionAlgorithm);
+            _properties = new XDictionaryPropertySet(content);
+            return content;
+        }
+
+        /// <summary>
+        /// 加密此配置属性。
+        /// </summary>
+        /// <param name="protectionAlgorithm">指定一个非对称加密算法，算法可以是公钥或私钥。</param>
+        /// <exception cref="Exception"></exception>
+        protected override XElement EncryptInternal(RSA protectionAlgorithm)
+        {
+            XElement content = base.EncryptInternal(protectionAlgorithm);
+            _properties = null;
             return content;
         }
     }

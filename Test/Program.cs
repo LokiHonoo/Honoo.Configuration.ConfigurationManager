@@ -9,7 +9,7 @@ namespace Test
         {
             string filePath1 = "config.main.xml";
             string filePath5 = "honoo-settings.xml";
-            bool clear = false;
+            bool clear = true;
             //
             // 清除内容。
             //

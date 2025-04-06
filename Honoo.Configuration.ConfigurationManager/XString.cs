@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Xml.Linq;
 
 namespace Honoo.Configuration
@@ -24,14 +25,17 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="value">文本类型的值。</param>
         /// <exception cref="Exception"/>
-        public XString(string value) : base(XPropertyKind.XString, GetElement(value), null)
+        public XString(string value) : base(XPropertyKind.XString, GetElement(value), null, false)
         {
             _value = base.Content.Value;
         }
 
-        internal XString(XElement content, XComment comment) : base(XPropertyKind.XString, content, comment)
+        internal XString(XElement content, XComment comment, bool isProtected) : base(XPropertyKind.XString, content, comment, isProtected)
         {
-            _value = base.Content.Value;
+            if (!isProtected)
+            {
+                _value = base.Content.Value;
+            }
         }
 
         #endregion Construction
@@ -51,12 +55,18 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取转换为 <see cref="byte"/>[] 格式的数据值。
         /// </summary>
-        /// <param name="removes">要移除的字符集合。</param>
+        /// <param name="sourceFormat">指定要转换为 <see cref="byte"/>[] 类型的字符串的源格式。</param>
+        /// <param name="removes">移除指定的字符后再转换。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public byte[] GetBytesValue(params string[] removes)
+        public byte[] GetBytesValue(XStringFormat sourceFormat, params string[] removes)
         {
-            return XValueHelper.Parse(_value, removes);
+            switch (sourceFormat)
+            {
+                case XStringFormat.Binary: return XValueHelper.BinaryToBytes(_value, removes);
+                case XStringFormat.Hex: default: return XValueHelper.HexToBytes(_value, removes);
+                case XStringFormat.Base64: return Convert.FromBase64String(_value);
+            }
         }
 
         /// <summary>
@@ -392,6 +402,30 @@ namespace Honoo.Configuration
         public override int GetHashCode()
         {
             return -414149184 + EqualityComparer<string>.Default.GetHashCode(_value);
+        }
+
+        /// <summary>
+        /// 解密此配置属性。
+        /// </summary>
+        /// <param name="protectionAlgorithm">指定一个非对称加密算法，算法必须拥有私钥。</param>
+        /// <exception cref="Exception"></exception>
+        protected override XElement DecryptInternal(RSA protectionAlgorithm)
+        {
+            XElement content = base.DecryptInternal(protectionAlgorithm);
+            _value = base.Content.Value;
+            return content;
+        }
+
+        /// <summary>
+        /// 加密此配置属性。
+        /// </summary>
+        /// <param name="protectionAlgorithm">指定一个非对称加密算法，算法可以是公钥或私钥。</param>
+        /// <exception cref="Exception"></exception>
+        protected override XElement EncryptInternal(RSA protectionAlgorithm)
+        {
+            XElement content = base.EncryptInternal(protectionAlgorithm);
+            _value = null;
+            return content;
         }
 
         private static XElement GetElement(string value)

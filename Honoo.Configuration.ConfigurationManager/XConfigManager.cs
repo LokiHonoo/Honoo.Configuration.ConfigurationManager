@@ -16,7 +16,7 @@ namespace Honoo.Configuration
         private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
         private static readonly XmlReaderSettings _readerSettings = new XmlReaderSettings() { IgnoreWhitespace = true };
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
-        private XDefault _default;
+        private XDictionary _default;
         private bool _disposed;
         private XDocument _document;
         private XSectionSet _sections;
@@ -24,14 +24,13 @@ namespace Honoo.Configuration
         /// <summary>
         /// 映射到 &lt;default /&gt; 配置容器节点。
         /// </summary>
-        public XDefault Default
+        public XDictionary Default
         {
             get
             {
                 if (!_disposed && _default == null)
                 {
-                    GetDefault(out XElement content, out XComment comment);
-                    _default = new XDefault(content, comment);
+                    _default = GetDefault();
                 }
                 return _default;
             }
@@ -165,7 +164,6 @@ namespace Honoo.Configuration
                 {
                     _document = XDocument.Load(reader);
                     _document = Coerce(_document);
-                    _document.Changed += (s, e) => { OnChanged(); };
                 }
             }
             else if (createNewIfFileNotExists)
@@ -313,13 +311,15 @@ namespace Honoo.Configuration
         public void Clear()
         {
             _default = null;
+            _sections = null;
             _document.Root.RemoveAll();
         }
 
         /// <summary>
         /// 获取 XML 文档的副本。
         /// </summary>
-        public XDocument CloneDocument()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
+        public XDocument GetDocumentClone()
         {
             return new XDocument(_document);
         }
@@ -352,10 +352,10 @@ namespace Honoo.Configuration
             return result;
         }
 
-        private void GetDefault(out XElement content, out XComment comment)
+        private XDictionary GetDefault()
         {
-            comment = null;
-            content = _document.Root.Element(_namespace + "default");
+            XComment comment = null;
+            XElement content = _document.Root.Element(_namespace + "default");
             if (content == null)
             {
                 content = new XElement(_namespace + "default");
@@ -369,6 +369,7 @@ namespace Honoo.Configuration
                     comment = (XComment)pre;
                 }
             }
+            return new XDictionary(content, comment, ProtectionHelper.QueryProtected(content));
         }
     }
 }

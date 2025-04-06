@@ -47,7 +47,7 @@ namespace Honoo.Configuration
                     {
                         comment = (XComment)pre;
                     }
-                    XSection section = new XSection(content, comment);
+                    XSection section = new XSection(content, comment, ProtectionHelper.QueryProtected(content));
                     _sections.Add(name, section);
                 }
             }
@@ -67,7 +67,7 @@ namespace Honoo.Configuration
         {
             XElement content = new XElement(XConfigManager.Namespace + "section");
             content.SetAttributeValue("name", name);
-            XSection section = new XSection(content, null);
+            XSection section = new XSection(content, null, false);
             _sections.Add(name, section);
             _container.Add(content);
             return section;

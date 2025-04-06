@@ -49,7 +49,7 @@ namespace Test
                 //
                 // 附加配置容器。
                 //
-                XDictionary section = manager.Sections.GetOrAdd("section1");
+                XSection section = manager.Sections.GetOrAdd("section1");
                 section.Comment.SetValue("This is \"XCconfig\" section1");
                 section.Properties.AddOrUpdate("prop1", new XString("123456789"));
                 //
@@ -57,7 +57,7 @@ namespace Test
                 //
                 manager.Save(filePath);
 
-                foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
                 {
                     if (node.NodeType == System.Xml.XmlNodeType.Element)
                     {
@@ -78,7 +78,7 @@ namespace Test
             //
             using (XConfigManager manager = new XConfigManager(filePath))
             {
-                foreach (XNode node in manager.CloneDocument().DescendantNodes())
+                foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
                 {
                     if (node.NodeType == System.Xml.XmlNodeType.Element)
                     {
@@ -107,11 +107,11 @@ namespace Test
                 Console.WriteLine(value3.Properties.GetValue<XString>(0).GetStringValue());
                 //
                 XString value5 = ((XDictionary)value3.Properties[1]).Properties.GetValue<XString>("prop5");
-                byte[] val5 = value5.GetBytesValue();
+                byte[] val5 = value5.GetBytesValue(XStringFormat.Hex);
                 Console.WriteLine(BitConverter.ToString(val5));
                 Console.WriteLine(value5.Attributes.GetValue("attr1").GetStringValue());
                 //
-                XDictionary section = manager.Sections.GetValue("section1");
+                XSection section = manager.Sections.GetValue("section1");
                 Console.WriteLine(section.Comment.GetValue());
                 Console.WriteLine(section.Properties.GetValue<XString>("prop1").GetInt64Value());
             }

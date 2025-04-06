@@ -19,11 +19,7 @@ Used to read/write default profiles or custom profiles in the .NET Framework 4.0
 
 Read/write support for appSettings, connectionStrings, configSections, assemblyBinding/linkedConfiguration nodes.
 
-Provides an method to encrypt the configuration file (not a ASP.NET encryption). 
-
-Waring: The encryption method is different from ASP.NET, and the generated encryption file can only using by this project tool.
-
-Provides another "XConfigManager" class to read/write a concise configuration file, encryption supported, dictionary/list nesting supported.
+Provides another "XConfigManager" class to read/write a concise configuration file, dictionary/list nesting supported, encryption supported.
 
 ## GUIDE
 

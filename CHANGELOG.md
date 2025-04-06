@@ -6,6 +6,7 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [CHANGELOG](#changelog)
+    - [1.5.10](#1510)
     - [1.5.9](#159)
     - [1.5.7](#157)
     - [1.5.6](#156)
@@ -26,6 +27,12 @@
 <!-- /code_chunk_output -->
 
 ## CHANGELOG
+
+### 1.5.10
+
+**Removed* 取消 ConfigurationManager 加密。
+
+**Features* XConfigManager 支持节点加密。
 
 ### 1.5.9
 

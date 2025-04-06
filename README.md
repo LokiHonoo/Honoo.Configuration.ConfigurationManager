@@ -29,7 +29,7 @@
 
 提供对标准节点 appSettings、connectionStrings、configSections assemblyBinding/linkedConfiguration 节点的有限读写支持。
 
-提供 XConfigManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型嵌套。
+提供 XConfigManager 类读写一个精简的配置属性文件，支持字典/列表类型嵌套，支持节点加密。
 
 ## GUIDE
 
@@ -359,7 +359,10 @@ internal static void Create()
         manager.Default.Decrypt(rsa);
         XSection section1 = manager.Sections.GetOrAdd("section1");
         section1.Encrypt(rsa);
-        section1.Decrypt(rsa);
+        if (section1.IsProtected)
+        {
+           section1.Decrypt(rsa);
+        }
     }
 }
 
@@ -408,7 +411,7 @@ internal static void Create(string filePath)
         //
         // 附加配置容器。
         //
-        XDictionary section = manager.Sections.GetOrAdd("section1");
+        XSection section = manager.Sections.GetOrAdd("section1");
         section.Comment.SetValue("This is \"XCconfig\" section1");
         section.Properties.AddOrUpdate("prop1", new XString("123456789"));
         //
@@ -447,11 +450,11 @@ internal static void Load(string filePath)
         Console.WriteLine(value3.Properties.GetValue<XString>(0).GetStringValue());
         //
         XString value5 = ((XDictionary)value3.Properties[1]).Properties.GetValue<XString>("prop5");
-        byte[] val5 = value5.GetBytesValue();
+        byte[] val5 = value5.GetBytesValue(XStringFormat.Hex);
         Console.WriteLine(BitConverter.ToString(val5));
         Console.WriteLine(value5.Attributes.GetValue("attr1").GetStringValue());
         //
-        XDictionary section = manager.Sections.GetValue("section1");
+        XSection section = manager.Sections.GetValue("section1");
         Console.WriteLine(section.Comment.GetValue());
         Console.WriteLine(section.Properties.GetValue<XString>("prop1").GetInt64Value());
     }
