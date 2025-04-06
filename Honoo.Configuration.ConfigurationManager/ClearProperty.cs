@@ -5,18 +5,18 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性。
     /// </summary>
-    public sealed class ClearProperty : TagProperty
+    public sealed class ClearProperty : ConfigProperty
     {
         #region Construction
 
         /// <summary>
         /// 创建 ClearProperty 的新实例。
         /// </summary>
-        public ClearProperty() : base(TagPropertyKind.ClearProperty, new XElement("clear"), null)
+        public ClearProperty() : base(ConfigPropertyType.ClearProperty, new XElement("clear"), null)
         {
         }
 
-        internal ClearProperty(XElement content, XComment comment) : base(TagPropertyKind.ClearProperty, content, comment)
+        internal ClearProperty(XElement content, XComment comment) : base(ConfigPropertyType.ClearProperty, content, comment)
         {
         }
 

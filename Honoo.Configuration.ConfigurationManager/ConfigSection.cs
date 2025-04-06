@@ -10,7 +10,7 @@ namespace Honoo.Configuration
         private readonly XConfigComment _comment;
         private readonly XElement _content;
         private readonly XElement _declaration;
-        private readonly ConfigSectionKind _kind;
+        private readonly ConfigSectionType _sectionType;
 
         /// <summary>
         /// 配置容器的注释。
@@ -20,7 +20,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取此配置容器的类型。
         /// </summary>
-        public ConfigSectionKind Kind => _kind;
+        public ConfigSectionType SectionType => _sectionType;
 
         internal XElement Content => _content;
         internal XElement Declaration => _declaration;
@@ -30,13 +30,13 @@ namespace Honoo.Configuration
         /// <summary>
         /// 创建 ConfigSection 的新实例。
         /// </summary>
-        /// <param name="kind">配置容器的类型。</param>
+        /// <param name="sectionType">配置容器的类型。</param>
         /// <param name="declaration">配置容器的描述节点。</param>
         /// <param name="content">配置容器的内容节点。</param>
         /// <param name="comment">配置容器的注释节点。</param>
-        protected ConfigSection(ConfigSectionKind kind, XElement declaration, XElement content, XComment comment)
+        protected ConfigSection(ConfigSectionType sectionType, XElement declaration, XElement content, XComment comment)
         {
-            _kind = kind;
+            _sectionType = sectionType;
             _declaration = declaration;
             _content = content;
             _comment = new XConfigComment(comment, content);

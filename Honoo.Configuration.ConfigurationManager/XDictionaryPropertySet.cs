@@ -76,7 +76,7 @@ namespace Honoo.Configuration
                     }
                     else
                     {
-                        throw new ArgumentException($"The incorrect kind \"{content.Name.LocalName}\".");
+                        throw new ArgumentException($"The incorrect type \"{content.Name.LocalName}\".");
                     }
                 }
             }

@@ -17,7 +17,7 @@ namespace Honoo.Configuration
         #region Construction
 
         internal NameValueSection(XElement declaration, XElement content, XComment comment)
-            : base(ConfigSectionKind.NameValueSection, declaration, content, comment)
+            : base(ConfigSectionType.NameValueSection, declaration, content, comment)
         {
             _properties = new NameValuePropertySet(content);
         }

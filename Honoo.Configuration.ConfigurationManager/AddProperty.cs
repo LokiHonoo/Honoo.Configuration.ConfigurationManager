@@ -8,7 +8,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性。
     /// </summary>
-    public sealed class AddProperty : TagProperty, IEquatable<AddProperty>, IComparer<AddProperty>, IComparable
+    public sealed class AddProperty : ConfigProperty, IEquatable<AddProperty>, IComparer<AddProperty>, IComparable
     {
         private string _value;
 
@@ -23,12 +23,12 @@ namespace Honoo.Configuration
         /// 创建 AddProperty 的新实例。
         /// </summary>
         /// <param name="value">配置属性的值。</param>
-        public AddProperty(string value) : base(TagPropertyKind.AddProperty, GetElement(value), null)
+        public AddProperty(string value) : base(ConfigPropertyType.AddProperty, GetElement(value), null)
         {
             _value = base.Content.Attribute("value").Value;
         }
 
-        internal AddProperty(XElement content, XComment comment) : base(TagPropertyKind.AddProperty, content, comment)
+        internal AddProperty(XElement content, XComment comment) : base(ConfigPropertyType.AddProperty, content, comment)
         {
             _value = base.Content.Attribute("value").Value;
         }

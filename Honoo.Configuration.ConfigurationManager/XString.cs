@@ -25,12 +25,12 @@ namespace Honoo.Configuration
         /// </summary>
         /// <param name="value">文本类型的值。</param>
         /// <exception cref="Exception"/>
-        public XString(string value) : base(XPropertyKind.XString, GetElement(value), null, false)
+        public XString(string value) : base(XPropertyType.XString, GetElement(value), null, false)
         {
             _value = base.Content.Value;
         }
 
-        internal XString(XElement content, XComment comment, bool isProtected) : base(XPropertyKind.XString, content, comment, isProtected)
+        internal XString(XElement content, XComment comment, bool isProtected) : base(XPropertyType.XString, content, comment, isProtected)
         {
             if (!isProtected)
             {

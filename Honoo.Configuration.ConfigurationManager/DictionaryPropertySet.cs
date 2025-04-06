@@ -9,12 +9,12 @@ namespace Honoo.Configuration
     /// <summary>
     /// 配置属性集合。
     /// </summary>
-    public sealed class DictionaryPropertySet : IEnumerable<KeyValuePair<string, TagProperty>>
+    public sealed class DictionaryPropertySet : IEnumerable<KeyValuePair<string, ConfigProperty>>
     {
         #region Members
 
         private readonly XElement _container;
-        private readonly Dictionary<string, TagProperty> _properties = new Dictionary<string, TagProperty>();
+        private readonly Dictionary<string, ConfigProperty> _properties = new Dictionary<string, ConfigProperty>();
 
         /// <summary>
         /// 获取配置属性集合中包含的元素数。
@@ -24,12 +24,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取配置属性集合的键的集合。
         /// </summary>
-        public Dictionary<string, TagProperty>.KeyCollection Keys => _properties.Keys;
+        public Dictionary<string, ConfigProperty>.KeyCollection Keys => _properties.Keys;
 
         /// <summary>
         /// 获取配置属性集合的值的集合。
         /// </summary>
-        public Dictionary<string, TagProperty>.ValueCollection Values => _properties.Values;
+        public Dictionary<string, ConfigProperty>.ValueCollection Values => _properties.Values;
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。
@@ -236,7 +236,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string key, out AddProperty value)
         {
-            if (_properties.TryGetValue(key, out TagProperty val))
+            if (_properties.TryGetValue(key, out ConfigProperty val))
             {
                 if (val is AddProperty va)
                 {
@@ -305,7 +305,7 @@ namespace Honoo.Configuration
         /// 返回循环访问集合的枚举数。
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<KeyValuePair<string, TagProperty>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, ConfigProperty>> GetEnumerator()
         {
             return _properties.GetEnumerator();
         }
@@ -322,7 +322,7 @@ namespace Honoo.Configuration
         /// <param name="value">配置属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public bool Remove(TagProperty value)
+        public bool Remove(ConfigProperty value)
         {
             string key = null;
             foreach (var val in _properties)
@@ -334,7 +334,7 @@ namespace Honoo.Configuration
             }
             if (key != null)
             {
-                TagProperty val = _properties[key];
+                ConfigProperty val = _properties[key];
                 val.Comment.Remove();
                 val.Content.Remove();
                 _properties.Remove(key);

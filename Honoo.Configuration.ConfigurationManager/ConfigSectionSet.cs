@@ -14,12 +14,12 @@ namespace Honoo.Configuration
     {
         #region Members
 
-        private static readonly Dictionary<Type, ConfigSectionKind> _kind = new Dictionary<Type, ConfigSectionKind>()
+        private static readonly Dictionary<Type, ConfigSectionType> _sectionTypes = new Dictionary<Type, ConfigSectionType>()
         {
-            { typeof(TextSection), ConfigSectionKind.TextSection },
-            { typeof(SingleTagSection), ConfigSectionKind.SingleTagSection },
-            { typeof(NameValueSection), ConfigSectionKind.NameValueSection },
-            { typeof(DictionarySection), ConfigSectionKind.DictionarySection }
+            { typeof(TextSection), ConfigSectionType.TextSection },
+            { typeof(SingleTagSection), ConfigSectionType.SingleTagSection },
+            { typeof(NameValueSection), ConfigSectionType.NameValueSection },
+            { typeof(DictionarySection), ConfigSectionType.DictionarySection }
         };
 
         private readonly XElement _contentContainer;
@@ -127,24 +127,24 @@ namespace Honoo.Configuration
             declaration.SetAttributeValue("name", name);
             XElement content = new XElement(name);
             ConfigSection section;
-            switch (_kind[typeof(T)])
+            switch (_sectionTypes[typeof(T)])
             {
-                case ConfigSectionKind.TextSection:
+                case ConfigSectionType.TextSection:
                     declaration.SetAttributeValue("type", "Honoo.Configuration.TextSectionHandler");
                     section = new TextSection(declaration, content, null);
                     break;
 
-                case ConfigSectionKind.SingleTagSection:
+                case ConfigSectionType.SingleTagSection:
                     declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
                     section = new SingleTagSection(declaration, content, null);
                     break;
 
-                case ConfigSectionKind.NameValueSection:
+                case ConfigSectionType.NameValueSection:
                     declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
                     section = new NameValueSection(declaration, content, null);
                     break;
 
-                case ConfigSectionKind.DictionarySection:
+                case ConfigSectionType.DictionarySection:
                     declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
                     section = new DictionarySection(declaration, content, null);
                     break;

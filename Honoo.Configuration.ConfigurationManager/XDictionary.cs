@@ -26,12 +26,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 初始化 XDictionary 类的新实例。
         /// </summary>
-        public XDictionary() : base(XPropertyKind.XDictionary, new XElement(XConfigManager.Namespace + "dictionary"), null, false)
+        public XDictionary() : base(XPropertyType.XDictionary, new XElement(XConfigManager.Namespace + "dictionary"), null, false)
         {
             _properties = new XDictionaryPropertySet(base.Content);
         }
 
-        internal XDictionary(XElement content, XComment comment, bool isProtected) : base(XPropertyKind.XDictionary, content, comment, isProtected)
+        internal XDictionary(XElement content, XComment comment, bool isProtected) : base(XPropertyType.XDictionary, content, comment, isProtected)
         {
             if (!isProtected)
             {

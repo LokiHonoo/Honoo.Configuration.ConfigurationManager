@@ -1,9 +1,9 @@
 ﻿namespace Honoo.Configuration
 {
     /// <summary>
-    /// 配置属性的类型。
+    /// 标签配置属性的类型。
     /// </summary>
-    public enum XPropertyKind
+    public enum XPropertyType
     {
         /// <summary>
         /// 字典配置属性类型。标签是 <see langword="&lt;dictionary /&gt;"/>，内容为字典配置属性集合。

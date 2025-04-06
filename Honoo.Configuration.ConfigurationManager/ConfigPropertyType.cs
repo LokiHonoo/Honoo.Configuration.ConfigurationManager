@@ -3,7 +3,7 @@
     /// <summary>
     /// 标签配置属性的类型。
     /// </summary>
-    public enum TagPropertyKind
+    public enum ConfigPropertyType
     {
         /// <summary>
         /// 配置属性的标签是 <see langword="&lt;add /&gt;"/>，并具有 <see langword="key"/>，<see langword="value"/> 属性字段。

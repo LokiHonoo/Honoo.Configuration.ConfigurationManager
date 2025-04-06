@@ -25,12 +25,12 @@ namespace Honoo.Configuration
         /// <summary>
         /// 初始化 XList 类的新实例。
         /// </summary>
-        public XList() : base(XPropertyKind.XList, new XElement(XConfigManager.Namespace + "list"), null, false)
+        public XList() : base(XPropertyType.XList, new XElement(XConfigManager.Namespace + "list"), null, false)
         {
             _properties = new XListPropertySet(base.Content);
         }
 
-        internal XList(XElement content, XComment comment, bool isProtected) : base(XPropertyKind.XList, content, comment, isProtected)
+        internal XList(XElement content, XComment comment, bool isProtected) : base(XPropertyType.XList, content, comment, isProtected)
         {
             if (!isProtected)
             {
