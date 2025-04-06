@@ -57,7 +57,7 @@ namespace Test
                 //
                 manager.Save(filePath);
 
-                foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
+                foreach (XNode node in manager.CloneDocument().DescendantNodes())
                 {
                     if (node.NodeType == System.Xml.XmlNodeType.Element)
                     {
@@ -78,7 +78,7 @@ namespace Test
             //
             using (XConfigManager manager = new XConfigManager(filePath))
             {
-                foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
+                foreach (XNode node in manager.CloneDocument().DescendantNodes())
                 {
                     if (node.NodeType == System.Xml.XmlNodeType.Element)
                     {

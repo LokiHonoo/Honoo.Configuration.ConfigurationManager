@@ -318,8 +318,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取 XML 文档的副本。
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:在适用处使用属性", Justification = "<挂起>")]
-        public XDocument GetDocumentClone()
+        public XDocument CloneDocument()
         {
             return new XDocument(_document);
         }

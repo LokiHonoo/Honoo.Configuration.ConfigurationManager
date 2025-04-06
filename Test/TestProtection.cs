@@ -46,7 +46,7 @@ namespace Test
                     section1.Properties.AddOrUpdate("prop2", new XDictionary()).Properties.AddOrUpdate("prop3", new XString("test."));
 
                     Console.WriteLine("AAA --------------------------------------------------");
-                    foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
+                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
                     {
                         if (node.NodeType == System.Xml.XmlNodeType.Element)
                         {
@@ -63,7 +63,7 @@ namespace Test
                     writer.Close();
 
                     Console.WriteLine("BBB --------------------------------------------------");
-                    foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
+                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
                     {
                         if (node.NodeType == System.Xml.XmlNodeType.Element)
                         {
@@ -98,7 +98,7 @@ namespace Test
                 using (XConfigManager manager = new XConfigManager(reader))
                 {
                     Console.WriteLine("DDD --------------------------------------------------");
-                    foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
+                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
                     {
                         if (node.NodeType == System.Xml.XmlNodeType.Element)
                         {
@@ -122,7 +122,7 @@ namespace Test
                     Console.WriteLine();
 
                     Console.WriteLine("EEE --------------------------------------------------");
-                    foreach (XNode node in manager.GetDocumentClone().DescendantNodes())
+                    foreach (XNode node in manager.CloneDocument().DescendantNodes())
                     {
                         if (node.NodeType == System.Xml.XmlNodeType.Element)
                         {
