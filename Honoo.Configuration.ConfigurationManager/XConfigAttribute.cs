@@ -24,7 +24,7 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 初始化 XConfigAttribute 类的新实例。
+        /// 创建 XConfigAttribute 类的新实例。
         /// </summary>
         /// <param name="value">文本类型的值。</param>
         /// <exception cref="Exception"/>

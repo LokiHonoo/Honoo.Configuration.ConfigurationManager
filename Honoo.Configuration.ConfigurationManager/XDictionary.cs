@@ -24,7 +24,7 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 初始化 XDictionary 类的新实例。
+        /// 创建 XDictionary 类的新实例。
         /// </summary>
         public XDictionary() : base(XPropertyType.XDictionary, new XElement(XConfigManager.Namespace + "dictionary"), null, false)
         {

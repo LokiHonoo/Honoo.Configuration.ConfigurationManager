@@ -26,7 +26,7 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 创建 TagProperty 的新实例。
+        /// 创建 ConfigProperty 的新实例。
         /// </summary>
         /// <param name="propertyType">配置属性的类型。</param>
         /// <param name="content">配置属性的内容节点。</param>

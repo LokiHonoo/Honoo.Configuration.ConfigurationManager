@@ -7,7 +7,7 @@ using System.Xml.Linq;
 namespace Honoo.Configuration
 {
     /// <summary>
-    /// 简单配置属性管理器。提供一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
+    /// 简单配置属性管理器。提供一个精简的配置属性文件，支持字典/列表类型嵌套，支持节点加密。
     /// </summary>
     public sealed class XConfigManager : IDisposable
     {

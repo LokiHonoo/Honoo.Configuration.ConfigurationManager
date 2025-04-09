@@ -11,7 +11,7 @@ namespace Honoo.Configuration
     public sealed class SingleTagProperty : IEquatable<SingleTagProperty>, IComparer<SingleTagProperty>, IComparable
     {
         private XAttribute _content;
-        private string _value;
+        private readonly string _value;
 
         /// <summary>
         /// 获取配置属性的值。

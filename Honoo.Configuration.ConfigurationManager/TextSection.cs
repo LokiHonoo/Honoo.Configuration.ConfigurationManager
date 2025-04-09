@@ -13,8 +13,8 @@ namespace Honoo.Configuration
     {
         #region Members
 
+        private readonly string _name;
         private XElement _content;
-        private string _name;
         private ConfigSectionSet _set;
 
         #endregion Members
@@ -100,7 +100,6 @@ namespace Honoo.Configuration
             if (emptyRemove ? value == null || string.IsNullOrWhiteSpace(value) : value == null)
             {
                 _set.Remove(_name);
-                _name = null;
                 _set = null;
                 _content = null;
                 return null;

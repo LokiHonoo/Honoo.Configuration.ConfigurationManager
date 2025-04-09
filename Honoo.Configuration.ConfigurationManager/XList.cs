@@ -23,7 +23,7 @@ namespace Honoo.Configuration
         #region Construction
 
         /// <summary>
-        /// 初始化 XList 类的新实例。
+        /// 创建 XList 类的新实例。
         /// </summary>
         public XList() : base(XPropertyType.XList, new XElement(XConfigManager.Namespace + "list"), null, false)
         {
