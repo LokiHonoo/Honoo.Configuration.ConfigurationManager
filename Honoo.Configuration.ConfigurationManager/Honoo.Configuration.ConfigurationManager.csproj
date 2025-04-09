@@ -20,7 +20,7 @@ manager.AppSettings.Properties.AddOrUpdate("prop1", "value");</Description>
     <PackageTags>Honoo;Configuration;ConfigurationManager;XConfigManager</PackageTags>
     <AssemblyName>Honoo.Configuration.ConfigurationManager</AssemblyName>
     <RootNamespace>Honoo.Configuration</RootNamespace>
-	<VersionPrefix>1.5.12</VersionPrefix>
+	<VersionPrefix>1.5.13</VersionPrefix>
     <PackageReadmeFile>Honoo.Configuration.ConfigurationManager.md</PackageReadmeFile>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>

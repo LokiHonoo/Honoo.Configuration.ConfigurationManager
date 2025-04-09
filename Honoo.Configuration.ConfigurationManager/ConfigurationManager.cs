@@ -85,6 +85,8 @@ namespace Honoo.Configuration
 
         internal static XNamespace AssemblyBindingNamespace => _assemblyBindingNamespace;
 
+        internal static XmlReaderSettings ReaderSettings => _readerSettings;
+
         #endregion Members
 
         #region Delegate

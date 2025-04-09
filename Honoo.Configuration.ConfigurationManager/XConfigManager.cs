@@ -16,7 +16,7 @@ namespace Honoo.Configuration
         private static readonly XNamespace _namespace = "https://github.com/LokiHonoo/Honoo.Configuration.ConfigurationManager/";
         private static readonly XmlReaderSettings _readerSettings = new XmlReaderSettings() { IgnoreWhitespace = true };
         private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings() { Indent = true, Encoding = new UTF8Encoding(false) };
-        private XDictionary _default;
+        private XDefault _default;
         private bool _disposed;
         private XDocument _document;
         private XSectionSet _sections;
@@ -24,7 +24,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 映射到 &lt;default /&gt; 配置容器节点。
         /// </summary>
-        public XDictionary Default
+        public XDefault Default
         {
             get
             {
@@ -351,7 +351,7 @@ namespace Honoo.Configuration
             return result;
         }
 
-        private XDictionary GetDefault()
+        private XDefault GetDefault()
         {
             XComment comment = null;
             XElement content = _document.Root.Element(_namespace + "default");
@@ -368,7 +368,7 @@ namespace Honoo.Configuration
                     comment = (XComment)pre;
                 }
             }
-            return new XDictionary(content, comment, ProtectionHelper.QueryProtected(content));
+            return new XDefault(content, comment, ProtectionHelper.QueryProtected(content));
         }
     }
 }

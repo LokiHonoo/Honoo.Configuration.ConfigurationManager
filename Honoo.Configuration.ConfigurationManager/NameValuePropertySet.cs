@@ -120,6 +120,17 @@ namespace Honoo.Configuration
             return value;
         }
 
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public AddProperty AddString(string key, string value)
+        {
+            return Add(key, new AddProperty(value));
+        }
+
         #endregion Add
 
         #region TryGetValue

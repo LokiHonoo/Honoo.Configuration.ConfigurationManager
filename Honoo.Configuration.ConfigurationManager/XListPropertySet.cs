@@ -28,11 +28,7 @@ namespace Honoo.Configuration
         public XProperty this[int index]
         {
             get => _properties[index];
-            set
-            {
-                RemoveAt(index);
-                Insert(index, value);
-            }
+            set => SetValue(index, value);
         }
 
         #region Construction
@@ -99,7 +95,7 @@ namespace Honoo.Configuration
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="values">配置属性的集合。</param>
         /// <exception cref="Exception"/>
-        public IEnumerable<T> AddRange<T>(IEnumerable<T> values) where T : XProperty
+        public void AddRange<T>(IEnumerable<T> values) where T : XProperty
         {
             if (values == null)
             {
@@ -109,7 +105,33 @@ namespace Honoo.Configuration
             {
                 Add(value);
             }
-            return values;
+        }
+
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public XString AddString(string value)
+        {
+            return Add(new XString(value));
+        }
+
+        /// <summary>
+        /// 添加配置属性集合。
+        /// </summary>
+        /// <param name="values">配置属性的集合。</param>
+        /// <exception cref="Exception"/>
+        public void AddStringRange(IEnumerable<string> values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            foreach (var value in values)
+            {
+                AddString(value);
+            }
         }
 
         /// <summary>
@@ -159,7 +181,17 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取指定索引处的配置属性的值。
+        /// 获取指定索引处的配置属性的值。如果无法转换指定的类型，则抛出 <see cref="Exception"/>。
+        /// </summary>
+        /// <param name="index">配置属性的索引。</param>
+        /// <exception cref="Exception"/>
+        public string GetStringValue(int index)
+        {
+            return ((XString)_properties[index]).GetStringValue();
+        }
+
+        /// <summary>
+        /// 获取指定索引处的配置属性的值。如果无法转换指定的类型，则抛出 <see cref="Exception"/>。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="index">配置属性的索引。</param>
@@ -187,9 +219,31 @@ namespace Honoo.Configuration
         /// <param name="index">指定索引。</param>
         /// <param name="value">要插入的配置属性。</param>
         /// <exception cref="Exception"/>
-        public void Insert<T>(int index, T value) where T : XProperty
+        public T Insert<T>(int index, T value) where T : XProperty
         {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             _properties.Insert(index, value);
+            return value;
+        }
+
+        /// <summary>
+        /// 将配置属性插入指定索引处。
+        /// </summary>
+        /// <param name="index">指定索引。</param>
+        /// <param name="value">要插入的配置属性。</param>
+        /// <exception cref="Exception"/>
+        public XString InsertString(int index, string value)
+        {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            XString val = new XString(value);
+            _properties.Insert(index, val);
+            return val;
         }
 
         /// <summary>
@@ -221,7 +275,23 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 获取指定索引处的配置属性的值。
+        /// 设置指定索引处的配置属性的值。
+        /// </summary>
+        /// <param name="index">配置属性的索引。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public XString SetStringValue<T>(int index, string value)
+        {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            RemoveAt(index);
+            return Insert(index, new XString(value));
+        }
+
+        /// <summary>
+        /// 设置指定索引处的配置属性的值。
         /// </summary>
         /// <typeparam name="T">指定配置属性类型。</typeparam>
         /// <param name="index">配置属性的索引。</param>
@@ -230,8 +300,7 @@ namespace Honoo.Configuration
         public T SetValue<T>(int index, T value) where T : XProperty
         {
             RemoveAt(index);
-            Insert(index, value);
-            return value;
+            return Insert(index, value);
         }
     }
 }

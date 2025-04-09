@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Honoo.Configuration
@@ -9,11 +11,22 @@ namespace Honoo.Configuration
     /// </summary>
     public sealed class TextSection : ConfigSection
     {
+        #region Members
+
+        private XElement _content;
+        private string _name;
+        private ConfigSectionSet _set;
+
+        #endregion Members
+
         #region Construction
 
-        internal TextSection(XElement declaration, XElement content, XComment comment)
+        internal TextSection(XElement declaration, XElement content, XComment comment, ConfigSectionSet set)
             : base(ConfigSectionType.TextSection, declaration, content, comment)
         {
+            _name = declaration.Attribute("name").Value;
+            _set = set;
+            _content = content;
         }
 
         #endregion Construction
@@ -64,27 +77,48 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 设置配置容器的串联内容。
+        /// 设置配置容器的串联内容。如果 <paramref name="value"/> 为 <see langword="null"/>，则删除配置容器。
         /// </summary>
         /// <param name="value">配置容器的串联内容。</param>
         /// <returns></returns>
-        ///
-        public void SetValue(string value)
+        /// <exception cref="Exception"/>
+        public TextSection SetValue(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
+            return SetValue(value, false);
+        }
+
+        /// <summary>
+        /// 设置配置容器的串联内容。如果 <paramref name="emptyRemove"/> 是 <see langword="true"/>，则 <paramref name="value"/> 为 <see langword="null"/> 或 <see cref="string.IsNullOrWhiteSpace(string)"/> 时删除注释配置容器。
+        /// <br />如果 <paramref name="emptyRemove"/> 是 <see langword="false"/>，则仅在 <paramref name="value"/> 为 <see langword="null"/> 时删除配置容器。
+        /// </summary>
+        /// <param name="value">配置容器的串联内容。</param>
+        /// <param name="emptyRemove">判断设置的内容是否是有效内容。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public TextSection SetValue(string value, bool emptyRemove)
+        {
+            if (emptyRemove ? value == null || string.IsNullOrWhiteSpace(value) : value == null)
             {
-                base.Content.SetValue(string.Empty);
+                _set.Remove(_name);
+                _name = null;
+                _set = null;
+                _content = null;
+                return null;
             }
-            else
+            base.Content.RemoveNodes();
+            string tmp = $"<encirclement>{value}</encirclement>";
+            using (StringReader sReader = new StringReader(tmp))
             {
-                base.Content.RemoveNodes();
-                string tmp = $"<encirclement>{value}</encirclement>";
-                XElement element = XElement.Parse(tmp);
-                foreach (XNode node in element.Nodes())
+                using (XmlReader reader = XmlReader.Create(sReader, ConfigurationManager.ReaderSettings))
                 {
-                    base.Content.Add(node);
+                    XElement element = XElement.Load(reader);
+                    foreach (XNode node in element.Nodes())
+                    {
+                        _content.Add(node);
+                    }
                 }
             }
+            return this;
         }
 
         /// <summary>

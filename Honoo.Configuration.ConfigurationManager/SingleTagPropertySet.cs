@@ -84,6 +84,17 @@ namespace Honoo.Configuration
             return value;
         }
 
+        /// <summary>
+        /// 添加一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public SingleTagProperty AddString(string key, string value)
+        {
+            return Add(key, new SingleTagProperty(value));
+        }
+
         #endregion Add
 
         #region AddOrUpdate
@@ -122,6 +133,17 @@ namespace Honoo.Configuration
             }
         }
 
+        /// <summary>
+        /// 添加或更新一个配置属性。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <exception cref="Exception"/>
+        public SingleTagProperty AddOrUpdateString(string key, string value)
+        {
+            return AddOrUpdate(key, new SingleTagProperty(value));
+        }
+
         #endregion AddOrUpdate
 
         #region GetOrAdd
@@ -138,9 +160,39 @@ namespace Honoo.Configuration
             return TryGetValue(key, out SingleTagProperty value) ? value : Add(key, valueIfNotExists);
         }
 
+        /// <summary>
+        /// 获取与指定键关联的配置属性。如果不存在，添加一个 <see cref="SingleTagProperty"/> 类型的配置属性并返回值。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="valueIfNotExists">指定键关联的配置属性不存在时添加此配置属性。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string GetOrAddString(string key, string valueIfNotExists)
+        {
+            return TryGetValue(key, out SingleTagProperty value) ? value.GetStringValue() : AddString(key, valueIfNotExists).GetStringValue();
+        }
+
         #endregion GetOrAdd
 
         #region TryGetValue
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// <br/>如果没有找到指定键，返回 <see langword="false"/>。如果找到了指定键但指定的类型不符，则仍返回 <see langword="false"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="value">配置属性的值。</param>
+        /// <returns></returns>
+        public bool TryGetStringValue(string key, out string value)
+        {
+            if (TryGetValue(key, out SingleTagProperty val))
+            {
+                value = val.GetStringValue();
+                return true;
+            }
+            value = null;
+            return false;
+        }
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。如果没有找到指定键，返回 <see langword="false"/>。
@@ -159,6 +211,17 @@ namespace Honoo.Configuration
         #region GetValue
 
         /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，则抛出 <see cref="Exception"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string GetStringValue(string key)
+        {
+            return _properties[key].GetStringValue();
+        }
+
+        /// <summary>
         /// 获取与指定键关联的配置属性的值。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
@@ -172,6 +235,17 @@ namespace Honoo.Configuration
         #endregion GetValue
 
         #region GetValueOrDefault
+
+        /// <summary>
+        /// 获取与指定键关联的配置属性的值。如果没有找到指定键或者无法转换指定的类型，返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="key">配置属性的键。</param>
+        /// <param name="defaultValue">没有找到指定键时的配置属性的默认值。</param>
+        /// <returns></returns>
+        public string GetStringValue(string key, string defaultValue)
+        {
+            return TryGetValue(key, out SingleTagProperty value) ? value.GetStringValue() : defaultValue;
+        }
 
         /// <summary>
         /// 获取与指定键关联的配置属性的值。如果没有找到指定键，返回 <paramref name="defaultValue"/>。

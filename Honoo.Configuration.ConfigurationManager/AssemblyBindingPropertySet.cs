@@ -27,7 +27,11 @@ namespace Honoo.Configuration
         /// <param name="index">连接属性的索引。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public LinkedConfigurationProperty this[int index] => GetValue(index);
+        public LinkedConfigurationProperty this[int index]
+        {
+            get => _properties[index];
+            set => SetValue(index, value);
+        }
 
         #endregion Members
 
@@ -83,24 +87,6 @@ namespace Honoo.Configuration
             _container.Add(value.Content);
             _properties.Add(value);
             return value;
-        }
-
-        /// <summary>
-        /// 添加配置文件链接属性集合。
-        /// </summary>
-        /// <param name="values">配置文件链接属性的集合。</param>
-        /// <exception cref="Exception"/>
-        public IEnumerable<LinkedConfigurationProperty> AddRange(IEnumerable<LinkedConfigurationProperty> values)
-        {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-            foreach (var value in values)
-            {
-                Add(value);
-            }
-            return values;
         }
 
         /// <summary>
@@ -173,9 +159,14 @@ namespace Honoo.Configuration
         /// <param name="index">指定索引。</param>
         /// <param name="value">要插入的配置文件链接属性。</param>
         /// <exception cref="Exception"/>
-        public void Insert(int index, LinkedConfigurationProperty value)
+        public LinkedConfigurationProperty Insert(int index, LinkedConfigurationProperty value)
         {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             _properties.Insert(index, value);
+            return value;
         }
 
         /// <summary>
@@ -214,8 +205,7 @@ namespace Honoo.Configuration
         public LinkedConfigurationProperty SetValue(int index, LinkedConfigurationProperty value)
         {
             RemoveAt(index);
-            Insert(index, value);
-            return value;
+            return Insert(index, value);
         }
     }
 }

@@ -101,7 +101,7 @@ namespace Honoo.Configuration
                             case "Honoo.Configuration.TextSectionHandler":
                             case "Honoo.Configuration.TextSectionHandler, Honoo.Configuration":
                             default:
-                                section = new TextSection(declaration, content, comment);
+                                section = new TextSection(declaration, content, comment, this);
                                 break;
                         }
                         _sections.Add(name, section);
@@ -131,7 +131,7 @@ namespace Honoo.Configuration
             {
                 case ConfigSectionType.TextSection:
                     declaration.SetAttributeValue("type", "Honoo.Configuration.TextSectionHandler");
-                    section = new TextSection(declaration, content, null);
+                    section = new TextSection(declaration, content, null, this);
                     break;
 
                 case ConfigSectionType.SingleTagSection:

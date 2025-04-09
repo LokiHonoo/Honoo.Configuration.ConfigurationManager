@@ -34,7 +34,7 @@ namespace Honoo.Configuration
         #endregion Construction
 
         /// <summary>
-        /// 获取注释。如果没有注释节点，返回 <see langword="null"/>。
+        /// 获取注释值。如果没有注释节点，返回 <see langword="null"/>。
         /// </summary>
         /// <returns></returns>
         public string GetValue()
@@ -58,13 +58,27 @@ namespace Honoo.Configuration
         }
 
         /// <summary>
-        /// 添加或更新注释。
+        /// 设置注释值。如果 <paramref name="value"/> 为 <see langword="null"/>，则删除注释节点。
         /// </summary>
-        /// <param name="value">注释文本。</param>
+        /// <param name="value">文本类型的值。</param>
+        /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void SetValue(string value)
+        public XConfigComment SetValue(string value)
         {
-            if (value == null)
+            return SetValue(value, false);
+        }
+
+        /// <summary>
+        /// 设置注释值。如果 <paramref name="emptyRemove"/> 是 <see langword="true"/>，则 <paramref name="value"/> 为 <see langword="null"/> 或 <see cref="string.IsNullOrWhiteSpace(string)"/> 时删除注释节点。
+        /// <br />如果 <paramref name="emptyRemove"/> 是 <see langword="false"/>，则仅在 <paramref name="value"/> 为 <see langword="null"/> 时删除注释节点。
+        /// </summary>
+        /// <param name="value">文本类型的值。</param>
+        /// <param name="emptyRemove">判断设置的值是否是有效内容。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public XConfigComment SetValue(string value, bool emptyRemove)
+        {
+            if (emptyRemove ? value == null || string.IsNullOrWhiteSpace(value) : value == null)
             {
                 if (_comment != null)
                 {
@@ -81,10 +95,11 @@ namespace Honoo.Configuration
             {
                 _comment.Value = value;
             }
+            return this;
         }
 
         /// <summary>
-        /// 获取注释。如果没有注释节点，返回 <see langword="false"/>。
+        /// 获取注释值。如果没有注释节点，返回 <see langword="false"/>。
         /// </summary>
         /// <param name="value">注释文本。</param>
         /// <returns></returns>

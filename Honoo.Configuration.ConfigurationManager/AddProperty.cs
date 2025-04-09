@@ -217,28 +217,6 @@ namespace Honoo.Configuration
 
         #endregion GetValue
 
-        #region SetValue
-
-        /// <summary>
-        /// 设置值。
-        /// </summary>
-        /// <param name="value">文本类型的值。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public AddProperty SetValue(string value)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-            value = value.Trim();
-            base.Content.SetAttributeValue("value", value);
-            _value = value;
-            return this;
-        }
-
-        #endregion SetValue
-
         /// <summary>
         /// 比较两个对象并返回一个值。该值指示一个对象是小于、等于还是大于另一个对象。
         /// </summary>

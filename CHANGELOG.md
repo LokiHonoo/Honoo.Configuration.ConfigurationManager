@@ -6,7 +6,8 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [CHANGELOG](#changelog)
-    - [1.5.10](#1510)
+    - [1.5.13](#1513)
+    - [1.5.12](#1512)
     - [1.5.9](#159)
     - [1.5.7](#157)
     - [1.5.6](#156)
@@ -28,7 +29,13 @@
 
 ## CHANGELOG
 
-### 1.5.10
+### 1.5.13
+
+**Features* 增加了一些方法，用于简化 string 类型的处理步骤。
+
+**Features* XConfigComment 设置注释时可设定根据内容删除，便于 Linq 处理。
+
+### 1.5.12
 
 **Removed* 取消 ConfigurationManager 加密。
 
