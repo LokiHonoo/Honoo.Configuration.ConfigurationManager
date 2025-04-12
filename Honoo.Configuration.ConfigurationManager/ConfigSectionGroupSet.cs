@@ -93,6 +93,43 @@ namespace Honoo.Configuration
 
         #endregion Add
 
+        #region AddOrUpdate
+
+        /// <summary>
+        /// 添加或更新一个配置组。如果不存在，添加一个配置组并返回值。如果已存在，创建一个新配置组替换已存在的配置组并返回值。
+        /// </summary>
+        /// <param name="name">配置组的名称。</param>
+        /// <exception cref="Exception"/>
+        public ConfigSectionGroup AddOrUpdate(string name)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+            if (_groups.TryGetValue(name, out ConfigSectionGroup value))
+            {
+                XElement declaration = new XElement("sectionGroup");
+                declaration.SetAttributeValue("name", name);
+                XElement content = new XElement(name);
+                ConfigSectionGroup group = new ConfigSectionGroup(declaration, content, null);
+                _groups[name] = group;
+                value.Declaration.AddBeforeSelf(declaration);
+                value.Content.AddBeforeSelf(content);
+                value.Groups.Clear();
+                value.Sections.Clear();
+                value.Comment.Remove();
+                value.Declaration.Remove();
+                value.Content.Remove();
+                return group;
+            }
+            else
+            {
+                return Add(name);
+            }
+        }
+
+        #endregion AddOrUpdate
+
         #region GetOrAdd
 
         /// <summary>
@@ -192,6 +229,8 @@ namespace Honoo.Configuration
         {
             if (_groups.TryGetValue(name, out ConfigSectionGroup value))
             {
+                value.Groups.Clear();
+                value.Sections.Clear();
                 value.Comment.Remove();
                 value.Declaration.Remove();
                 value.Content.Remove();

@@ -159,6 +159,73 @@ namespace Honoo.Configuration
 
         #endregion Add
 
+        #region AddOrUpdate
+
+        /// <summary>
+        /// 添加或更新一个配置容器。如果不存在，添加一个配置容器并返回值。如果已存在，创建一个新配置容器替换已存在的配置容器并返回值。
+        /// </summary>
+        /// <typeparam name="T">添加配置容器时使用的类型。</typeparam>
+        /// <param name="name">配置容器的名称。</param>
+        /// <exception cref="Exception"/>
+        public T AddOrUpdate<T>(string name) where T : ConfigSection
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+            if (_sections.TryGetValue(name, out ConfigSection value))
+            {
+                XElement declaration = new XElement("section");
+                declaration.SetAttributeValue("name", name);
+                XElement content = new XElement(name);
+                ConfigSection section;
+                switch (_sectionTypes[typeof(T)])
+                {
+                    case ConfigSectionType.TextSection:
+                        declaration.SetAttributeValue("type", "Honoo.Configuration.TextSectionHandler");
+                        section = new TextSection(declaration, content, null, this);
+                        break;
+
+                    case ConfigSectionType.SingleTagSection:
+                        declaration.SetAttributeValue("type", "System.Configuration.SingleTagSectionHandler");
+                        section = new SingleTagSection(declaration, content, null);
+                        break;
+
+                    case ConfigSectionType.NameValueSection:
+                        declaration.SetAttributeValue("type", "System.Configuration.NameValueSectionHandler");
+                        section = new NameValueSection(declaration, content, null);
+                        break;
+
+                    case ConfigSectionType.DictionarySection:
+                        declaration.SetAttributeValue("type", "System.Configuration.DictionarySectionHandler");
+                        section = new DictionarySection(declaration, content, null);
+                        break;
+
+                    default: throw new ArgumentException($"The invalid argument - {nameof(T)}.");
+                }
+                _sections[name] = section;
+                value.Declaration.AddBeforeSelf(declaration);
+                value.Content.AddBeforeSelf(content);
+                switch (value.SectionType)
+                {
+                    case ConfigSectionType.DictionarySection: ((DictionarySection)value).Properties.Clear(); break;
+                    case ConfigSectionType.NameValueSection: ((NameValueSection)value).Properties.Clear(); break;
+                    case ConfigSectionType.SingleTagSection: ((SingleTagSection)value).Properties.Clear(); break;
+                    case ConfigSectionType.TextSection: default: break;
+                }
+                value.Comment.Remove();
+                value.Declaration.Remove();
+                value.Content.Remove();
+                return section as T;
+            }
+            else
+            {
+                return Add<T>(name);
+            }
+        }
+
+        #endregion AddOrUpdate
+
         #region GetOrAdd
 
         /// <summary>
@@ -279,6 +346,13 @@ namespace Honoo.Configuration
         {
             if (_sections.TryGetValue(name, out ConfigSection value))
             {
+                switch (value.SectionType)
+                {
+                    case ConfigSectionType.DictionarySection: ((DictionarySection)value).Properties.Clear(); break;
+                    case ConfigSectionType.NameValueSection: ((NameValueSection)value).Properties.Clear(); break;
+                    case ConfigSectionType.SingleTagSection: ((SingleTagSection)value).Properties.Clear(); break;
+                    case ConfigSectionType.TextSection: default: break;
+                }
                 value.Comment.Remove();
                 value.Declaration.Remove();
                 value.Content.Remove();

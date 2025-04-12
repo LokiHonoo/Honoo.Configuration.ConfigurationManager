@@ -103,12 +103,12 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
+            _properties.Add(key, value);
             if (value.Comment.HasValue)
             {
                 _container.Add(value.Comment.Comment);
             }
             value.Content.SetAttributeValue("key", key);
-            _properties.Add(key, value);
             _container.Add(value.Content);
             return value;
         }
@@ -145,7 +145,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            if (TryGetValue(key, out XProperty val))
+            if (_properties.TryGetValue(key, out XProperty val))
             {
                 value.Content.SetAttributeValue("key", key);
                 if (value.Comment.HasValue)
@@ -190,7 +190,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public T GetOrAdd<T>(string key, T valueIfNotExists) where T : XProperty
         {
-            if (TryGetValue(key, out XProperty value))
+            if (_properties.TryGetValue(key, out XProperty value))
             {
                 if (value is T val)
                 {
@@ -217,7 +217,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public string GetOrAddString(string key, string valueIfNotExists)
         {
-            if (TryGetValue(key, out XProperty value))
+            if (_properties.TryGetValue(key, out XProperty value))
             {
                 if (value is XString val)
                 {

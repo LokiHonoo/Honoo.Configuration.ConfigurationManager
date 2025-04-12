@@ -32,12 +32,16 @@ namespace Honoo.Configuration
         public Dictionary<string, ConfigProperty>.ValueCollection Values => _properties.Values;
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
+        /// 获取或设置具有指定键的配置属性的值。直接赋值等同于 AddOrUpdate 方法。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public AddProperty this[string key] => GetValue(key);
+        public AddProperty this[string key]
+        {
+            get { return GetValue(key); }
+            set { AddOrUpdate(key, value); }
+        }
 
         #endregion Members
 
@@ -108,13 +112,13 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
+            _properties.Add(key, value);
             if (value.Comment.HasValue)
             {
                 _container.Add(value.Comment.Comment);
             }
             value.Content.SetAttributeValue("key", key);
             _container.Add(value.Content);
-            _properties.Add(key, value);
             return value;
         }
 
@@ -135,13 +139,13 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
+            _properties.Add("{remove_" + Guid.NewGuid().ToString("N") + "}" + key, value);
             if (value.Comment.HasValue)
             {
                 _container.Add(value.Comment.Comment);
             }
             value.Content.SetAttributeValue("key", key);
             _container.Add(value.Content);
-            _properties.Add("{remove_" + Guid.NewGuid().ToString("N") + "}" + key, value);
             return value;
         }
 
@@ -161,8 +165,8 @@ namespace Honoo.Configuration
             {
                 _container.Add(value.Comment.Comment);
             }
-            _container.Add(value.Content);
             _properties.Add("{clear_" + Guid.NewGuid().ToString("N") + "}", value);
+            _container.Add(value.Content);
             return value;
         }
 

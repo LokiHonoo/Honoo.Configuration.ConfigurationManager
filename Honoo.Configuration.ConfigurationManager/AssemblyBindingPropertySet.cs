@@ -22,7 +22,7 @@ namespace Honoo.Configuration
         public int Count => _properties.Count;
 
         /// <summary>
-        /// 获取指定索引处的连接属性的值。
+        /// 获取或设置指定索引处的连接属性的值。
         /// </summary>
         /// <param name="index">连接属性的索引。</param>
         /// <returns></returns>

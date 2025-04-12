@@ -33,12 +33,16 @@ namespace Honoo.Configuration
         public Dictionary<string, ConnectionStringProperty>.ValueCollection Values => _properties.Values;
 
         /// <summary>
-        /// 获取与指定名称关联的连接属性的值。
+        /// 获取或设置具有指定名称的连接属性的值。直接赋值等同于 AddOrUpdate 方法。
         /// </summary>
         /// <param name="name">连接属性的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public ConnectionStringProperty this[string name] => GetValue(name);
+        public ConnectionStringProperty this[string name]
+        {
+            get { return GetValue(name); }
+            set { AddOrUpdate(name, value); }
+        }
 
         #endregion Members
 
@@ -97,13 +101,13 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
+            _properties.Add(name, value);
             if (value.Comment.HasValue)
             {
                 _container.Add(value.Comment.Comment);
             }
             value.Content.SetAttributeValue("name", name);
             _container.Add(value.Content);
-            _properties.Add(name, value);
             return value;
         }
 
@@ -153,7 +157,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            if (TryGetValue(name, out ConnectionStringProperty val))
+            if (_properties.TryGetValue(name, out ConnectionStringProperty val))
             {
                 value.Content.SetAttributeValue("name", name);
                 if (value.Comment.HasValue)
@@ -264,7 +268,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public bool TryGetValue(string name, out string connectionString, out string providerName)
         {
-            if (TryGetValue(name, out ConnectionStringProperty value))
+            if (_properties.TryGetValue(name, out ConnectionStringProperty value))
             {
                 connectionString = value.ConnectionString;
                 providerName = value.ProviderName;

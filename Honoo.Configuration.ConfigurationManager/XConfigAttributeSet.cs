@@ -21,12 +21,16 @@ namespace Honoo.Configuration
         public int Count => _attributes.Count;
 
         /// <summary>
-        /// 获取与指定名称关联的附加属性。
+        /// 获取或设置具有指定名称的附加属性的值。直接赋值等同于 AddOrUpdate 方法。
         /// </summary>
         /// <param name="name">附加属性的名称。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public XConfigAttribute this[string name] => GetValue(name);
+        public XConfigAttribute this[string name]
+        {
+            get { return GetValue(name); }
+            set { AddOrUpdate(name, value); }
+        }
 
         #endregion Members
 
@@ -74,13 +78,24 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException("Don't use keyword \"name\", \"key\".", nameof(value));
             }
+            _attributes.Add(name, value);
             if (value.Content == null)
             {
                 value.CreateContent(name);
             }
             _container.Add(value.Content);
-            _attributes.Add(name, value);
             return value;
+        }
+
+        /// <summary>
+        /// 添加一个附加属性。
+        /// </summary>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
+        /// <param name="value">附加属性的值。</param>
+        /// <exception cref="Exception"/>
+        public XConfigAttribute AddString(string name, string value)
+        {
+            return Add(name, new XConfigAttribute(value));
         }
 
         #endregion Add
@@ -90,7 +105,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 添加或更新一个附加属性。
         /// </summary>
-        /// <param name="name">附加属性的名称。</param>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
         /// <param name="value">附加属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
@@ -104,7 +119,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            if (TryGetValue(name, out XConfigAttribute val))
+            if (_attributes.TryGetValue(name, out XConfigAttribute val))
             {
                 val.RemoveContent();
                 value.CreateContent(name);
@@ -118,6 +133,18 @@ namespace Honoo.Configuration
             }
         }
 
+        /// <summary>
+        /// 添加或更新一个附加属性。
+        /// </summary>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
+        /// <param name="value">附加属性的值。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public XConfigAttribute AddOrUpdateString(string name, string value)
+        {
+            return AddOrUpdate(name, new XConfigAttribute(value));
+        }
+
         #endregion AddOrUpdate
 
         #region GetOrAdd
@@ -125,18 +152,47 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取与指定名称关联的附加属性的值。如果不存在，添加一个附加属性并返回值。
         /// </summary>
-        /// <param name="name">附加属性的名称。</param>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
         /// <param name="valueIfNotExists">指定名称关联的附加属性不存在时添加此附加属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public XConfigAttribute GetOrAdd<T>(string name, XConfigAttribute valueIfNotExists)
+        public XConfigAttribute GetOrAdd(string name, XConfigAttribute valueIfNotExists)
         {
             return TryGetValue(name, out XConfigAttribute value) ? value : Add(name, valueIfNotExists);
+        }
+
+        /// <summary>
+        /// 获取与指定名称关联的附加属性的值。如果不存在，添加一个附加属性并返回值。
+        /// </summary>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
+        /// <param name="valueIfNotExists">指定名称关联的附加属性不存在时添加此附加属性。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string GetOrAddString(string name, string valueIfNotExists)
+        {
+            return TryGetValue(name, out XConfigAttribute value) ? value.GetStringValue() : Add(name, new XConfigAttribute(valueIfNotExists)).GetStringValue();
         }
 
         #endregion GetOrAdd
 
         #region TryGetValue
+
+        /// <summary>
+        /// 获取与指定名称关联的附加属性的值。
+        /// </summary>
+        /// <param name="name">附加属性的名称。</param>
+        /// <param name="value">附加属性的值。</param>
+        /// <returns></returns>
+        public bool TryGetStringValue(string name, out string value)
+        {
+            if (_attributes.TryGetValue(name, out XConfigAttribute val))
+            {
+                value = val.GetStringValue();
+                return true;
+            }
+            value = null;
+            return false;
+        }
 
         /// <summary>
         /// 获取与指定名称关联的附加属性的值。
@@ -155,6 +211,17 @@ namespace Honoo.Configuration
         #region GetValue
 
         /// <summary>
+        /// 获取与指定键关联的配置属性的值。
+        /// </summary>
+        /// <param name="name">附加属性的名称。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"/>
+        public string GetStringValue(string name)
+        {
+            return _attributes[name].GetStringValue();
+        }
+
+        /// <summary>
         /// 获取与指定名称关联的附加属性的值。
         /// </summary>
         /// <param name="name">附加属性的名称。</param>
@@ -168,6 +235,17 @@ namespace Honoo.Configuration
         #endregion GetValue
 
         #region GetValueOrDefault
+
+        /// <summary>
+        /// 获取与指定名称关联的附加属性的值。如果没有找到指定名称，返回 <paramref name="defaultValue"/>。
+        /// </summary>
+        /// <param name="name">附加属性的名称。</param>
+        /// <param name="defaultValue">没有找到指定名称时的附加属性的默认值。</param>
+        /// <returns></returns>
+        public string GetStringValue(string name, string defaultValue)
+        {
+            return TryGetValue(name, out XConfigAttribute value) ? value.GetStringValue() : defaultValue;
+        }
 
         /// <summary>
         /// 获取与指定名称关联的附加属性的值。如果没有找到指定名称，返回 <paramref name="defaultValue"/>。

@@ -75,6 +75,39 @@ namespace Honoo.Configuration
 
         #endregion Add
 
+        #region AddOrUpdate
+
+        /// <summary>
+        /// 添加或更新一个配置容器。如果不存在，添加一个配置容器并返回值。如果已存在，创建一个新配置容器替换已存在的配置容器并返回值。
+        /// </summary>
+        /// <param name="name">配置容器的名称。</param>
+        /// <exception cref="Exception"/>
+        public XSection AddOrUpdate(string name)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+            if (_sections.TryGetValue(name, out XSection value))
+            {
+                XElement content = new XElement(XConfigManager.Namespace + "section");
+                content.SetAttributeValue("name", name);
+                XSection section = new XSection(content, null, false);
+                _sections[name] = section;
+                value.Content.AddBeforeSelf(content);
+                value.Properties.Clear();
+                value.Comment.Remove();
+                value.Content.Remove();
+                return section;
+            }
+            else
+            {
+                return Add(name);
+            }
+        }
+
+        #endregion AddOrUpdate
+
         #region GetOrAdd
 
         /// <summary>
@@ -174,6 +207,7 @@ namespace Honoo.Configuration
         {
             if (_sections.TryGetValue(name, out XSection value))
             {
+                value.Properties.Clear();
                 value.Comment.Remove();
                 value.Content.Remove();
                 _sections.Remove(name);

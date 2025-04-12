@@ -10,11 +10,8 @@
     - [NuGet](#nuget)
   - [USAGE](#usage)
     - [Namespace](#namespace)
-    - [appSettings](#appsettings)
-    - [connectionStrings](#connectionstrings)
-    - [sectionGroup/section](#sectiongroupsection)
+    - [ConfigurationManager](#configurationmanager)
     - [Auto save](#auto-save)
-    - [Protection](#protection)
     - [XConfigManager](#xconfigmanager)
   - [CHANGELOG](#changelog)
   - [LICENSE](#license)
@@ -47,93 +44,25 @@ using Honoo.Configuration;
 
 ```
 
-### appSettings
+### ConfigurationManager
 
 ```c#
 
-internal static void Create(string filePath)
+internal static class TestC
 {
-    //
-    // 使用 .NET 程序的默认配置文件或自定义配置文件。
-    //
-    using (ConfigurationManager manager = File.Exists(filePath) ? new ConfigurationManager(filePath) : new ConfigurationManager())
+    private static bool _isFirst = true;
+
+    internal static void Create()
     {
-        manager.AppSettings.SetFileAttribute("config.exrea1.xml");
-        //
-        // 赋值并设置注释。
-        //
-        manager.AppSettings.Properties.AddOrUpdate("prop1", new AddProperty("This is \"appSettings\" prop1 value.")).Comment.SetValue("This is \"appSettings\" prop1 comment.");
-        manager.AppSettings.Properties.AddOrUpdate("prop6", new AddProperty("Update this."));
-        //manager.AppSettings.Properties.Add(new ClearProperty());
-        manager.AppSettings.Properties.AddOrUpdate("prop2", new AddProperty("123456789"));
-        manager.AppSettings.Properties.AddOrUpdate("prop3", new AddProperty("F058C"));
-        manager.AppSettings.Properties.AddOrUpdate("prop4", new AddProperty(LoaderOptimization.SingleDomain.ToString()));
-        manager.AppSettings.Properties.AddOrUpdate("prop5", new AddProperty("Remove this."));
-        //manager.AppSettings.Properties.Add("prop4", new RemoveProperty());
-        //manager.AppSettings.Properties.Add("prop1", new AddProperty("Test unique."));
-        //
-        // 移除属性的方法。移除属性时相关注释一并移除。
-        //
-        manager.AppSettings.Properties.Remove("prop5");
-        //
-        // 更新。
-        //
-        manager.AppSettings.Properties.AddOrUpdate("prop6", new AddProperty("Update this successful."));
-        //
-        // 保存到指定的文件。
-        //
-        manager.Save(filePath);
-    }
-}
-
-internal static void Load(string filePath)
-{
-    //
-    // 使用 .NET 程序的默认配置文件或自定义配置文件。
-    //
-    using (ConfigurationManager manager = new ConfigurationManager(filePath))
-    {
-        //
-        // 取出属性和注释。
-        //
-        AddProperty value1 = manager.AppSettings.Properties.GetValue("prop1");
-        if (value1.Comment.TryGetValue(out string comment1))
+        if (_isFirst)
         {
-            Console.WriteLine(comment1);
+            File.Delete("config.exrea.xml");
+            File.Delete("config.main.xml");
+            _isFirst = false;
         }
-        Console.WriteLine(value1.Value);
         //
-        int value2 = manager.AppSettings.Properties.GetValue("prop2", 55555);
-        Console.WriteLine(value2);
+        // 测试连接。
         //
-        AddProperty value3 = manager.AppSettings.Properties["prop3"];
-        Console.WriteLine(value3.GetValue(Binaries.Empty));
-        //
-        if (manager.AppSettings.Properties.TryGetValue("prop4", out LoaderOptimization value4))
-        {
-            Console.WriteLine(value4);
-        }
-        // 取出应用控制标签后的属性。
-        foreach (AddProperty property in manager.AppSettings.GetControlledProperties())
-        {
-            Console.WriteLine(property.Value);
-        }
-    }
-}
-
-```
-
-### connectionStrings
-
-```c#
-
-internal static void Create(string filePath)
-{
-    //
-    // 使用 .NET 程序的默认配置文件或自定义配置文件。
-    //
-    using (ConfigurationManager manager = new ConfigurationManager(filePath))
-    {
         SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder()
         {
             DataSource = "127.0.0.1",
@@ -143,168 +72,138 @@ internal static void Create(string filePath)
         };
         SqlConnection connection = new SqlConnection(builder.ConnectionString);
         //
-        // 赋值并设置注释。
+        // 附加配置文件。
         //
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop1", connection).Comment.SetValue("This is \"connectionStrings\" prop1 comment.");
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop2", connection.ConnectionString, connection.GetType().Namespace);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop3", connection.ConnectionString, string.Empty);
-        manager.ConnectionStrings.Properties.AddOrUpdate("prop4", connection).Comment.SetValue("It's will remove this.");;
-        //manager.ConnectionStrings.Properties.Add("prop1", connection);
-        //
-        // 移除属性的方法。
-        //
-        manager.ConnectionStrings.Properties.Remove("prop4");
-        //
-        // 保存到指定的文件。
-        //
-        manager.Save(filePath);
-    }
-}
-
-internal static void Load(string filePath)
-{
-    //
-    // 使用 .NET 程序的默认配置文件或自定义配置文件。
-    //
-    using (ConfigurationManager manager = new ConfigurationManager(filePath))
-    {
-        //
-        // 取出属性和注释。
-        //
-        ConnectionStringProperty value1 = manager.ConnectionStrings.Properties.GetValue("prop1");
-        if (value1.Comment.TryGetValue(out string comment1))
+        using (AppSettingsManager manager = new AppSettingsManager("config.exrea.xml", true))
         {
-            Console.WriteLine(comment1);
+            manager.Properties.AddOrUpdate("exrea-prop1", new AddProperty("exrea-prop1")).Comment.SetValue("This is exrea file prop1 comment.");
+            manager.Properties.AddOrUpdate("exrea-prop2", new AddProperty("exrea-prop2")).Comment.SetValue("This is exrea file prop2 comment.");
+            manager.Save("config.exrea.xml");
         }
-        Console.WriteLine(value1.ConnectionString);
         //
-        if (manager.ConnectionStrings.Properties.TryGetValue("prop2", out ConnectionStringProperty value2))
+        // 使用 .NET 程序的默认配置文件或自定义配置文件。
+        //
+        using (ConfigurationManager manager = new ConfigurationManager("config.main.xml", true))
         {
-            Console.WriteLine(value2.ConnectionString);
+            #region AppSettings
+
+            manager.AppSettings.SetFileAttribute("config.exrea.xml");
             //
-            // 访问实例。
+            // 添加或更新属性，并设置注释。
             //
-            SqlConnection connection = value2.CreateInstance<SqlConnection>();
-            Console.WriteLine(connection.ConnectionString);
+            manager.AppSettings.Properties.AddOrUpdate("appSettings-prop1", new AddProperty("appSettings-prop1")).Comment.SetValue("This is \"appSettings\" prop1 comment.");
+            manager.AppSettings.Properties.AddOrUpdateString("appSettings-prop2", "123456789").Comment.SetValue("This is \"appSettings\" prop2 comment.");
+            manager.AppSettings.Properties.AddOrUpdateString("appSettings-prop3", "F058C");
+            manager.AppSettings.Properties.AddOrUpdate("appSettings-prop4", new AddProperty(LoaderOptimization.SingleDomain.ToString()));
+            manager.AppSettings.Properties.AddOrUpdate("appSettings-prop5", new AddProperty("Update this.")).Comment.SetValue("Will be update prop5.");
+            manager.AppSettings.Properties.AddOrUpdate("appSettings-prop6", new AddProperty("Remove this.")).Comment.SetValue("Will be remove prop6.");
+            //
+            // 更新。
+            //
+            manager.AppSettings.Properties.AddOrUpdateString("appSettings-prop5", "Update this successful.").Comment.SetValue("Update prop5 successful.");
+            //
+            // 移除属性的方法。移除属性时相关注释一并移除。
+            //
+            manager.AppSettings.Properties.Remove("appSettings-prop6");
+            //
+            // 添加同名属性异常。
+            //
+            try
+            {
+                manager.AppSettings.Properties.Add("appSettings-prop1", new AddProperty("Test unique.")); // Allways error.
+            }
+            catch (Exception)
+            {
+                manager.AppSettings.Properties.AddOrUpdateString("appSettings-prop99", "Add prop1 exception OK.");
+            }
+
+            #endregion AppSettings
+
+            #region ConnectionStrings
+
+            //
+            // 添加或更新属性，并设置注释。
+            //
+            manager.ConnectionStrings.Properties.AddOrUpdate("connectionStrings-prop1", new ConnectionStringProperty(connection)).Comment.SetValue("This is \"connectionStrings\" prop1 comment.");
+            manager.ConnectionStrings.Properties.AddOrUpdate("connectionStrings-prop2", new ConnectionStringProperty(connection.ConnectionString, connection.GetType().Namespace));
+            manager.ConnectionStrings.Properties.AddOrUpdate("connectionStrings-prop3", connection.ConnectionString, connection.GetType().Namespace).Comment.SetValue("Will be remove prop3.");
+            //
+            // 移除属性的方法。移除属性时相关注释一并移除。
+            //
+            manager.ConnectionStrings.Properties.Remove("connectionStrings-prop3");
+            //
+            // 添加同名属性异常。
+            //
+            try
+            {
+                manager.ConnectionStrings.Properties.Add("connectionStrings-prop1", connection.ConnectionString, connection.GetType().Namespace); // Allways error.
+            }
+            catch (Exception)
+            {
+                manager.ConnectionStrings.Properties.AddOrUpdate("connectionStrings-prop99", "Add prop1 exception OK.", string.Empty);
+            }
+
+            #endregion ConnectionStrings
+
+            #region ConfigSections
+
+            //
+            // 添加或更新容器组，并设置注释。
+            //
+            ConfigSectionGroup group1 = manager.ConfigSections.Groups.AddOrUpdate("group1");
+            group1.Comment.SetValue("This is \"configSections\" group1 comment.");
+            group1.Sections.AddOrUpdate<DictionarySection>("group1-section1").Comment.SetValue("This is group1 section1 comment.");
+            //
+            // 添加或更新容器，并设置注释。
+            //
+            DictionarySection dictSection = manager.ConfigSections.Sections.AddOrUpdate<DictionarySection>("dict-section1");
+            dictSection.Comment.SetValue("This is main section1 comment.");
+            SingleTagSection stSection = manager.ConfigSections.Sections.AddOrUpdate<SingleTagSection>("st-section2");
+            stSection.Comment.SetValue("This is main section2 comment.");
+            NameValueSection nvtSection = manager.ConfigSections.Sections.AddOrUpdate<NameValueSection>("nv-section3");
+            nvtSection.Comment.SetValue("This is main section3 comment.");
+            TextSection textSection = manager.ConfigSections.Sections.AddOrUpdate<TextSection>("section4");
+            textSection.Comment.SetValue("This is main section4 comment.");
+            //
+            // 添加或更新属性，并设置注释。
+            //
+            dictSection.Properties.AddOrUpdate("dict-prop1", new AddProperty("dict-prop1")).Comment.SetValue("This is \"dict-section\" prop1 comment.");
+            stSection.Properties.AddOrUpdate("st-prop1-name", new SingleTagProperty("st-prop1"));
+            stSection.Properties.AddOrUpdate("st-prop2-name", new SingleTagProperty("st-prop2"));
+            try
+            {
+                stSection.Properties.Add("st-prop2-name", new SingleTagProperty("st-prop2")); // Allways error.
+            }
+            catch (Exception)
+            {
+                stSection.Properties.AddOrUpdateString("st-prop99-name", "Add st-prop2 exception OK.");
+            }
+            nvtSection.Properties.Add("nv-prop1", new AddProperty("123456789")).Comment.SetValue("This is \"nv-section\" prop1 comment.");
+            nvtSection.Properties.Add("nv-prop1", new AddProperty("987654321"));
+            textSection.SetValue("<arbitrarily>abc</arbitrarily><arbitrarily><![CDATA[sssAAA]]></arbitrarily>");
+
+            #endregion ConfigSections
+
+            //
+            // 保存到指定的文件。
+            //
+            manager.Save("config.main.xml");
         }
     }
-}
 
-```
-
-### sectionGroup/section
-
-```c#
-
-internal static void Create(string filePath)
-{
-    //
-    // 使用 .NET 程序的默认配置文件或自定义配置文件。
-    //
-    using (ConfigurationManager manager = new ConfigurationManager(filePath))
+    internal static void Load()
     {
-        //
-        // 支持三种标准类型的创建。
-        // System.Configuration.DictionarySectionHandler
-        // System.Configuration.NameValueSectionHandler
-        // System.Configuration.SingleTagSectionHandler
-        //
-        // 配置组。
-        //
-        ConfigSectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
-        group.Comment.SetValue("This is \"ConfigSectionGroup\" comment.");
-        //
-        // 配置容器。
-        //
-        SingleTagSection section1 = manager.ConfigSections.Sections.GetOrAdd<SingleTagSection>("section1");
-        NameValueSection section2 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section2");
-        DictionarySection section3 = group.Sections.GetOrAdd<DictionarySection>("section3");
-        //
-        // SingleTagSection 使用唯一键值。不支持属性值注释。
-        //
-        section1.Properties.AddOrUpdate("prop1", new SingleTagProperty("0.6789"));
-        section1.Comment.SetValue("This is \"SingleTagSection\" comment.");
-        section1.Properties.Remove("prop3");
-        section1.Properties.Add("prop3", new SingleTagProperty("Update this."));
-        section1.Properties.AddOrUpdate("prop2", new SingleTagProperty("abc"));
-        //section1.Properties.Add("prop1", new SingleTagProperty("Test unique."));
-        //
-        // 更新。
-        //
-        section1.Properties.AddOrUpdate("prop3", new SingleTagProperty("Update this successful."));
-        //
-        // NameValueSection 允许同名键值。
-        //
-        section2.Properties.Clear();
-        section2.Properties.Add("prop1", new AddProperty("155.66")).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
-        section2.Properties.Add("prop1", new AddProperty("7.9992")).Comment.SetValue("This is \"NameValueSection\" prop1 comment.");
-        section2.Comment.SetValue("This is \"NameValueSection\" comment.");
-        //
-        // DictionarySection 使用唯一键值。
-        //
-        section3.Properties.AddOrUpdate("prop1", new AddProperty("DictionarySection prop.")).Comment.SetValue("This is \"DictionarySection\" prop1 comment.");
-        section3.Comment.SetValue("This is \"DictionarySection\" comment.");
-
-        //
-        // 以文本方式创建。
-        //
-        TextSection section4 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section4");
-        section4.SetAttribute("attr1", "attr1value");
-        section4.SetValue("<!-- Comment --><arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>");
-        section4.Comment.SetValue("This is \"TextSection\" comment.");
-
-        TextSection section5 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section5");
-        section5.SetValue("<![CDATA[<arbitrarily>abc</arbitrarily><arbitrarily>def</arbitrarily>]]>");
-
-        TextSection section6 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section6");
-        section6.SetValue("abcdefg");
-        //
-        //
-        //
-        NameValueSection section7 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section7");
-        section7.Comment.SetValue("It's will remove this.");
-        manager.ConfigSections.Sections.Remove("section7");
-        //
-        // 保存到指定的文件。
-        //
-        manager.Save(filePath);
-    }
-}
-
-internal static void Load(string filePath)
-{
-    //
-    // 使用 .NET 程序的默认配置文件或自定义配置文件。
-    //
-    using (ConfigurationManager manager = new ConfigurationManager(filePath))
-    {
-        //
-        // 取出容器。
-        //
-        ConfigSectionGroup group = manager.ConfigSections.Groups.GetOrAdd("sectionGroup1");
-        SingleTagSection section1 = manager.ConfigSections.Sections.GetOrAdd<SingleTagSection>("section1");
-        NameValueSection section2 = manager.ConfigSections.Sections.GetOrAdd<NameValueSection>("section2");
-        DictionarySection section3 = group.Sections.GetOrAdd<DictionarySection>("section3");
-        TextSection section4 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section4");
-        TextSection section5 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section5");
-        TextSection section6 = manager.ConfigSections.Sections.GetOrAdd<TextSection>("section6");
-        //
-        // 取出属性和注释。
-        //
-        Console.WriteLine(section1.Properties.GetValue("prop1"));
-        //
-        AddProperty[] value2 = section2.Properties.GetValue("prop1");
-        foreach (AddProperty val in value2)
+        using (ConfigurationManager manager = new ConfigurationManager("config.main.xml"))
         {
-            Console.WriteLine(val.Value);
+            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            Console.WriteLine(manager.ToString());
+            manager.Save("config.main.xml");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            Console.WriteLine(File.ReadAllText("config.main.xml"));
         }
-        Console.WriteLine(section3.Properties.GetValue("prop1", new AddProperty(string.Empty)));
-        //
-        // 以文本方式取出节点内容。
-        //
-        Console.WriteLine(section4.GetValue());
-        Console.WriteLine(section5.GetValue());
-        Console.WriteLine(section6.GetValue());
     }
 }
 
@@ -337,126 +236,114 @@ private static void Manager_Disposing(ConfigurationManager manager)
 
 ```
 
-### Protection
-
-提供了一个额外的加密方式加密整个配置文件。这和 ASP.NET 的默认加密方式无关，生成的加密配置文件仅可使用此项目工具读写。
-
-```c#
-
-internal static void Create()
-{
-    RSA rsa = RSA.Create();
-    rsa.FromXmlString(keyStored);
-    //
-    // 读取加密配置文件。加密方式和 ASP.NET 加密不兼容。
-    //
-    using (XConfigManager manager = new XConfigManager(filePath))
-    {
-        //
-        // 配置容器加解密。
-        //
-        manager.Default.Encrypt(rsa);
-        manager.Default.Decrypt(rsa);
-        XSection section1 = manager.Sections.GetOrAdd("section1");
-        section1.Encrypt(rsa);
-        if (section1.IsProtected)
-        {
-           section1.Decrypt(rsa);
-        }
-    }
-}
-
-```
-
 ### XConfigManager
 
 提供 XConfigManager 类读写一个精简的配置属性文件，支持加密，支持字典/列表类型无限嵌套。
 
 ```c#
 
-internal static void Create(string filePath)
+internal static class TestXX
 {
-    //
-    // 使用自定义配置文件。
-    //
-    using (XConfigManager manager = File.Exists(filePath) ? new XConfigManager(filePath) : new XConfigManager())
+    private static bool _isFirst = true;
+    private static RSA _rsa = RSA.Create();
+
+    internal static void Create()
     {
-        //
-        // 赋值并设置注释。
-        //
-        manager.Default.Properties.AddOrUpdate("prop1", new XString(StringComparison.Ordinal.ToString())).Comment.SetValue("This is \"XCconfig\" prop1 comment.");
-        manager.Default.Properties.AddOrUpdate("prop7", new XString("Update this."));
-        var prop2 = manager.Default.Properties.AddOrUpdate("prop2", new XDictionary());
-        prop2.Properties.AddOrUpdate("prop4", new XString("Sub this dictionary prop."));
-        var prop3 = manager.Default.Properties.AddOrUpdate("prop3", new XList());
-        prop3.Properties.Add(new XString("Sub this list prop.")).Comment.SetValue("This is \"XCconfig\" list prop comment.");
-        XDictionary prop5 = prop3.Properties.Add(new XDictionary());
-        prop5.Properties.Add("prop5", new XString("F024AC4"));
-        //
-        // 附加属性。
-        //
-        prop5.Attributes.AddOrUpdate("attr1", new XConfigAttribute("add attr"));
-        prop55.Attributes.AddOrUpdate("attr1", new XConfigAttribute("add attr"));
-        //
-        manager.Default.Properties.AddOrUpdate("prop6", new XString("Remove this."));
-        // manager.Default.Properties.Add("prop1", new XString("Test unique."));
-        //
-        // 移除属性的方法。移除属性时相关注释一并移除。
-        //
-        manager.Default.Properties.Remove("prop6");
-        //
-        // 更新。
-        //
-        manager.Default.Properties.AddOrUpdate("prop7", new XString("Update this successful."));
-        //
-        // 附加配置容器。
-        //
-        XSection section = manager.Sections.GetOrAdd("section1");
-        section.Comment.SetValue("This is \"XCconfig\" section1");
-        section.Properties.AddOrUpdate("prop1", new XString("123456789"));
-        //
-        // 保存到指定的文件。
-        //
-        manager.Save(filePath);
-    }
-}
-
-```
-
-```c#
-
-internal static void Load(string filePath)
-{
-    //
-    // 使用自定义配置文件。
-    //
-    using (XConfigManager manager = new XConfigManager(filePath))
-    {
-        //
-        // 取出属性和注释。
-        //
-        XString value1 = manager.Default.Properties.GetValue<XString>("prop1");
-        if (value1.Comment.TryGetValue(out string comment1))
+        if (_isFirst)
         {
-            Console.WriteLine(comment1);
+            File.Delete("config.x.xml");
+            _isFirst = false;
         }
-        Console.WriteLine(value1.GetEnumValue<StringComparison>());
+        _rsa.FromXmlString(keyStored);
         //
-        XDictionary value2 = manager.Default.Properties.GetValue<XDictionary>("prop2");
-        value2.Properties.TryGetValue("prop4", out XString val2);
-        Console.WriteLine(val2.GetStringValue());
+        // 使用自定义配置文件。
         //
-        XList value3 = manager.Default.Properties.GetValue<XList>("prop3");
-        Console.WriteLine(value3.Properties.GetValue<XString>(0).GetStringValue());
-        //
-        XString value5 = ((XDictionary)value3.Properties[1]).Properties.GetValue<XString>("prop5");
-        byte[] val5 = value5.GetBytesValue(XStringFormat.Hex);
-        Console.WriteLine(BitConverter.ToString(val5));
-        Console.WriteLine(value5.Attributes.GetValue("attr1").GetStringValue());
-        //
-        XSection section = manager.Sections.GetValue("section1");
-        Console.WriteLine(section.Comment.GetValue());
-        Console.WriteLine(section.Properties.GetValue<XString>("prop1").GetInt64Value());
+        using (XConfigManager manager = new XConfigManager("config.x.xml", true))
+        {
+            #region Default
+
+            //
+            // 添加或更新属性，并设置注释。
+            //
+            manager.Default.Properties.AddOrUpdate("prop1", new XString("prop1")).Attributes.AddOrUpdateString("attr1", "attr1");
+            XDictionary dict1 = manager.Default.Properties.AddOrUpdate("dictionary1", new XDictionary());
+            dict1.Comment.SetValue("This is dictionary1 comment.");
+            dict1.Properties.AddOrUpdateString("dict-prop1", "dict-prop1").Comment.SetValue("This is dictionary1 prop1 comment.");
+            dict1.Properties.AddOrUpdate("dict-prop2", new XString("dict-prop2"));
+            XList list1 = dict1.Properties.AddOrUpdate("dict-prop3-list1", new XList());
+            list1.Properties.Add(new XString("dict-prop3-list1-prop1"));
+            manager.Default.Properties.AddOrUpdate("prop5", new XString("Update this.")).Comment.SetValue("Will be update prop5.");
+            manager.Default.Properties.AddOrUpdate("prop6", new XString("Remove this.")).Comment.SetValue("Will be remove prop6.");
+            //
+            // 更新。
+            //
+            manager.Default.Properties.AddOrUpdateString("prop5", "Update this successful.").Comment.SetValue("Update prop5 successful.");
+            //
+            // 移除属性的方法。移除属性时相关注释一并移除。
+            //
+            manager.Default.Properties.Remove("prop6");
+            //
+            // 添加同名属性异常。
+            //
+            try
+            {
+                manager.Default.Properties.Add("prop1", new XString("Test unique.")); // Allways error.
+            }
+            catch (Exception)
+            {
+                manager.Default.Properties.AddOrUpdateString("prop99", "Add prop1 exception OK.");
+            }
+
+            #endregion Default
+
+            #region Sections
+
+            //
+            // 添加或更新容器组，并设置注释。
+            //
+            manager.Sections.AddOrUpdate("section1");
+            manager.Sections.AddOrUpdate("section2").Comment.SetValue("This is section2 comment."); ;
+            manager.Sections.AddOrUpdate("section3");
+            XSection section1 = manager.Sections.GetOrAdd("section1");
+            section1.Comment.SetValue("This is section1 comment.");
+            //
+            // 添加或更新属性，并设置注释。
+            //
+            section1.Properties.AddOrUpdate("section1-dict1", new XDictionary()).Comment.SetValue("This is section1-dict1 comment.");
+            section1.Properties.AddOrUpdate("section1-list1", new XList()).Comment.SetValue("This is section1-list1 comment.");
+            section1.Properties.AddOrUpdate("section1-string1", new XString("section1-string1")).Comment.SetValue("This is section1-string1 comment.");
+            //
+            // 加密。
+            //
+            section1.Encrypt(_rsa);
+
+            #endregion Sections
+
+            //
+            // 保存到指定的文件。
+            //
+            manager.Save("config.x.xml");
+        }
+    }
+
+    internal static void Load()
+    {
+        using (XConfigManager manager = new XConfigManager("config.x.xml"))
+        {
+            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            Console.WriteLine(manager.ToString());
+            Console.WriteLine();
+            Console.WriteLine();
+            manager.Sections.GetValue("section1").Decrypt(_rsa);
+            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            Console.WriteLine(manager.ToString());
+            manager.Save("config.x.xml");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            Console.WriteLine(File.ReadAllText("config.x.xml"));
+        }
     }
 }
 

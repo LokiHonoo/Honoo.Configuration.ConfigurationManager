@@ -31,12 +31,16 @@ namespace Honoo.Configuration
         public Dictionary<string, SingleTagProperty>.ValueCollection Values => _properties.Values;
 
         /// <summary>
-        /// 获取与指定键关联的配置属性的值。
+        /// 获取或设置具有指定键的配置属性的值。直接赋值等同于 AddOrUpdate 方法。
         /// </summary>
         /// <param name="key">配置属性的键。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public SingleTagProperty this[string key] => GetValue(key);
+        public SingleTagProperty this[string key]
+        {
+            get { return GetValue(key); }
+            set { AddOrUpdate(key, value); }
+        }
 
         #endregion Members
 
@@ -75,12 +79,12 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
+            _properties.Add(key, value);
             if (value.Content == null)
             {
                 value.CreateContent(key);
             }
             _container.Add(value.Content);
-            _properties.Add(key, value);
             return value;
         }
 
@@ -116,7 +120,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            if (TryGetValue(key, out SingleTagProperty val))
+            if (_properties.TryGetValue(key, out SingleTagProperty val))
             {
                 val.RemoveContent();
                 if (value.Content == null)
@@ -155,7 +159,7 @@ namespace Honoo.Configuration
         /// <param name="valueIfNotExists">指定键关联的配置属性不存在时添加此配置属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public SingleTagProperty GetOrAdd<T>(string key, SingleTagProperty valueIfNotExists)
+        public SingleTagProperty GetOrAdd(string key, SingleTagProperty valueIfNotExists)
         {
             return TryGetValue(key, out SingleTagProperty value) ? value : Add(key, valueIfNotExists);
         }
@@ -185,7 +189,7 @@ namespace Honoo.Configuration
         /// <returns></returns>
         public bool TryGetStringValue(string key, out string value)
         {
-            if (TryGetValue(key, out SingleTagProperty val))
+            if (_properties.TryGetValue(key, out SingleTagProperty val))
             {
                 value = val.GetStringValue();
                 return true;
