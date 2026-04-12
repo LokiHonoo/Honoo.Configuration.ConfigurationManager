@@ -31,7 +31,7 @@ namespace Test
             //
             // 附加配置文件。
             //
-            using (AppSettingsManager manager = new AppSettingsManager("config.exrea.xml", true))
+            using (AppSettingsManager manager = File.Exists("config.exrea.xml") ? new AppSettingsManager("config.exrea.xml") : new AppSettingsManager())
             {
                 manager.Properties.AddOrUpdate("exrea-prop1", new AddProperty("exrea-prop1")).Comment.SetValue("This is exrea file prop1 comment.");
                 manager.Properties.AddOrUpdate("exrea-prop2", new AddProperty("exrea-prop2")).Comment.SetValue("This is exrea file prop2 comment.");
@@ -40,7 +40,7 @@ namespace Test
             //
             // 使用 .NET 程序的默认配置文件或自定义配置文件。
             //
-            using (ConfigurationManager manager = new ConfigurationManager("config.main.xml", true))
+            using (ConfigurationManager manager = File.Exists("config.main.xml") ? new ConfigurationManager("config.main.xml") : new ConfigurationManager())
             {
                 #region AppSettings
 

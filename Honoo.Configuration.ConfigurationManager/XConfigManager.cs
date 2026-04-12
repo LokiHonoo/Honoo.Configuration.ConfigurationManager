@@ -149,37 +149,6 @@ namespace Honoo.Configuration
         /// <summary>
         /// 创建 XConfigManager 的新实例。
         /// </summary>
-        /// <param name="filePath">指定配置文件的路径。</param>
-        /// <param name="createNewIfFileNotExists">如果文件不存在，创建无内容的 XConfigManager 实例。此时不会写入到文件路径。</param>
-        /// <exception cref="Exception"/>
-        public XConfigManager(string filePath, bool createNewIfFileNotExists)
-        {
-            if (string.IsNullOrWhiteSpace(filePath))
-            {
-                throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
-            }
-            if (File.Exists(filePath))
-            {
-                using (XmlReader reader = XmlReader.Create(filePath, _readerSettings))
-                {
-                    _document = XDocument.Load(reader);
-                    _document = Coerce(_document);
-                }
-            }
-            else if (createNewIfFileNotExists)
-            {
-                _document = new XDocument(new XDeclaration("1.0", "utf-8", string.Empty), new XElement(_namespace + "config"));
-            }
-            else
-            {
-                throw new FileNotFoundException($"The file \"{filePath}\" is not found.");
-            }
-            _document.Changed += (s, e) => { OnChanged(); };
-        }
-
-        /// <summary>
-        /// 创建 XConfigManager 的新实例。
-        /// </summary>
         /// <param name="stream">指定配置文件的流。</param>
         /// <exception cref="Exception"/>
         public XConfigManager(Stream stream)
@@ -263,7 +232,7 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentException($"The invalid argument - {nameof(filePath)}.");
             }
-            XDocument document = Clean();
+            XDocument document = GetCleared();
             using (XmlWriter writer = XmlWriter.Create(filePath, _writerSettings))
             {
                 document.WriteTo(writer);
@@ -278,7 +247,7 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public void Save(Stream stream)
         {
-            XDocument document = Clean();
+            XDocument document = GetCleared();
             using (XmlWriter writer = XmlWriter.Create(stream, _writerSettings))
             {
                 document.WriteTo(writer);
@@ -297,9 +266,21 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(writer));
             }
-            XDocument document = Clean();
+            XDocument document = GetCleared();
             document.WriteTo(writer);
             writer.Flush();
+        }
+
+        /// <summary>
+        /// 在根节点设置一个属性值，用于描述此配置属性文件。
+        /// </summary>
+        /// <param name="name">属性名称。</param>
+        /// <param name="value">属性值。</param>
+        /// <exception cref="Exception"/>
+
+        public void SetAttributeValue(string name, string value)
+        {
+            _document.Root.SetAttributeValue(name, value);
         }
 
         #endregion Save
@@ -341,9 +322,16 @@ namespace Honoo.Configuration
             return document;
         }
 
-        private XDocument Clean()
+        private XDocument GetCleared()
         {
             XDocument result = new XDocument(_document);
+            foreach (XAttribute attribute in _document.Root.Attributes())
+            {
+                if (attribute.Value.Length == 0)
+                {
+                    result.Root.Attribute(attribute.Name).Remove();
+                }
+            }
             if (_default != null && _default.Properties.Count == 0 && !_default.Comment.HasValue)
             {
                 result.Element("default").Remove();

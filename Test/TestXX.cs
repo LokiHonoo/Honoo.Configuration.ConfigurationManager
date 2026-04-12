@@ -30,8 +30,16 @@ namespace Test
             //
             // 使用自定义配置文件。
             //
-            using (XConfigManager manager = new XConfigManager("config.x.xml", true))
+            using (XConfigManager manager = File.Exists("config.x.xml") ? new XConfigManager("config.x.xml") : new XConfigManager())
             {
+                //
+                // 自定义描述。
+                //
+                manager.SetAttributeValue("name", "APP Config");
+                manager.SetAttributeValue("description", "This is a custom configuration file.");
+                manager.SetAttributeValue("version", "1.0.0");
+                manager.SetAttributeValue("version", string.Empty);
+
                 #region Default
 
                 //

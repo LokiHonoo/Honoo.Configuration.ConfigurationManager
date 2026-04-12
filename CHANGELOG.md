@@ -6,6 +6,7 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [CHANGELOG](#changelog)
+    - [1.5.15](#1515)
     - [1.5.14](#1514)
     - [1.5.13](#1513)
     - [1.5.12](#1512)
@@ -29,6 +30,10 @@
 <!-- /code_chunk_output -->
 
 ## CHANGELOG
+
+### 1.5.15
+
+**Features* 可以为根节点增加自定义属性用于描述配置属性文件。
 
 ### 1.5.14
 
