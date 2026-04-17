@@ -336,11 +336,11 @@ namespace Honoo.Configuration
         /// <exception cref="Exception"/>
         public int CompareTo(object obj)
         {
-            if (obj is XString other)
+            if (obj is XConfigAttribute other)
             {
                 return CompareTo(other);
             }
-            throw new ArgumentException($"{nameof(obj)} is not a XString.");
+            throw new ArgumentException($"{nameof(obj)} is not a XConfigAttribute.");
         }
 
         /// <summary>

@@ -271,18 +271,6 @@ namespace Honoo.Configuration
             writer.Flush();
         }
 
-        /// <summary>
-        /// 在根节点设置一个属性值，用于描述此配置属性文件。
-        /// </summary>
-        /// <param name="name">属性名称。</param>
-        /// <param name="value">属性值。</param>
-        /// <exception cref="Exception"/>
-
-        public void SetAttributeValue(string name, string value)
-        {
-            _document.Root.SetAttributeValue(name, value);
-        }
-
         #endregion Save
 
         /// <summary>
@@ -325,16 +313,9 @@ namespace Honoo.Configuration
         private XDocument GetCleared()
         {
             XDocument result = new XDocument(_document);
-            foreach (XAttribute attribute in _document.Root.Attributes())
+            if (_default != null && _default.Attributes.Count == 0 && _default.Properties.Count == 0 && !_default.Comment.HasValue)
             {
-                if (attribute.Value.Length == 0)
-                {
-                    result.Root.Attribute(attribute.Name).Remove();
-                }
-            }
-            if (_default != null && _default.Properties.Count == 0 && !_default.Comment.HasValue)
-            {
-                result.Element("default").Remove();
+                result.Element(_namespace + "default").Remove();
             }
             return result;
         }

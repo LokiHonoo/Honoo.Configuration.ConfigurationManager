@@ -351,7 +351,7 @@ namespace Honoo.Configuration
         private XDocument GetCleared()
         {
             XDocument result = new XDocument(_document);
-            if (_appSettings != null && _appSettings.Properties.Count == 0)
+            if (_appSettings != null && !_appSettings.TryGetFileAttribute(out _) && _appSettings.Properties.Count == 0)
             {
                 result.Element("appSettings").Remove();
             }

@@ -32,19 +32,12 @@ namespace Test
             //
             using (XConfigManager manager = File.Exists("config.x.xml") ? new XConfigManager("config.x.xml") : new XConfigManager())
             {
-                //
-                // 自定义描述。
-                //
-                manager.SetAttributeValue("name", "APP Config");
-                manager.SetAttributeValue("description", "This is a custom configuration file.");
-                manager.SetAttributeValue("version", "1.0.0");
-                manager.SetAttributeValue("version", string.Empty);
-
                 #region Default
 
                 //
                 // 添加或更新属性，并设置注释。
                 //
+                manager.Default.Attributes.AddOrUpdateString("description", "This is a custom configuration file.");
                 manager.Default.Properties.AddOrUpdate("prop1", new XString("prop1")).Attributes.AddOrUpdateString("attr1", "attr1");
                 XDictionary dict1 = manager.Default.Properties.AddOrUpdate("dictionary1", new XDictionary());
                 dict1.Comment.SetValue("This is dictionary1 comment.");
