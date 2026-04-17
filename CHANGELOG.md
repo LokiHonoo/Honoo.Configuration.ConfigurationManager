@@ -6,7 +6,7 @@
 
 - [Honoo.Configuration.ConfigurationManager](#honooconfigurationconfigurationmanager)
   - [CHANGELOG](#changelog)
-    - [1.5.15](#1515)
+    - [1.5.16](#1516)
     - [1.5.14](#1514)
     - [1.5.13](#1513)
     - [1.5.12](#1512)
@@ -31,7 +31,7 @@
 
 ## CHANGELOG
 
-### 1.5.15
+### 1.5.16
 
 **Fix* 修复bug。
 

@@ -9,7 +9,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 列表类型的配置属性集合。
     /// </summary>
-    public class XListPropertySet : IEnumerable<XProperty>
+    public sealed class XListPropertySet : IEnumerable<XProperty>
     {
         private readonly XElement _container;
         private readonly List<XProperty> _properties = new List<XProperty>();

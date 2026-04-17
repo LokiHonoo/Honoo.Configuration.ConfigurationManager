@@ -9,7 +9,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 字典类型的配置属性集合。
     /// </summary>
-    public class XDictionaryPropertySet : IEnumerable<KeyValuePair<string, XProperty>>
+    public sealed class XDictionaryPropertySet : IEnumerable<KeyValuePair<string, XProperty>>
     {
         #region Members
 

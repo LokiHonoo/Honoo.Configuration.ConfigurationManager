@@ -5,7 +5,7 @@ namespace Honoo.Configuration
     /// <summary>
     /// 映射到 &lt;default /&gt; 配置容器节点。
     /// </summary>
-    public class XDefault : XDictionary
+    public sealed class XDefault : XDictionary
     {
         #region Construction
 
