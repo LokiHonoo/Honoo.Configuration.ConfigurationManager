@@ -74,7 +74,7 @@ internal static class TestC
         //
         // 附加配置文件。
         //
-        using (AppSettingsManager manager = new AppSettingsManager("config.exrea.xml", true))
+        using (AppSettingsManager manager = File.Exists("config.exrea.xml") ? new AppSettingsManager("config.exrea.xml") : new AppSettingsManager())
         {
             manager.Properties.AddOrUpdate("exrea-prop1", new AddProperty("exrea-prop1")).Comment.SetValue("This is exrea file prop1 comment.");
             manager.Properties.AddOrUpdate("exrea-prop2", new AddProperty("exrea-prop2")).Comment.SetValue("This is exrea file prop2 comment.");
@@ -83,7 +83,7 @@ internal static class TestC
         //
         // 使用 .NET 程序的默认配置文件或自定义配置文件。
         //
-        using (ConfigurationManager manager = new ConfigurationManager("config.main.xml", true))
+        using (ConfigurationManager manager = File.Exists("config.main.xml") ? new ConfigurationManager("config.main.xml") : new ConfigurationManager())
         {
             #region AppSettings
 
@@ -258,13 +258,14 @@ internal static class TestXX
         //
         // 使用自定义配置文件。
         //
-        using (XConfigManager manager = new XConfigManager("config.x.xml", true))
+        using (XConfigManager manager = File.Exists("config.x.xml") ? new XConfigManager("config.x.xml") : new XConfigManager())
         {
             #region Default
 
             //
             // 添加或更新属性，并设置注释。
             //
+            manager.Default.Attributes.AddOrUpdateString("description", "This is a custom configuration file.");
             manager.Default.Properties.AddOrUpdate("prop1", new XString("prop1")).Attributes.AddOrUpdateString("attr1", "attr1");
             XDictionary dict1 = manager.Default.Properties.AddOrUpdate("dictionary1", new XDictionary());
             dict1.Comment.SetValue("This is dictionary1 comment.");

@@ -271,18 +271,6 @@ namespace Honoo.Configuration
             writer.Flush();
         }
 
-        /// <summary>
-        /// 在根节点设置一个属性值，用于描述此配置属性文件。
-        /// </summary>
-        /// <param name="name">属性名称。</param>
-        /// <param name="value">属性值。</param>
-        /// <exception cref="Exception"/>
-
-        public void SetAttributeValue(string name, string value)
-        {
-            _document.Root.SetAttributeValue(name, value);
-        }
-
         #endregion Save
 
         /// <summary>

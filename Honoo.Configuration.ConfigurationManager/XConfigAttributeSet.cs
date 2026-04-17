@@ -43,7 +43,7 @@ namespace Honoo.Configuration
             {
                 foreach (XAttribute attribute in container.Attributes())
                 {
-                    if (attribute.Name != "name" && attribute.Name != "key")
+                    if (attribute.Name != "name" && attribute.Name != "key" && attribute.Name != "xmlns")
                     {
                         string name = attribute.Name.LocalName;
                         XConfigAttribute attr = new XConfigAttribute(attribute);
@@ -60,7 +60,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 添加一个附加属性。
         /// </summary>
-        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>", "<see langword="key"/>".</param>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"，"<see langword="key"/>"，"<see langword="xmlns"/>"。</param>
         /// <param name="value">附加属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
@@ -74,9 +74,9 @@ namespace Honoo.Configuration
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            if (name == "name" || name == "key")
+            if (name == "name" || name == "key" || name == "xmlns")
             {
-                throw new ArgumentException("Don't use keyword \"name\", \"key\".", nameof(value));
+                throw new ArgumentException("Don't use keyword \"name\", \"key\", \"xmlns\".", nameof(value));
             }
             _attributes.Add(name, value);
             if (value.Content == null)
@@ -90,7 +90,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 添加一个附加属性。
         /// </summary>
-        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"，"<see langword="key"/>"，"<see langword="xmlns"/>"。</param>
         /// <param name="value">附加属性的值。</param>
         /// <exception cref="Exception"/>
         public XConfigAttribute AddString(string name, string value)
@@ -105,7 +105,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 添加或更新一个附加属性。
         /// </summary>
-        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"，"<see langword="key"/>"，"<see langword="xmlns"/>"。</param>
         /// <param name="value">附加属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
@@ -136,7 +136,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 添加或更新一个附加属性。
         /// </summary>
-        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"，"<see langword="key"/>"，"<see langword="xmlns"/>"。</param>
         /// <param name="value">附加属性的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
@@ -152,7 +152,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取与指定名称关联的附加属性的值。如果不存在，添加一个附加属性并返回值。
         /// </summary>
-        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"，"<see langword="key"/>"，"<see langword="xmlns"/>"。</param>
         /// <param name="valueIfNotExists">指定名称关联的附加属性不存在时添加此附加属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
@@ -164,7 +164,7 @@ namespace Honoo.Configuration
         /// <summary>
         /// 获取与指定名称关联的附加属性的值。如果不存在，添加一个附加属性并返回值。
         /// </summary>
-        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"， "<see langword="key"/>"。</param>
+        /// <param name="name">附加属性的名称。名称不能使用关键字 "<see langword="name"/>"，"<see langword="key"/>"，"<see langword="xmlns"/>"。</param>
         /// <param name="valueIfNotExists">指定名称关联的附加属性不存在时添加此附加属性。</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
